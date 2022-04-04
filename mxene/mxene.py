@@ -105,6 +105,7 @@ class MXene(Structure):
         super(MXene, self).__init__(
             lattice, species, coords, charge, validate_proximity,
             to_unit_cell, coords_are_cartesian, site_properties)
+        self.out_dir = ""
 
     def get_similar_layer_atoms(self, z0=0.0, tol=0.005, axis=2, frac=True, frac_coords=None, ):
         """
@@ -270,6 +271,7 @@ class MXene(Structure):
         按照结构中原子层，以及堆垛方式，获取下一层原子位置。
 
         Args:
+            array: np.ndarray, use array directly.
             ignore_index: (list of int), ignore index to split layer
             site_atom: (str), name of next layer atoms
             site_type: (str), fcc, hcp, top
@@ -335,6 +337,7 @@ class MXene(Structure):
         产生理想的单原子掺杂MXenes结构。
 
         Args:
+            add_noise: bool, add noise or not.
             doping: None, str, doping atoms.
             terminal_site: str, terminal atom type: ["fcc","bcc","hcp"].
             terminal: None, str, terminal atoms.
@@ -471,6 +474,7 @@ class MXene(Structure):
         添加吸附原子。
 
         Args:
+            center: (int), center index.
             doping: (None, str), doping atoms.
             site_type: (str), terminal atom type: ["fcc","bcc","hcp"].
             terminal: (None, str), terminal atoms.
