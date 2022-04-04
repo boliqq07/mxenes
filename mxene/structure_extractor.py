@@ -10,9 +10,9 @@ import numpy as np
 import pandas as pd
 from pymatgen.core import Structure, Element
 
-from mgetool.tool import coarse_and_spilt_array
+
 from mxene.functions import get_common_name, get_center_name, get_plane_neighbors_to_center, \
-    get_nearest_plane_atom_index
+    get_nearest_plane_atom_index, coarse_and_spilt_array
 
 
 def tetra_sites(st: Structure, base_metal="Ti", s: int = None, r=6.0, tol=0.6, ignore_index=45, center_m0=None,

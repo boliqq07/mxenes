@@ -11,7 +11,10 @@ from ase.visualize import view
 from numpy.typing import ArrayLike
 from pymatgen.core import Structure, Lattice
 from pymatgen.io.ase import AseAtomsAdaptor
-from pymatgen.util.typing import CompositionLike
+try:
+    from pymatgen.util.typing import CompositionLike
+except BaseException:
+    CompositionLike = str
 
 from mxene.functions import coarse_and_spilt_array_ignore_force_plane, get_plane_neighbors_to_center, \
     check_random_state, interp2d_nearest
