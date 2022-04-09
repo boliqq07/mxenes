@@ -179,13 +179,13 @@ class MyTestCase(unittest.TestCase):
 
     def test_add_random_16(self):
         import matplotlib.pyplot as plt
-        mx = MXene.from_standard(terminal_site="fcc", doping="Zr",
+        mx = MXene.from_standard(terminal_site="hcp", doping="Zr",
                                  terminal="O",
-                                 base="Ti", carbide_nitride="C",
+                                 base="Mo", carbide_nitride="C",
                                  n_base=2, add_noise=True,
                                  super_cell=(3, 3, 1), add_atoms=None, add_atoms_site=None)
-        st = mx.add_face_random_z_16_site(debug=True, number_each=3)
-        st.to(fmt="poscar", filename="Ti_POSCAR")
+        st = mx.add_face_random_z_16_site(debug=True, number_each=5)
+        st.to(fmt="poscar", filename="Mo_POSCAR")
         # st.show()
 
     def test_non_equivalent_site(self):

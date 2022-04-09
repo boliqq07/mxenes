@@ -1,4 +1,5 @@
 import functools
+import itertools
 import os
 from typing import Union
 
@@ -346,9 +347,12 @@ def get_potcar_lru(sym):
 
 def get_potcar(poscar: Union[Poscar, Structure], sym_potcar_map=sym_potcar_map):
     if isinstance(poscar, Structure):
-        sym = tuple(poscar.symbol_set)
+        syms = [site.specie.symbol for site in poscar]
+        site_symbols = [a[0] for a in itertools.groupby(syms)]
+        sym = tuple(site_symbols)
     else:
         sym = tuple(poscar.site_symbols)
+
     if sym_potcar_map is not None:
         POTCAR = Potcar(sym, sym_potcar_map=sym_potcar_map, )
     else:

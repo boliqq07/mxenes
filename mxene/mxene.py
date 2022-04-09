@@ -9,7 +9,7 @@ from typing import Union, Sequence, List
 import numpy as np
 from ase.visualize import view
 from numpy.typing import ArrayLike
-from pymatgen.core import Structure, Lattice
+from pymatgen.core import Structure, Lattice, SymmOp, PeriodicSite
 from pymatgen.io.ase import AseAtomsAdaptor
 try:
     from pymatgen.util.typing import CompositionLike
@@ -18,7 +18,7 @@ except BaseException:
 
 from mxene.functions import coarse_and_spilt_array_ignore_force_plane, get_plane_neighbors_to_center, \
     check_random_state, interp2d_nearest
-from mxene.make_disk import make_disk
+from mxene.disk import make_disk
 from mxene.structure_extractor import structure_message
 
 
@@ -136,7 +136,7 @@ class MXene(Structure):
         z0_atoms = [i for i, z in enumerate(coords) if abs(z - z0) < tol]
         return z0_atoms
 
-    def __add__(self, other):
+    def __add__(self, other:Structure)->"MXene":
         """
         Add the 2 MXenes with same Lattice.
 
@@ -959,3 +959,44 @@ class MXene(Structure):
                                      up_down=up_down, perturb_base=perturb_base,
                                      offset_z=offset_z, alpha=alpha)
         return res
+
+    def apply_operation_no_lattice(self, symmop: SymmOp, fractional: bool = False):
+        """
+        Apply a symmetry operation to the structure and return the new
+        structure. The lattice is operated by the rotation matrix only.
+        Coords are operated in full and then transformed to the new lattice.
+
+        Args:
+            symmop (SymmOp): Symmetry operation to apply.
+            fractional (bool): Whether the symmetry operation is applied in
+                fractional space. Defaults to False, i.e., symmetry operation
+                is applied in cartesian coordinates.
+        """
+        if not fractional:
+            # self._lattice = Lattice([symmop.apply_rotation_only(row) for row in self._lattice.matrix])
+
+            def operate_site(site):
+                new_cart = symmop.operate(site.coords)
+                new_frac = self._lattice.get_fractional_coords(new_cart)
+                return PeriodicSite(
+                    site.species,
+                    new_frac,
+                    self._lattice,
+                    properties=site.properties,
+                    skip_checks=True,
+                )
+
+        else:
+            # new_latt = np.dot(symmop.rotation_matrix, self._lattice.matrix)
+            # self._lattice = Lattice(new_latt)
+
+            def operate_site(site):
+                return PeriodicSite(
+                    site.species,
+                    symmop.operate(site.frac_coords),
+                    self._lattice,
+                    properties=site.properties,
+                    skip_checks=True,
+                )
+
+        self._sites = [operate_site(s) for s in self._sites]

@@ -519,6 +519,7 @@ class interp2d_nearest:
         t_data_ = np.repeat(t_data_, data.shape[0], axis=1)
 
         dis = np.sum((t_data_ - data_) ** 2, axis=-1) ** 0.5
+
         w = np.exp(-dis * self.s)
         w = w / np.sum(w, axis=0)
         z = np.sum(w * np.repeat(tz.reshape(-1, 1), w.shape[1], axis=1), axis=0)
