@@ -8,6 +8,7 @@
 import functools
 import itertools
 import numbers
+import pathlib
 import warnings
 from collections import Counter
 from copy import deepcopy
@@ -16,6 +17,7 @@ from typing import List, Union, Dict, Tuple
 import numpy as np
 from numpy import atleast_1d
 from pymatgen.core import Structure
+from pymatgen.io.vasp import Poscar
 
 
 def middle(st: Structure, deprecated=None, tol=0.01):
@@ -244,7 +246,7 @@ def get_nearest_plane_atom_index(structure: Structure, center: int, special_name
 
 def get_plane_neighbors_to_center_raw(st: Structure, center, neighbors_name: Union[List, Tuple, str] = "O",
                                       ignore_index: Union[int, List, Tuple] = None,
-                                      r=6.0, plane=True, ) -> tuple:
+                                      r=6.0, plane=True, n_cluster=2) -> tuple:
     """
     Get neighbor to center atom for next process.
 
@@ -255,6 +257,7 @@ def get_plane_neighbors_to_center_raw(st: Structure, center, neighbors_name: Uni
         ignore_index:(int,list),  ignore_index. refer to all structure atom list.
         r: (float), cut radius.
         plane: just for nearest plane.
+        n_cluster: n for plane.
 
     Returns:
         np.ndarray,np.ndarray,np.ndarray
@@ -264,7 +267,7 @@ def get_plane_neighbors_to_center_raw(st: Structure, center, neighbors_name: Uni
     center_m0 = center
 
     if plane is True:
-        samez_o_index = get_nearest_plane_atom_index(st, center, special_name=neighbors_name)
+        samez_o_index = get_nearest_plane_atom_index(st, center, special_name=neighbors_name, n_cluster=n_cluster)
     else:
         if isinstance(neighbors_name, str):
             samez_o_index = st.indices_from_symbol(neighbors_name)
@@ -296,7 +299,7 @@ def get_plane_neighbors_to_center_raw(st: Structure, center, neighbors_name: Uni
 
 def get_plane_neighbors_to_center(st: Structure, center, neighbors_name: Union[List, Tuple, str] = "O",
                                   ignore_index: Union[int, List, Tuple] = None,
-                                  r=6.0, top=3, tol=0.6, plane=True, ) -> Dict[int, Dict]:
+                                  r=6.0, top=3, tol=0.6, plane=True, n_cluster=2) -> Dict[int, Dict]:
     """
     Get neighbor to center atom.
 
@@ -309,6 +312,7 @@ def get_plane_neighbors_to_center(st: Structure, center, neighbors_name: Union[L
         top: (int), return top group.
         tol: (float), tolerance for group.
         plane: just for nearest plane.
+        n_cluster: number of plane
 
     Returns:
         points_and_distance_to_center: (dict), points and distance.
@@ -318,14 +322,14 @@ def get_plane_neighbors_to_center(st: Structure, center, neighbors_name: Union[L
     center_m0 = center
 
     if plane is True:
-        samez_o_index = get_nearest_plane_atom_index(st, center, special_name=neighbors_name)
+        samez_o_index = get_nearest_plane_atom_index(st, center, special_name=neighbors_name, n_cluster=n_cluster)
     else:
         if isinstance(neighbors_name, str):
-            samez_o_index = st.indices_from_symbol(neighbors_name)
+            samez_o_index = np.array(list(st.indices_from_symbol(neighbors_name)))
         else:
             neighbors_name = list(set(neighbors_name))
             samez_o_index = [st.indices_from_symbol(i) for i in neighbors_name]
-            samez_o_index = list(itertools.chain(samez_o_index))
+            samez_o_index = np.array(list(itertools.chain(samez_o_index)))
 
     if ignore_index is None:
         pass
@@ -526,3 +530,26 @@ class interp2d_nearest:
         if not meshed:
             z = z.reshape((y.shape[0], x.shape[0])).T
         return z
+
+
+def fixed_poscar(poscar, fixed_type: Union[str, float, None] = "base", fixed_array=None,coords_are_cartesian=True):
+    if fixed_type is None:
+        pass
+    else:
+        pathi = pathlib.Path(poscar)
+        poscar = Poscar.from_file(poscar, check_for_POTCAR=False)
+        if fixed_array is None:
+            st = poscar.structure
+            fixed_array = np.full_like(poscar.structure.frac_coords, False)
+
+            if fixed_type == "base":
+                fixed_array[-1] = True
+            else:
+                if isinstance(fixed_type, float):
+                    if coords_are_cartesian is False:
+                        index = st.frac_coords[:, -1] > fixed_type
+                    else:
+                        index = st.cart_coords[:, -1] > fixed_type
+                    fixed_array[index] = True
+        poscar = Poscar(poscar.structure, selective_dynamics=fixed_array.tolist())
+        poscar.write_file(str(pathi))

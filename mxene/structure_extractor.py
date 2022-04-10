@@ -10,7 +10,6 @@ import numpy as np
 import pandas as pd
 from pymatgen.core import Structure, Element
 
-
 from mxene.functions import get_common_name, get_center_name, get_plane_neighbors_to_center, \
     get_nearest_plane_atom_index, coarse_and_spilt_array
 

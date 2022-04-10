@@ -11,6 +11,7 @@ from ase.visualize import view
 from numpy.typing import ArrayLike
 from pymatgen.core import Structure, Lattice, SymmOp, PeriodicSite
 from pymatgen.io.ase import AseAtomsAdaptor
+
 try:
     from pymatgen.util.typing import CompositionLike
 except BaseException:
@@ -20,6 +21,8 @@ from mxene.functions import coarse_and_spilt_array_ignore_force_plane, get_plane
     check_random_state, interp2d_nearest
 from mxene.disk import make_disk
 from mxene.structure_extractor import structure_message
+
+aaa = AseAtomsAdaptor()
 
 
 class MXene(Structure):
@@ -61,6 +64,7 @@ class MXene(Structure):
     cn = ["C", "N"]
     bm = ["Ti", "Zr", "Hf", "V", "Nb", "Ta", "Cr", "Mo", "W"]
     tem_z_axis = {"O": 1.0, "F": 0.9, "Cl": 1.2}
+    am_z_axis = {"K": 2.1, "Li": 1.3, "H": 1.0, "Ca": 1.6, "Na": 1.6, "Mg": 1.4, "Al": 1.1, "Zn": 1.2}
 
     def __init__(self,
                  lattice: Union[ArrayLike, Lattice],
@@ -136,7 +140,7 @@ class MXene(Structure):
         z0_atoms = [i for i, z in enumerate(coords) if abs(z - z0) < tol]
         return z0_atoms
 
-    def __add__(self, other:Structure)->"MXene":
+    def __add__(self, other: Structure) -> "MXene":
         """
         Add the 2 MXenes with same Lattice.
 
@@ -285,6 +289,7 @@ class MXene(Structure):
         """
 
         reverse = True if up_down == "up" else False
+        coef = 1 if up_down == "up" else -1
 
         if array:
             layer_label = coarse_and_spilt_array_ignore_force_plane(array, ignore_index=ignore_index,
@@ -294,8 +299,8 @@ class MXene(Structure):
             layer_label = self.split_layer(ignore_index=ignore_index, n_cluster=None, tol=0.5, axis=2,
                                            method=None, reverse=reverse)
 
-        layer1_values = np.max(layer_label)
-        layer2_values = layer1_values - 1
+        layer1_values = np.min(layer_label)
+        layer2_values = layer1_values + 1
         layer1_index = np.where(layer_label == layer1_values)
         layer2_index = np.where(layer_label == layer2_values)
         coords1 = self.cart_coords[layer1_index]
@@ -304,28 +309,23 @@ class MXene(Structure):
 
         if isinstance(site_atom, str) and site_atom in self.tem_z_axis:
             terminal_z_axis = self.tem_z_axis[site_atom]
+        elif isinstance(site_atom, str) and site_atom in self.tem_z_axis:
+            terminal_z_axis = self.am_z_axis[site_atom]
         elif isinstance(site_atom, str):
             terminal_z_axis = 1.2
         else:
             terminal_z_axis = None
 
         if site_type == "fcc":
-
             coords_add = coords1 + offset12
-            if terminal_z_axis is not None:
-                coords_add[:-1] = offset12[-1] / abs(offset12) * terminal_z_axis + coords1[:-1]
-
         elif site_type == "hcp":
             coords_add = coords2
-            if terminal_z_axis is not None:
-                coords_add[:-1] = offset12[-1] / abs(offset12) * terminal_z_axis + coords1[:-1]
-
         elif site_type == "top":
             coords_add = coords1
-            if terminal_z_axis is not None:
-                coords_add[:-1] = offset12[-1] / abs(offset12) * terminal_z_axis + coords1[:-1]
         else:
             raise TypeError("Just accept 'top','fcc','hcp' terminal_site.")
+        if terminal_z_axis is not None:
+            coords_add[:, -1] = coef * terminal_z_axis + coords1[:, -1]
 
         return coords_add
 
@@ -334,12 +334,14 @@ class MXene(Structure):
                       terminal: Union[None, str] = "O",
                       base="Ti", carbide_nitride="C",
                       n_base=2, add_noise=True,
-                      super_cell=(3, 3, 1), add_atoms=None, add_atoms_site=None) -> "MXene":
+                      super_cell=(3, 3, 1), add_atoms=None, add_atoms_site=None,
+                      coords_are_cartesian=True) -> "MXene":
         """
         Generate single atom doping MXenes.
         产生理想的单原子掺杂MXenes结构。
 
         Args:
+            coords_are_cartesian: absorb_site are cartesian or not.
             add_noise: bool, add noise or not.
             doping: None, str, doping atoms.
             terminal_site: str, terminal atom type: ["fcc","bcc","hcp"].
@@ -349,7 +351,7 @@ class MXene(Structure):
             n_base:int, number of base atoms layer.
             super_cell: tuple with szie 3.
             add_atoms: str,list add atoms.
-            add_atoms_site:: str,list add atoms site.
+            add_atoms_site:: str,list add atoms site. fractional
 
         Returns:
             st: pymatgen.core.Strucutre
@@ -459,9 +461,9 @@ class MXene(Structure):
         if add_atoms is not None:
             if isinstance(add_atoms, (list, tuple)):
                 for n, s in zip(add_atoms, add_atoms_site):
-                    st.append(n, coords=s)
+                    st.append(n, coords=s, coords_are_cartesian=coords_are_cartesian)
             else:
-                st.append(add_atoms, coords=add_atoms_site)
+                st.append(add_atoms, coords=add_atoms_site, coords_are_cartesian=coords_are_cartesian)
 
         return cls.from_sites(sites=list(st.sites))
 
@@ -470,71 +472,81 @@ class MXene(Structure):
         return structure_message(self)
 
     def add_absorb(self, center=44, site_type: Union[None, str] = "fcc",
-                   terminal: Union[None, str] = "O", add_noise=True,
+                   add_noise=True, up_down="up",
                    site_name="S0", equivalent="ini_opt", absorb="H", absorb_site=None,
-                   ignore_index=None, doping=None, base=None) -> "MXene":
+                   ignore_index=None, coords_are_cartesian=True, offset_z=0) -> "MXene":
         """
         添加吸附原子。
 
         Args:
+            up_down: (str), up or down.
+            coords_are_cartesian: absorb_site are cartesian or not.
             center: (int), center index.
-            doping: (None, str), doping atoms.
-            site_type: (str), terminal atom type: ["fcc","bcc","hcp"].
-            terminal: (None, str), terminal atoms.
-            base: (str), base atoms.
+            site_type: (str), terminal atom type: ["fcc","bcc","hcp","center"].
             absorb: (list,str) name or list of name of absorb atoms.
             absorb_site: (None, list of list), np.ndarray with (Nx3) size.
             add_noise:(bool), add noise to site.
             site_name: (str), equivalent site name
             equivalent: (str), class name of equivalent site
             ignore_index: (list) index of ignore index.
+            offset_z: (float), offset z cartesian, manually, not affect by up_down.
 
         Returns:
 
         """
-        doping = self.species[-1].name if doping is None else doping
-        base = self.species[-4].name if base is None else base
-        nm_tm = "NM" if doping in self.nm_list else "TM"
-
-        if doping is None:
-            assert center is not None, "The center is should not be None for no_doping materials."
-        else:
-            center = len(self.species) - 1 if center is None else center
+        # just for up_down="up"
 
         if absorb_site is None:
             # 自动确定位置
-            if terminal == base:
-                neighbors_name = [terminal, doping]
+            if site_type == "center":
+                coef = 1 if up_down == "up" else -1
+                if isinstance(absorb, str) and absorb in self.tem_z_axis:
+                    offset_z = self.tem_z_axis[absorb] * coef + offset_z
+                elif isinstance(absorb, str) and absorb in self.tem_z_axis:
+                    offset_z = self.am_z_axis[absorb] * coef + offset_z
+                elif isinstance(absorb, str):
+                    offset_z = 1.2 * coef + offset_z
+                else:
+                    offset_z = offset_z
+
+                absorb_site = self.cart_coords[center] + np.array([0, 0, offset_z])
+
+                self.append(absorb, coords=absorb_site, coords_are_cartesian=coords_are_cartesian)
+
             else:
-                neighbors_name = terminal if nm_tm == "TM" else [terminal, doping]
 
-            sites = self.get_next_layer_sites(site_type=site_type, ignore_index=ignore_index,
-                                              up_down="up", site_atom=absorb)
+                sites = self.get_next_layer_sites(site_type=site_type, ignore_index=ignore_index,
+                                                  up_down=up_down, site_atom=absorb)
 
-            st2 = copy.deepcopy(self)
-            [st2.append(species=i, coords=j, coords_are_cartesian=True) for i, j in
-             zip([absorb] * sites.shape[0], list(sites))]
+                st2 = copy.deepcopy(self)
+                [st2.append(species=i, coords=j, coords_are_cartesian=True) for i, j in
+                 zip([absorb] * sites.shape[0], list(sites))]
 
-            points_and_distance_to_m0 = get_plane_neighbors_to_center(st2, center, neighbors_name=neighbors_name,
-                                                                      ignore_index=ignore_index, r=7.0)
+                points_and_distance_to_m0 = get_plane_neighbors_to_center(st2, center, neighbors_name=absorb,
+                                                                          plane=False,
+                                                                          ignore_index=ignore_index, r=7.0)
 
-            if equivalent == "fin_opt":
-                sel = 0
-            else:
-                sel = 1
+                if equivalent == "fin_opt":
+                    sel = 0
+                else:
+                    sel = 1
 
-            index = list(points_and_distance_to_m0[int(site_name[-1])].keys())[sel]
+                si = int(site_name[-1])
+                if len(list(points_and_distance_to_m0[0].keys())) == 1:
+                    si += 1  # jump center site
 
-            absorb_site = self.cart_coords[index]
+                index = list(points_and_distance_to_m0[si].keys())[sel]
 
-            self.append(absorb, coords=absorb_site)
+                absorb_site = st2.cart_coords[index] + np.array([0, 0, offset_z])
+
+                self.append(absorb, coords=absorb_site, coords_are_cartesian=coords_are_cartesian)
 
         else:
             if isinstance(absorb_site, (list, tuple)):
                 for n, s in zip(absorb, absorb_site):
-                    self.append(n, coords=s)
+                    self.append(n, coords=s, coords_are_cartesian=coords_are_cartesian)
             else:
-                self.append(absorb, coords=absorb_site)
+                self.append(absorb, coords=absorb_site, coords_are_cartesian=coords_are_cartesian)
 
         if add_noise:
             st_frac_coords = self.frac_coords
@@ -741,8 +753,7 @@ class MXene(Structure):
             return sts
 
     def add_face_random_z(self, x, y, number_each=1, random_state=0, add_atom="H", debug=False, up_down="up",
-                          perturb_base=0,
-                          offset_z=1.0, alpha=1.0) -> Union["MXene", List["MXene"]]:
+                          perturb_base=0, offset_z=1.0, alpha=1.0, method='random') -> Union["MXene", List["MXene"]]:
         """
         随机添加z原子，x，y使用输入值。
 
@@ -757,6 +768,7 @@ class MXene(Structure):
             perturb_base:  (str),扰动初始结构。
             offset_z: (str), Z高度。
             alpha: (str), 移动Z波动系数。
+            method: (str), 'random','uniform','linspace'
 
         Returns:
             result: (MXenes,list of MXenes)
@@ -772,11 +784,17 @@ class MXene(Structure):
             x_mesh = np.repeat(x_mesh, number_each)
             y_mesh = np.repeat(y_mesh, number_each)
             z = np.repeat(z, number_each)
+        if method == "random":
+            add = alpha * rdm.random(z.shape)
+        elif method == "uniform":
+            add = alpha * rdm.uniform(low=0.0, high=1.0, size=z.shape)
+        else:
+            add = np.concatenate([alpha * np.linspace(0, 1, number_each)] * int(z.shape[0] / number_each))
 
         if up_down == "up":
-            car = np.vstack((x_mesh, y_mesh, z + offset_z + alpha * rdm.random(z.shape))).T
+            car = np.vstack((x_mesh, y_mesh, z + offset_z + add)).T
         else:
-            car = np.vstack((x_mesh, y_mesh, z - offset_z + alpha * rdm.random(z.shape))).T
+            car = np.vstack((x_mesh, y_mesh, z - offset_z - add)).T
         add_atom = [add_atom] * car.shape[0]
         if debug:
             print("Just for dedug.")
@@ -796,7 +814,6 @@ class MXene(Structure):
         """
         展示画图。
         """
-        aaa = AseAtomsAdaptor()
         atomss = aaa.get_atoms(self)
         view(atomss)
 
@@ -930,7 +947,7 @@ class MXene(Structure):
 
     def add_face_random_z_16_site(self, center=44, ignore_index=None, base_m=None, terminal=None, number_each=1,
                                   random_state=0, add_atom="H", debug=False, up_down="up", perturb_base=0,
-                                  offset_z=1.0, alpha=1.0) -> Union["MXene", List["MXene"]]:
+                                  offset_z=1.0, alpha=1.0, method="random") -> Union["MXene", List["MXene"]]:
         """
         随机添加z原子，x，y使用输入值。
 
@@ -957,7 +974,7 @@ class MXene(Structure):
         res = self.add_face_random_z(x=x, y=y, number_each=number_each, random_state=random_state, add_atom=add_atom,
                                      debug=debug,
                                      up_down=up_down, perturb_base=perturb_base,
-                                     offset_z=offset_z, alpha=alpha)
+                                     offset_z=offset_z, alpha=alpha, method=method)
         return res
 
     def apply_operation_no_lattice(self, symmop: SymmOp, fractional: bool = False):
@@ -1000,3 +1017,7 @@ class MXene(Structure):
                 )
 
         self._sites = [operate_site(s) for s in self._sites]
+
+    def to_ase_atoms(self):
+
+        return aaa.get_atoms(self)

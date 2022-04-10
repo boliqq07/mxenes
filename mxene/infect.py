@@ -17,6 +17,7 @@ frames = []
 
 def store_fig(func):
     """画图"""
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         result = func(*args, **kwargs)
@@ -27,20 +28,21 @@ def store_fig(func):
 
     return wrapper
 
-def from_points_to_matrix(x,y,z,new_shape=(int(9*100),int(9*(1.732/2)*100)),
+
+def from_points_to_matrix(x, y, z, new_shape=(int(9 * 100), int(9 * (1.732 / 2) * 100)),
                           method="cubic"):
     """产生网格。"""
     # f = interp.interp2d(x, y, z,bounds_error=False,fill_value=fill_value,kind=kind)
-    x_min= min(x)
-    y_min= min(y)
-    x_max= max(x)
-    y_max= max(y)
+    x_min = min(x)
+    y_min = min(y)
+    x_max = max(x)
+    y_max = max(y)
     fill_value = max(z)
     # newz = f(np.linspace(x_min,x_max,new_shape[0]), np.linspace(y_min,y_max,new_shape[1]))
 
-    grid_x, grid_y = np.linspace(x_min,x_max,new_shape[0]), np.linspace(y_min,y_max,new_shape[1])
+    grid_x, grid_y = np.linspace(x_min, x_max, new_shape[0]), np.linspace(y_min, y_max, new_shape[1])
     grid_x, grid_y = np.meshgrid(grid_x, grid_y)
-    newz = griddata((x,y), z, (grid_x, grid_y), method=method, fill_value=fill_value,
+    newz = griddata((x, y), z, (grid_x, grid_y), method=method, fill_value=fill_value,
                     rescale=False)
 
     return newz
@@ -99,12 +101,12 @@ def infect(zb, site0x, site0y):
     temp = list(getnebor(site0x, site0y))  # 获取邻域索引
     size_x, size_y = zb.shape
     while len(temp) > 0:
-        nebor_ix, nebor_iy = temp.pop()   # 取出一个位置(x,y)，并从temp删除
-        if nebor_ix == -1 or nebor_iy == -1 or nebor_ix == size_x or nebor_iy == size_y:   # 防止边界溢出
+        nebor_ix, nebor_iy = temp.pop()  # 取出一个位置(x,y)，并从temp删除
+        if nebor_ix == -1 or nebor_iy == -1 or nebor_ix == size_x or nebor_iy == size_y:  # 防止边界溢出
             pass
         elif zb[nebor_ix, nebor_iy] == 0:
-            temp.extend(getnebor(nebor_ix, nebor_iy))   # 获取，添加邻域索引
-            zb[nebor_ix, nebor_iy] = -1    # 赋值为-1
+            temp.extend(getnebor(nebor_ix, nebor_iy))  # 获取，添加邻域索引
+            zb[nebor_ix, nebor_iy] = -1  # 赋值为-1
         # else:  # 值为1,不作操作。
         #     pass
     return zb
@@ -130,21 +132,21 @@ def find_energy(newz, site0x, site0y, site1x, site1y, step=None, number=100, plo
 
     """
     zs_start = newz[site0x, site0y]
-    if isinstance(step, (float, int)): # 定义z可变化的序列zs
+    if isinstance(step, (float, int)):  # 定义z可变化的序列zs
         zs = np.arange(zs_start, np.max(newz), step)
     else:
         zs = np.linspace(zs_start, np.max(newz), number)
 
     infect0 = infect if not plot_or_not else infect_with_plot  # 确定使用函数，infect_with_plot比infect多一个画图功能。
 
-    zb = (newz - np.min(newz)) >= 0 # 无用，占位
-    zi = np.min(newz) # 无用，占位
+    zb = (newz - np.min(newz)) >= 0  # 无用，占位
+    zi = np.min(newz)  # 无用，占位
 
     for zi in zs:  # 核心部分
         zb = (newz - zi) >= 0  # 判断大小
         zb = zb.astype(np.int32)  # 复制 0, 1
         zb = infect0(zb, site0x, site0y)  # 传播0的领域0为-1
-        if zb[site1x, site1y] == -1: # 结束点为-1，终止
+        if zb[site1x, site1y] == -1:  # 结束点为-1，终止
             break
 
     if plot_or_not:  # 存储gif
@@ -153,7 +155,6 @@ def find_energy(newz, site0x, site0y, site1x, site1y, step=None, number=100, plo
         except BaseException:
             pass
     return zb, zi
-
 
 
 def show(self):
@@ -173,6 +174,7 @@ def get_data_spilt(cart_all_all):
     index = np.lexsort(cart_all_all[:, ::-1].T, axis=-1)
     return index
 
+
 def mx_reflection(structure, energys, center_site_cart):
     """反射。"""
     sui = structure
@@ -187,6 +189,7 @@ def mx_reflection(structure, energys, center_site_cart):
     energys = energys.reshape((-1, 1))
 
     return sui0, energys
+
 
 def mx_rotate3(structure, energys, center_site_cart):
     """旋转三次。"""
@@ -282,31 +285,28 @@ def remove_dup(structure_or_cart_coords, energys, num_z=5):
     return data_min
 
 
-
-
-
-def get_2_equ_min_site(face,angle,tol=0.01,super_cell=(3,3,1),axis=1):
+def get_2_equ_min_site(face, angle, tol=0.01, super_cell=(3, 3, 1), axis=1):
     """获取相邻晶胞的两个等效位。"""
     min_value = np.min(face)
-    index = np.where(face>(min_value+tol))
-    index = np.concatenate((index[0].reshape(-1,1),index[1].reshape(-1,1)),axis=1)
-    dis = index-np.array([face.shape[0]/2,face.shape[1]/2])
+    index = np.where(face > (min_value + tol))
+    index = np.concatenate((index[0].reshape(-1, 1), index[1].reshape(-1, 1)), axis=1)
+    dis = index - np.array([face.shape[0] / 2, face.shape[1] / 2])
     dis = np.sum(dis ** 2, axis=1) ** 0.5
     sel = np.argmin(dis)
     point1 = index[sel]
-    if np.cos(angle/180*np.pi)>=0:
-        w=1
+    if np.cos(angle / 180 * np.pi) >= 0:
+        w = 1
     else:
-        w=1-np.cos(angle/180*np.pi)
+        w = 1 - np.cos(angle / 180 * np.pi)
     num = face.shape[axis]
-    offset_num = int(num/w/super_cell[0])
+    offset_num = int(num / w / super_cell[0])
     point2 = np.copy(point1)
-    point2[axis] = point2[axis]+offset_num
+    point2[axis] = point2[axis] + offset_num
     return point1, point2
 
 
 ######################
-if __name__ =="__main__":
+if __name__ == "__main__":
     tt.t1
     newz = get_test_data()
     site0x, site0y = 10, 20
@@ -314,9 +314,9 @@ if __name__ =="__main__":
 
     ##################
     tt.t2  # 纯计算
-    zb, zi = find_energy(newz, site0x, site0y, site1x, site1y,step=0.02, plot_or_not=True)
+    zb, zi = find_energy(newz, site0x, site0y, site1x, site1y, step=0.02, plot_or_not=True)
     tt.t3  # 计算+ 画图
-    zb2, zi2 = find_energy(newz, site0x, site0y, site1x, site1y,step=0.02, plot_or_not=False)
+    zb2, zi2 = find_energy(newz, site0x, site0y, site1x, site1y, step=0.02, plot_or_not=False)
     tt.t4
     tt.p
     print("Energy:", zi)
