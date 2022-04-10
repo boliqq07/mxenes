@@ -532,7 +532,7 @@ class interp2d_nearest:
         return z
 
 
-def fixed_poscar(poscar, fixed_type: Union[str, float, None] = "base", fixed_array=None,coords_are_cartesian=True):
+def fixed_poscar(poscar, fixed_type: Union[str, float, None] = "base", fixed_array=None, coords_are_cartesian=True):
     if fixed_type is None:
         pass
     else:

@@ -6,7 +6,7 @@ from ase.constraints import FixAtoms, FixedPlane
 from ase.constraints import FixedLine
 
 
-def get_fixed_atoms(atoms: Atoms, fixed_type: Union[str, float, None] = "base",coords_are_cartesian=True):
+def get_fixed_atoms(atoms: Atoms, fixed_type: Union[str, float, None] = "base", coords_are_cartesian=True):
     if fixed_type is None:
         pass
     else:
@@ -26,7 +26,7 @@ def get_fixed_atoms(atoms: Atoms, fixed_type: Union[str, float, None] = "base",c
 
 def fixed_atoms(atoms: Atoms, fixed_type: Union[str, float, None] = "base", doping_fixed_type="line",
                 doping_direction=(0, 0, 1), coords_are_cartesian=True):
-    fixed_array = get_fixed_atoms(atoms, fixed_type=fixed_type,coords_are_cartesian=coords_are_cartesian)
+    fixed_array = get_fixed_atoms(atoms, fixed_type=fixed_type, coords_are_cartesian=coords_are_cartesian)
     fixed_array = ~fixed_array[:, -1]
     fixed_array[-1] = False
     con = FixAtoms(mask=fixed_array)
@@ -40,5 +40,5 @@ def fixed_atoms(atoms: Atoms, fixed_type: Union[str, float, None] = "base", dopi
                           direction=doping_direction, )
     else:
         raise TypeError
-    atoms.set_constraint(constraint=[con,con2])
+    atoms.set_constraint(constraint=[con, con2])
     return atoms
