@@ -4,12 +4,12 @@ from collections import Counter
 from pymatgen.io.vasp import VaspInput
 
 
-def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, absorb=None, equivalent=None,
+def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, absorb=None, equ_name=None,
               site_name=None, add_atoms=None) -> pathlib.Path:
     nm_list = ["H", "B", "C", "N", "O", "F", "Si", "P", "S", "Cl", "As", "Se", "Br", "I", "Te", "At"]
     if isinstance(base, (tuple, list)):
         assert isinstance(carbide_nitride, (tuple, list)), "terminal and base should be same type, (str or list)."
-        assert len(carbide_nitride) < len(base), "terminal should less than 1."
+        # assert len(carbide_nitride) < len(base), "terminal should less than 1."
         base_list = list(base)
         carbide_nitride_list = list(carbide_nitride)
         name = {}
@@ -63,29 +63,26 @@ def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, absorb=None
     else:
         dop = doping
 
-    if isinstance(add_atoms, (list, tuple)):
-        if dop != "no_doping":
-            dop = dop + "-".join(add_atoms)
-        else:
-            dop = "-".join(add_atoms)
+    if add_atoms is None:
+        add_atoms = "no_add"
+    elif isinstance(add_atoms, (list, tuple)):
+        add_atoms = "-".join(add_atoms)
     elif isinstance(add_atoms, str):
-        if dop != "no_doping":
-            dop = dop + "-" + add_atoms
-        else:
-            dop = add_atoms
-    else:
         pass
+    else:
+        raise TypeError("add_atoms just accept list of str or str.")
 
     if absorb is None:
-        disk = pathlib.Path(disk) / "MXenes" / base_mx / dop / "pure_opt"
-    else:
-        disk = pathlib.Path(disk) / "MXenes" / base_mx / dop / absorb
+        absorb = "no_absorb"
 
-        if equivalent is not None:
-            disk = disk / equivalent
+    disk = pathlib.Path(disk) / "MXenes" / base_mx / absorb / add_atoms / dop
 
-        if site_name is not None:
-            disk = disk / site_name
+    if site_name is not None:
+        disk = disk / site_name
+
+    if equ_name is not None:
+        disk = disk / equ_name
+
 
     return disk
 

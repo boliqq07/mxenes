@@ -17,7 +17,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 setup(
 
     name='mxene',
-    version='0.0.03',
+    version='0.0.05',
     description='MXenes scripts',
     install_requires=['pandas', 'numpy', 'sympy', 'scipy', 'scikit-learn', 'joblib', 'matplotlib',
                       'seaborn', 'requests', 'tqdm', 'six', "mgetool", "pymatgen", "ase"],

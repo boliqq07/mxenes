@@ -163,6 +163,34 @@ mpirun -np 12 vasp_std
 
 """
 
+
+opt_run_gjj_wang = """
+
+#!/bin/sh
+#JSUB -J skk       
+#JSUB -n 60
+#JSUB -R span[ptile=60]        
+#JSUB -q cpu
+#JSUB -o out.%J                  
+#JSUB -e err.%J
+
+source ~/intel/oneapi/mkl/2022.0.2/env/vars.sh intel64
+source ~/intel/oneapi/compiler/2022.0.2/env/vars.sh intel64
+source ~/intel/oneapi/mpi/2021.5.1/env/vars.sh intel64
+export PATH=~/app/vasp.5.4.4/bin/:$PATH
+
+ulimit -s 5120000
+
+source /beegfs/jhinno/unischeduler/conf/unisched
+########################################################
+#   $JH_NCPU:         Number of CPU cores              #
+#   $JH_HOSTFILE:     List of computer hostfiles       #
+########################################################
+
+mpirun -np $JH_NCPU -machinefile $JH_HOSTFILE vasp_std  > vasp.log
+
+"""
+
 opt_run_240 = """
 #BSUB -q normal
 #BSUB -n 24

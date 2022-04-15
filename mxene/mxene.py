@@ -556,16 +556,21 @@ class MXene(Structure):
         else:
             return self
 
-    def get_disk(self, disk='.', ignore_index=None, equivalent="ini_opt", site_name="S0", nm_tm="TM",
-                 absorb=None, doping=None, terminal=None, carbide_nitride=None,
+    def get_disk(self, disk='.', ignore_index=None, site_name="S0", equ_name="ini_opt",  nm_tm="TM",
+                 absorb=None, doping=None, terminal=None, carbide_nitride=None, add_atoms=None
                  ) -> pathlib.Path:
-        """Just for single doping, single。"""
+        """Just for single doping, single absorb,single type terminal.
+
+        path = disk / MXenes / base_mx / absorb / add_atoms / doping / site_name / equ_name
+
+        """
         absorb_ = absorb
         doping_ = doping
+        add_atoms_ = add_atoms
         terminal_ = terminal
         carbide_nitride_ = carbide_nitride
         names = [site.specie.name for site in self]
-        labels = self.split_layer(ignore_index=ignore_index)
+        labels = self.split_layer(ignore_index=ignore_index,tol=0.4)
         end = int(max(labels) + 1)
         start = int(max(min(labels), 0))
         layer_name = []
@@ -604,31 +609,44 @@ class MXene(Structure):
                 base.append(i)
 
         for i in doping_add:
-            if nm_tm == "TM" and i in self.tm_list:
+            if i in base:
+                base.append(i)
+            elif nm_tm == "TM" and i in self.tm_list and i not in base:
                 doping.append(i)
-            elif nm_tm == "NM" and i in self.nm_list[1:]:
+            elif nm_tm == "NM" and i in self.nm_list[1:] and i not in base:
                 doping.append(i)
             elif i in self.am_list:
                 absorb.append(i)
             else:
                 add_atoms.append(i)
 
-        assert len(doping) <= 1
-        assert len(absorb) <= 1
-        assert len(list(set(terminal))) <= 1
+        if absorb_:
+            absorb = absorb_
+        else:
+            assert len(absorb) <= 1
+            absorb = None if len(absorb) == 0 else absorb[0]
 
-        doping = None if len(doping) == 0 else doping[0]
-        absorb = None if len(absorb) == 0 else absorb[0]
+        if doping_:
+            doping = doping_
+        else:
+            assert len(doping) <= 1
+            doping = None if len(doping) == 0 else doping[0]
 
-        terminal = None if len(terminal) == 0 else terminal[0]
+        if add_atoms_:
+            add_atoms = add_atoms_
+        else:
+            add_atoms = None if len(add_atoms) == 0 else add_atoms
 
-        absorb = absorb_ if absorb_ else absorb
-        doping = doping_ if doping_ else doping
-        terminal = terminal_ if terminal_ else terminal
+        assert len(list(set(terminal))) <= 1, "just for same terminal."
+        terminal = terminal_ if terminal_ else terminal[0]
         carbide_nitride = carbide_nitride_ if carbide_nitride_ else carbide_nitride
 
+        if isinstance(base, (tuple, list)):
+            assert isinstance(carbide_nitride, (tuple, list)), "terminal and base should be same type, (str or list)."
+            assert len(carbide_nitride) < len(base), "carbide_nitride should less than base."
+
         self.out_dir = make_disk(disk, terminal, base, carbide_nitride, n_base=None, doping=doping, absorb=absorb,
-                                 equivalent=equivalent,
+                                 equ_name=equ_name,
                                  site_name=site_name, add_atoms=add_atoms)
         return self.out_dir
 
