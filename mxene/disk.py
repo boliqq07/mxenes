@@ -75,7 +75,7 @@ def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, absorb=None
     if absorb is None:
         absorb = "no_absorb"
 
-    disk = pathlib.Path(disk) / "MXenes" / base_mx / absorb / add_atoms / dop
+    disk = pathlib.Path(disk) / "MXenes" / base_mx / add_atoms / dop / absorb
 
     if site_name is not None:
         disk = disk / site_name

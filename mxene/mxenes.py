@@ -561,7 +561,32 @@ class MXene(Structure):
                  ) -> pathlib.Path:
         """Just for single doping, single absorb,single type terminal.
 
-        path = disk / MXenes / base_mx / absorb / add_atoms / doping / site_name / equ_name
+        **(1)不吸附**
+
+        MXenes -> 基底名称 -> 负载物 -> 搀杂物 -> pure/pure_static
+
+        例子
+
+        MXenes -> Ti2NO2 -> no_add -> no_doping -> pure/pure_static
+
+        MXenes -> Ti2NO2 -> no_add -> Mo        -> pure/pure_static
+
+        **(2)吸附**
+
+        MXenes -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物  -> 标签
+
+        例子
+        MXenes -> Ti2NO2      -> no_add -> no_dopin -> H/add_H  -> top -> 00
+
+        MXenes -> TiNCrNTi-O2 -> Hf     -> C         -> Li -> S0  -> 00
+
+        **(3)NEB**
+
+        MXenes -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物 -> 等效位点 -> 路径名称
+
+        例子
+
+        MXenes -> Ti2NO2 -> no_add -> no_doping -> H -> S0-S1 -> 00/01/01/03/04/ini/fin/...
 
         """
         absorb_ = absorb

@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 from pymatgen.core import Lattice
 
-from mxene.mxene import MXene
+from mxene.mxenes import MXene
 
 
 class MyTestCase(unittest.TestCase):
