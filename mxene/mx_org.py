@@ -2,19 +2,21 @@
 
 ****此脚本用来重新组织 MXenes文件夹****
 
-0. 此代码可以作文脚本单独使用，python3。
+0. 此代码可以作脚本单独使用，需要安装python3，若需要获取推荐路径，需要安装pymatgen,ase,mxene等包。
 
-1. 此代码不更改文件内容, 仅调整目录。
+1. 此代码不更改文件内容, 仅调整目录（注意先数据备份，确保无误再删除原文件夹）。
 
-2. 若经过此代码分析，文件路径不合理，经过自动整理仍然无法通过，将在路径下添加输出 un_mark.txt文件 ,输出必要信息。
+2. 若经过此代码分析，经过整理仍然无法通过，将在路径下添加输出 un_mark.txt文件 ,输出必要信息。
 
-3. 若优化结构文件夹及静态计算文件夹同时存在，默认仅保存静态计算。
+3. 若优化结构文件夹及静态计算文件夹同时存在，默认仅保存静态计算（未添加，开发中）。
 
-4. 不能出现同一文件夹下，即出现计算文件又出现子文件夹情况，辅助文件可以出现。
+4. 整理后数据，不能出现同一文件夹下，即出现计算文件又出现子文件夹情况，（辅助文件例外）。
 
-5. 所有未计算，或者 un_mark 不应该被上传到数据库。
+5. 所有未计算，或者 un_mark 数据不建议被上传到数据库。
 
-6. 最终统一的文件夹格式为:
+6. 此脚本可自由分发并可自由更改使用，以mxene包中版本为源头版本。若bug或重要内容，需要更改源头版本，请联系我。
+
+最终统一的文件夹格式为:
 
 (1).不吸附
 
@@ -51,11 +53,9 @@ MXenes -> Ti2NO2 -> no_add -> no_doping -> H -> S0-S1/neb_S0-S1 -> 00/01/01/03/0
 import copy
 import os
 import pathlib
-# 识别
 import shutil
 import warnings
 from typing import Union, List
-
 import path
 
 nm_list = ["H", "B", "C", "N", "O", "F", "Si", "P", "S", "Cl", "As", "Se", "Br", "I", "Te", "At"]
@@ -631,7 +631,7 @@ def check_mx_data(pt, ck_pt=True, ck_conver=True, ck_st=True, get_rcmd_pt=True, 
 
 if __name__ == "__main__":
 
-    # 移动替换部分,用于原始数据初始路径移动
+    # 移动替换部分,用于原始数据初始路径移动（谨慎使用）
     # pt = r"E:\MXenes_raw_data\MXenes"
     # #
     # paths = find_leaf_path(pt)
@@ -648,25 +648,25 @@ if __name__ == "__main__":
     #     copy_disk(old_pt=pi, new_pt=npi, file = True, disk = False, cover = False,remove=False)
     #     break
 
-    # # 检查路径部分，用于检查路径是否合格 ###
-    # pt = r"E:\MXenes_raw_data\MXenes"
-    # paths = find_leaf_path(pt)
-    #
-    # for pi in paths:
-    #     try:
-    #         npi = path_regroup(pi, base_name=1,add=2,doping=3,absorb=4,site=5,label=6,)
-    #     except AssertionError:
-    #         try:
-    #             npi = path_regroup(pi, base_name=1,add=2,doping=3,absorb=4,site=5,label=None)
-    #             npi = npi/"00"
-    #         except AssertionError:
-    #             npi = path_regroup(pi,base_name=1, add=2,doping=3,absorb=4,site=None,label=None,)
-    #
-    #     if pi==npi:
-    #         pass
-    #     else:
-    #         print(pi)
-    #         print(npi)
+    # 检查路径部分，用于检查路径是否合格 ###
+    pt = r"E:\MXenes_raw_data\MXenes"
+    paths = find_leaf_path(pt)
+
+    for pi in paths:
+        try:
+            npi = path_regroup(pi, base_name=1,add=2,doping=3,absorb=4,site=5,label=6,)
+        except AssertionError:
+            try:
+                npi = path_regroup(pi, base_name=1,add=2,doping=3,absorb=4,site=5,label=None)
+                npi = npi/"00"
+            except AssertionError:
+                npi = path_regroup(pi,base_name=1, add=2,doping=3,absorb=4,site=None,label=None,)
+
+        if pi==npi:
+            pass
+        else:
+            print(pi)
+            print(npi)
 
     # 标记部分(可以重复运行)，用于检查数据是否有效 ###
     pt = r"E:\MXenes_raw_data\MXenes\Mo2CO2"

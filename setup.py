@@ -20,7 +20,7 @@ setup(
     version='0.0.07',
     description='MXenes scripts',
     install_requires=['pandas', 'numpy', 'sympy', 'scipy', 'scikit-learn', 'joblib', 'matplotlib',
-                      'seaborn', 'requests', 'tqdm', 'six', "mgetool", "pymatgen", "ase"],
+                      'seaborn', 'requests', 'tqdm', 'six', "mgetool", "pymatgen", "ase", "path"],
     include_package_data=True,
     author='wangchangxin',
     author_email='986798607@qq.com',
