@@ -143,7 +143,7 @@ IOPTCELL = 1 1 0 1 1 0 0 0 0
 
 # 2. run file
 
-opt_run_wang_test = """
+run_192_168_3_6_wang = """
 #PBS -S /bin/bash
 #PBS -N vasp
 #PBS -l nodes=1:ppn=12
@@ -152,22 +152,22 @@ opt_run_wang_test = """
 
 source /opt/intel/oneapi/mkl/latest/env/vars.sh intel64
 source /opt/intel/oneapi/compiler/latest/env/vars.sh intel64
-export PATH=/opt/intel/oneapi/mpi/2021.4.0/bin/:$PATH
+source /opt/intel/oneapi/mpi/2021.4.0/env/vars.sh intel64
+
 export PATH=/opt/software/vasp.5.4.4/bin:$PATH
 
 cd ${PBS_O_WORKDIR}
 
-dos2unix *
-
 mpirun -np 12 vasp_std
+
 
 """
 
 
-opt_run_gjj_wang = """
+run_gjj_wang = """
 
 #!/bin/sh
-#JSUB -J skk       
+#JSUB -J CX_W       
 #JSUB -n 60
 #JSUB -R span[ptile=60]        
 #JSUB -q cpu
@@ -191,7 +191,7 @@ mpirun -np $JH_NCPU -machinefile $JH_HOSTFILE vasp_std  > vasp.log
 
 """
 
-opt_run_240 = """
+run_240_all = """
 #BSUB -q normal
 #BSUB -n 24
 #BSUB -o %J.out
@@ -202,7 +202,7 @@ source /share/intel/intel/bin/compilervars.sh intel64
 mpirun vasp_std > log.log
 """
 
-neb_run_240 = """
+run_240_all_neb = """
 #BSUB -q normal
 #BSUB -n 72
 #BSUB -o %J.out
@@ -213,7 +213,7 @@ source /share/intel/intel/bin/compilervars.sh intel64
 mpirun vasp_std > log.log
 """
 
-opt_run_gjj_sk = """
+run_gjj_sk = """
 #!/bin/sh
 #JSUB -J skk       
 #JSUB -n 64
@@ -237,65 +237,52 @@ mpirun -np $JH_NCPU -machinefile $JH_HOSTFILE vasp_std  > vasp.log
 
 """
 
-opt_run_gjj_sk_normal = """
+gpaw_relax_py = '''
+from ase.optimize import QuasiNewton
+from gpaw import GPAW, PW
+from mxene.function2 import fixed_atoms
+from mxene.mxene import MXene, aaa
+
+mx = MXene.from_file("POSCAR")
+
+atoms = mx.to_ase_atoms()
+atoms = fixed_atoms(atoms, fixed_type=0.58, doping_fixed_type="line", doping_direction=(0, 0, 1),
+                    coords_are_cartesian=False)
+
+convergence={'energy': 0.001,  # eV / electron
+ 'density': 5.0e-4,  # electrons / electron
+ 'bands': 'occupied',
+             }
+
+atoms.calc = GPAW(xc='PBE',
+                  mode=PW(300),
+                  convergence=convergence,
+                  )
+
+relax = QuasiNewton(atoms)
+
+try:
+    relax.run(fmax=0.1)
+
+    st = aaa.get_structure(atoms)
+    st.to("poscar","POSCAR")
+    mx.to("poscar","old_POSCAR")
+except BaseException:
+    pass
+'''
+
+run_gjj_wang_gpaw_relax = """
 #!/bin/sh
-#JSUB -J skk       
-#JSUB -n 40
-#JSUB -R span[ptile=40]        
-#JSUB -q normal
-#JSUB -o out.%J                  
-#JSUB -e err.%J                  
-
-source /beegfs/home/kesong/intel/bin/compilervars.sh intel64
-source /beegfs/home/kesong/intel/mkl/bin/mklvars.sh intel64
-
-ulimit -s 5120000
-
-source /beegfs/jhinno/unischeduler/conf/unisched
-########################################################
-#   $JH_NCPU:         Number of CPU cores              #
-#   $JH_HOSTFILE:     List of computer hostfiles       #
-########################################################
-export PATH=/beegfs/home/kesong/app/vasp.5.4.4-vtst/bin/:$PATH
-mpirun -np $JH_NCPU -machinefile $JH_HOSTFILE vasp_std  > vasp.log
-
-"""
-
-neb_run_gjj_sk_cpu = """
-#!/bin/sh
-#JSUB -J skk       
+#JSUB -J gpaw       
 #JSUB -n 60
 #JSUB -R span[ptile=60]        
 #JSUB -q cpu
 #JSUB -o out.%J                  
-#JSUB -e err.%J                  
+#JSUB -e err.%J
 
-source /beegfs/home/kesong/intel/bin/compilervars.sh intel64
-source /beegfs/home/kesong/intel/mkl/bin/mklvars.sh intel64
-
-ulimit -s 5120000
-
-source /beegfs/jhinno/unischeduler/conf/unisched
-########################################################
-#   $JH_NCPU:         Number of CPU cores              #
-#   $JH_HOSTFILE:     List of computer hostfiles       #
-########################################################
-export PATH=/beegfs/home/kesong/app/vasp.5.4.4-vtst/bin/:$PATH
-mpirun -np $JH_NCPU -machinefile $JH_HOSTFILE vasp_std  > vasp.log
-
-"""
-
-neb_run_gjj_sk_fat = """
-#!/bin/sh
-#JSUB -J skk       
-#JSUB -n 96
-#JSUB -R span[ptile=96]        
-#JSUB -q fat
-#JSUB -o out.%J                  
-#JSUB -e err.%J                  
-
-source /beegfs/home/kesong/intel/bin/compilervars.sh intel64
-source /beegfs/home/kesong/intel/mkl/bin/mklvars.sh intel64
+source ~/intel/oneapi/mkl/2022.0.2/env/vars.sh intel64
+source ~/intel/oneapi/compiler/2022.0.2/env/vars.sh intel64
+source ~/intel/oneapi/mpi/2021.5.1/env/vars.sh intel64
 
 ulimit -s 5120000
 
@@ -304,9 +291,8 @@ source /beegfs/jhinno/unischeduler/conf/unisched
 #   $JH_NCPU:         Number of CPU cores              #
 #   $JH_HOSTFILE:     List of computer hostfiles       #
 ########################################################
-export PATH=/beegfs/home/kesong/app/vasp.5.4.4-neb-fix/bin/:$PATH
-mpirun -np $JH_NCPU -machinefile $JH_HOSTFILE vasp_std  >> vasp.log
 
+$ mpirun -np $JH_NCPU -machinefile $JH_HOSTFILE gpaw python gpaw_relax.py
 
 """
 
@@ -323,14 +309,16 @@ def write_batch():
         f.writelines(opt_incar)
     with open("neb_INCAR", "w") as f:
         f.writelines(neb_incar)
-    with open("cpu.run", "w") as f:
-        f.writelines(opt_run_gjj_sk)
-    with open("normal.run", "w") as f:
-        f.writelines(opt_run_gjj_sk_normal)
-    with open("fat.run", "w") as f:
-        f.writelines(neb_run_gjj_sk_fat)
-    with open("neb_cpu.run", "w") as f:
-        f.writelines(neb_run_gjj_sk_cpu)
+
+    with open("gjj_skk_cpu.run", "w") as f:
+        f.writelines(run_gjj_sk)
+    with open("gjj_wang.run", "w") as f:
+        f.writelines(run_gjj_wang)
+
+    with open("gjj_wang_gpaw_relax.run", "w") as f:
+        f.writelines(run_gjj_wang_gpaw_relax)
+    with open("gpaw_relax.py", "w") as f:
+        f.writelines(gpaw_relax_py)
 
     path = os.getcwd()
 

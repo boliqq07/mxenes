@@ -51,13 +51,12 @@ MXenes -> Ti2NO2 -> no_add -> no_doping -> H -> S0-S1/neb_S0-S1 -> 00/01/01/03/0
 import copy
 import os
 import pathlib
-
-import path
-
 # 识别
 import shutil
 import warnings
-from typing import Union
+from typing import Union, List
+
+import path
 
 nm_list = ["H", "B", "C", "N", "O", "F", "Si", "P", "S", "Cl", "As", "Se", "Br", "I", "Te", "At"]
 tm_list = ["Sc", "Y", "Ti", "Zr", "Hf", "V", "Nb", "Ta", "Cr", "Mo", "W", "Mn",
@@ -227,26 +226,24 @@ def path_regroup(pt: Union[str, path.Path, os.PathLike, pathlib.Path],
         label = kwargs["func_label"](label) if "func_label" in kwargs else label
         new_pt.append(label)
 
-
-
     new_pt = path.Path.joinpath(*new_pt)
     return new_pt
 
-def _rmtree(path, protect=None):
 
+def _rmtree(path, protect=None):
     with os.scandir(path) as scandir_it:
         entries = list(scandir_it)
 
     for entry in entries:
         fullname = os.path.join(path, entry.name)
-        if entry.name ==protect or fullname==protect:
+        if entry.name == protect or fullname == protect:
             pass
         else:
             is_dir = entry.is_dir(follow_symlinks=False)
 
             if is_dir:
 
-                _rmtree(fullname,protect)
+                _rmtree(fullname, protect)
 
                 os.rmdir(fullname)
             else:
@@ -280,7 +277,7 @@ def copy_disk(old_pt: Union[str, path.Path], new_pt: Union[str, path.Path], file
             if old_pt in new_pt:
                 _rmtree(old_pt, new_pt)
             else:
-                shutil.rmtree(old_pt,)
+                shutil.rmtree(old_pt, )
     elif file:
         if len(ds) > 0:
             warnings.warn(f"{old_pt} is not the leaf node directory.", UserWarning)
@@ -333,24 +330,31 @@ def check_structure_contcar(pt: Union[str, path.Path, os.PathLike, pathlib.Path]
     """
     if msg is None:
         msg = []
-    if not isinstance(pt,path.Path):
+    msg.append("\nCheck Structure:")
+    if not isinstance(pt, path.Path):
         pt = path.Path(pt)
     contcar = pt / "CONTCAR"
     poscar = pt / "POSCAR"
     if contcar.isfile() and poscar.isfile():
-        pc = []
-        for con in [contcar, poscar]:
-            with open(con) as fc:
-                f1 = fc.readlines()
-                k = f1[5].replace(" ","")
-                v = f1[6].replace(" ","")
-                pc.append(k+v)
-        if pc[0] == pc[1]:
-            res = True, msg
-        else:
-            warnings.warn(f"contcar or poscar are different.",
+        try:
+            pc = []
+            for con in [contcar, poscar]:
+                with open(con) as fc:
+                    f1 = fc.readlines()
+                    k = f1[5].replace(" ", "")
+                    v = f1[6].replace(" ", "")
+                    pc.append(k + v)
+            if pc[0] == pc[1]:
+                res = True, msg
+            else:
+                warnings.warn(f"contcar or poscar are different.",
+                              UnicodeWarning)
+                msg.append(f"contcar or poscar are different.")
+                res = False, msg
+        except IndexError:
+            warnings.warn(f"contcar or poscar are empty.",
                           UnicodeWarning)
-            msg.append(f"contcar or poscar are different.")
+            msg.append(f"contcar or poscar are empty.")
             res = False, msg
 
     else:
@@ -377,20 +381,29 @@ def check_convergence(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=
     """
     if msg is None:
         msg = []
+    msg.append("\nCheck Convergence:")
     key_sentence0 = ' reached required accuracy - stopping structural energy minimisation\n'
-    if not isinstance(pt,path.Path):
+    key_sentence1 = ' General timing and accounting informations for this job:\n'
+    if not isinstance(pt, path.Path):
         pt = path.Path(pt)
+    try:
+        with open(pt / 'OUTCAR') as c:
+            outcar = c.readlines()
 
-    with open(pt / 'OUTCAR') as c:
-        outcar = c.readlines()
+        if key_sentence0 not in outcar[-40:] and key_sentence1 not in outcar[-20:]:
+            warnings.warn(f"Not converge and not get the final energy.",
+                          UnicodeWarning)
+            msg.append(f"Not converge and not get the final energy..")
+            res = False, msg
+        else:
+            res = True, msg
 
-    if key_sentence0 not in outcar[-40:]:
-        warnings.warn(f"Not converge and not get the final energy.",
+    except BaseException:
+        warnings.warn(f"Error to read OUTCAR.",
                       UnicodeWarning)
-        msg.append(f"Not converge and not get the final energy..")
+        msg.append(f"Error to read OUTCAR.")
         res = False, msg
-    else:
-        res = True, msg
+
     return res
 
 
@@ -410,27 +423,32 @@ def get_recommend_path(pt: Union[str, path.Path, os.PathLike, pathlib.Path]):
         res:(tuple), bool and msg list
 
     """
-    if not isinstance(pt,path.Path):
+    if not isinstance(pt, path.Path):
         pt = path.Path(pt)
-    msg=[]
+
+    msg = ["\nGET PATH:",
+           f"Standard PATH:           .../MXenes/基底名称/   负载/  搀杂/   吸附/   等效位点(路径名)/ 标签",
+           f"Standard PATH:           .../MXenes/base_name/add/doping/absorb/site_or_move_path/label\n", ]
+
     contcar = pt / "CONTCAR"
     if contcar.isfile():
-        from mxenes.mxene import MXene
-        mx = MXene.from_file(contcar)
-        parents = pt.splitall()
-
-        assert "MXenes" in parents
-        mx_site = parents.index("MXenes")
-        pre_parents = parents[:mx_site]
         try:
-            new_pt = mx.get_disk(disk= path.Path.joinpath(*pre_parents),site_name="xx", equ_name="xx")
+            from mxene.mxenes import MXene
+            mx = MXene.from_file(contcar)
+            parents = pt.splitall()
+
+            assert "MXenes" in parents
+            mx_site = parents.index("MXenes")
+            pre_parents = parents[:mx_site]
+
+            new_pt = mx.get_disk(disk=path.Path.joinpath(*pre_parents), site_name="xx", equ_name="xx")
             new_pt = path.Path(new_pt)
-            msg.append(f"Now PATH (Auto Rename Failed): {pt}")
-            msg.append(f"Recommend PATH (May Be Wrong): {new_pt}")
+            msg.append(f"Now PATH:                 {pt}")
+            msg.append(f"Recommend PATH:    {new_pt}      (May Be Wrong, Use Carefully!)")
             res = True, msg
         except BaseException:
             msg.append("Can't to define path for this structure.")
-            warnings.warn("Can't to define path for this structure.",UnicodeWarning)
+            warnings.warn("Can't to define path for this structure.", UnicodeWarning)
             res = False, msg
     else:
         msg.append("Can't to define path for this structure, due to no CONTCAR.")
@@ -454,6 +472,7 @@ def check_pt(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=None):
     """
     if msg is None:
         msg = []
+    msg.append("\nCheck PATH:")
     if not isinstance(pt, path.Path):
         pt = path.Path(pt)
     parents = pt.splitall()
@@ -531,10 +550,10 @@ def check_pt(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=None):
     return res
 
 
-def find_leaf_path(root_pt: Union[str, path.Path, os.PathLike, pathlib.Path]):
+def find_leaf_path(root_pt: Union[str, path.Path, os.PathLike, pathlib.Path]) -> List[path.Path]:
     """
     Find the leaf path.
-    获取所有叶节点路径
+    获取所有叶节点路径.
 
     Args:
         root_pt: pt: (str, path.Path, os.PathLike,pathlib.Path), path.
@@ -556,7 +575,7 @@ def find_leaf_path(root_pt: Union[str, path.Path, os.PathLike, pathlib.Path]):
     return res
 
 
-def check_mx_data(pt, ck_pt=True,ck_conver=True, ck_st=True,get_rcmd_pt=True,out_file="un_mark.txt"):
+def check_mx_data(pt, ck_pt=True, ck_conver=True, ck_st=True, get_rcmd_pt=True, out_file="un_mark.txt"):
     """
     Check MXene data in total.
 
@@ -571,30 +590,31 @@ def check_mx_data(pt, ck_pt=True,ck_conver=True, ck_st=True,get_rcmd_pt=True,out
         out_file: (str), out file name.
 
     """
-    msg = []
+    msg = ["### Check MXene Data ###"]
 
     if ck_pt:
         c1, msg1 = check_pt(pt)
     else:
-        c1,msg1=True,[]
+        c1, msg1 = True, []
 
     if ck_conver:
         c2, msg2 = check_convergence(pt)
     else:
-        c2,msg2=True,[]
+        c2, msg2 = True, []
 
     if ck_st:
         c3, msg3 = check_structure_contcar(pt)
     else:
-        c3,msg3=True,[]
+        c3, msg3 = True, []
 
     if get_rcmd_pt:
         c4, msg4 = get_recommend_path(pt)
     else:
-        c4,msg4=True,[]
+        c4, msg4 = True, []
 
     if c1 and c2 and c3:
-        pass
+        if (pi / out_file).isfile():
+            os.remove(pi / out_file)
     else:
         if out_file is None:
             pass
@@ -603,15 +623,15 @@ def check_mx_data(pt, ck_pt=True,ck_conver=True, ck_st=True,get_rcmd_pt=True,out
             msg.extend(msg2)
             msg.extend(msg3)
             msg.extend(msg4)
-            with open(pt / "un_mark.txt", "w") as f:
+            with open(pt / out_file, "w") as f:
                 msg = "\n".join(msg)
                 f.write(msg)
             print("Error report are stored in un_mark.txt")
 
 
-if __name__ =="__main__":
+if __name__ == "__main__":
 
-    # 移动替换部分
+    # 移动替换部分,用于原始数据初始路径移动
     # pt = r"E:\MXenes_raw_data\MXenes"
     # #
     # paths = find_leaf_path(pt)
@@ -628,26 +648,39 @@ if __name__ =="__main__":
     #     copy_disk(old_pt=pi, new_pt=npi, file = True, disk = False, cover = False,remove=False)
     #     break
 
+    # # 检查路径部分，用于检查路径是否合格 ###
+    # pt = r"E:\MXenes_raw_data\MXenes"
+    # paths = find_leaf_path(pt)
+    #
+    # for pi in paths:
+    #     try:
+    #         npi = path_regroup(pi, base_name=1,add=2,doping=3,absorb=4,site=5,label=6,)
+    #     except AssertionError:
+    #         try:
+    #             npi = path_regroup(pi, base_name=1,add=2,doping=3,absorb=4,site=5,label=None)
+    #             npi = npi/"00"
+    #         except AssertionError:
+    #             npi = path_regroup(pi,base_name=1, add=2,doping=3,absorb=4,site=None,label=None,)
+    #
+    #     if pi==npi:
+    #         pass
+    #     else:
+    #         print(pi)
+    #         print(npi)
 
-    # 检查部分 ###
-    pt = r"E:\MXenes_raw_data\MXenes"
+    # 标记部分(可以重复运行)，用于检查数据是否有效 ###
+    pt = r"E:\MXenes_raw_data\MXenes\Mo2CO2"
     paths = find_leaf_path(pt)
 
     for pi in paths:
-        try:
-            npi = path_regroup(pi, base_name=1,add=2,doping=3,absorb=4,site=5,label=6,)
-        except AssertionError:
-            try:
-                npi = path_regroup(pi, base_name=1,add=2,doping=3,absorb=4,site=5,label=None)
-                npi = npi/"00"
-            except AssertionError:
-                npi = path_regroup(pi,base_name=1, add=2,doping=3,absorb=4,site=None,label=None,)
+        check_mx_data(pi, ck_pt=True, ck_conver=True, ck_st=True, get_rcmd_pt=True, out_file="un_mark.txt")
 
-        if pi==npi:
-            pass
-        else:
+    temp = []
+    for pi in paths:
+        if (pi / "un_mark.txt").isfile():
             print(pi)
-            print(npi)
-
-
-
+            temp.append(pi)
+            # if 'pure_static' in pi:
+            #     shutil.copyfile(pi / "CONTCAR" ,pi / "POSCAR")
+    with open("paths.temp", "w") as f:
+        f.write("\n".join(temp))
