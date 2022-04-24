@@ -18,32 +18,32 @@
 
 最终统一的文件夹格式为:
 
-(1).不吸附
+**(1)不吸附**
 
-MXenes -> 基底名称 -> 负载物 -> 搀杂物 -> 标签
-
-例子
-
-MXenes -> Ti2NO2   -> no_add -> no_doping -> pure_opt/pure_static
-
-MXenes -> TiNCr-O2 -> no_add -> Mo       -> pure_optpure_static
-
-(2).吸附
-
-MXenes -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物  -> 等效位点 -> 标签
+MXenes -> 基底层数分类 -> 基底名称 -> 负载物 -> 搀杂物 -> pure/pure_static
 
 例子
 
-MXenes -> Ti2NO2     -> no_add -> no_dopin -> H/add_H -> top -> opt/static
+MXenes -> M2C -> Ti2NO2 -> no_add -> no_doping -> pure/pure_static
 
-MXenes -> TiNCrNTi-O2 -> Hf    -> C        -> Li       -> S0 -> 00
+MXenes -> M2N -> Ti2NO2 -> no_add -> Mo        -> pure/pure_static
 
+**(2)吸附**
 
-(3).NEB
-MXenes -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物 -> 等效位点路径名称 -> 标签
+MXenes -> 基底层数分类  -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物  -> 标签
 
 例子
-MXenes -> Ti2NO2 -> no_add -> no_doping -> H -> S0-S1/neb_S0-S1 -> 00/01/01/03/04/ini/fin/...
+MXenes -> M2N  -> Ti2NO2      -> no_add -> no_dopin -> H/add_H  -> top -> 00
+
+MXenes -> M3N2 -> TiNCrNTi-O2 -> Hf     -> C         -> Li -> S0  -> 00
+
+**(3)NEB**
+
+MXenes -> 基底层数分类  -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物 -> 等效位点 -> 路径名称
+
+例子
+
+MXenes -> M2N -> Ti2NO2 -> no_add -> no_doping -> H -> S0-S1 -> 00/01/01/03/04/ini/fin/...
 
 ``->`` 代表下一层
 ``/`` 代表或者
@@ -65,7 +65,7 @@ tm_list = ["Sc", "Y", "Ti", "Zr", "Hf", "V", "Nb", "Ta", "Cr", "Mo", "W", "Mn",
 am_list = ["Al", "Ca", "Li", "Mg", "Na", "K", "Zn", "H", "OH", "O", "OOH"]
 tem_list = ["O", "F", "OH", "Cl"]
 cn_list = ["C", "N"]
-bm_list = ["Ti", "Zr", "Hf", "V", "Nb", "Ta", "Cr", "Mo", "W"]
+bm_list = ["Ti", "Zr", "Hf", "V", "Nb", "Ta", "Cr", "Mo", "W", "Sc"]
 tnm_list = tm_list + nm_list
 
 no_absorb_list = ["no_absorb", "pure", "static", "pure_static", "pure_opt", "scf", "opt"]
@@ -80,6 +80,8 @@ def path_regroup(pt: Union[str, path.Path, os.PathLike, pathlib.Path],
                  absorb: Union[tuple, int, None, str] = 4,
                  site: Union[tuple, int, None, str] = 5,
                  label: Union[tuple, int, None, str] = 6,
+                 base_num_class: Union[tuple, int, None, str] = None,
+                 prefix=None,
                  **kwargs
                  ) -> path.Path:
     """
@@ -87,29 +89,25 @@ def path_regroup(pt: Union[str, path.Path, os.PathLike, pathlib.Path],
 
     重新组织文件夹,使用序号标记文件层，使得最终为:
 
-    MXenes -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物/未吸附/pure_* -> 等效位点/路径 -> 标签
-    MXenes -> base_name -> add -> doping -> absorb -> site -> lable
+    MXenes -> 0            -> 1         -> 2    -> 3      -> 4      -> 5    -> 6
+    MXenes -> 基底层数分类   -> 基底名称   -> 负载物 -> 搀杂物 -> 吸附物/pure_* -> 等效位点/路径 -> 标签
+    例如：
+    MXenes -> base_num_class  -> base_name -> add  -> doping -> absorb -> site -> label
+    MXenes -> base_num_class  -> base_name -> add  -> doping -> pure
 
     1.若输入序号n,则代表使用旧文件夹的第n层作为名称.
-    2.若输入None,则代表跳过 不（掺杂no_doping，负载no_add，吸附no_absorb）.
+    2.若输入None,则代表跳过,将使用（掺杂no_doping，负载no_add，吸附no_absorb）.
     3.若输入字符串,则该层直接使用该名称.
 
 
     Examples:
     ----------
 
-    path_regroup(pt=r"E:/x/MXenes/M2XO2-TM/Hf/C/Au/2",
-                 base_name=1, add=2,doping=3,absorb=4,site=5,label=6)
+    path_regroup(pt=r"E:/x/MXenes/M2C/M2XO2-TM/Hf/C/Au/2",
+                 base_name=1, add=2,doping=3,absorb=4,site=5,label="00")
 
-    path_regroup(pt=r"E:/x/MXenes/M2XO2-TM/Hf/C/Au/2",
-                 base_name=(1,2,3),add=4, doping=None,absorb=None,site=5,label="00",)
-
-    path_regroup(pt=r'E:/x/MXenes/M2XO2/Hf/C/Au/H/neb/ini',
-                 base_name=(1,2,3),add=4, doping=None,absorb=None,site="neb_S0-S0",label="ini",)
-
-    path_regroup(pt=r'E:/x/MXenes/M2XO2/Hf/C/Au/H/neb/ini',
-                 base_name=(1,2,3),add=4, doping=None, absorb=None,site="neb_S0-S0",label="ini",
-                 fun_base_name=lambda x:f"S{x}")
+    path_regroup(pt=r"E:/x/MXenes/M2XO2-TM/Hf/C/Au/2",base_num_class="M2C",
+                 base_name=0, add=1,doping=2,absorb=3,site=4,label="00")
 
     Args:
         pt: (str, path.Path, os.PathLike,pathlib.Path), path of leaf node.
@@ -119,6 +117,8 @@ def path_regroup(pt: Union[str, path.Path, os.PathLike, pathlib.Path],
         absorb: (tuple,int,None,str), layer of absorb atom.
         site: (tuple,int,None,str), layer of site name.
         label: (tuple,int,None,str), layer of label name.
+        base_num_class: (tuple,int,None,str), label of MXenes system.
+        prefix:(str,None), Move to other path.
         **kwargs: keywords are formed "func_*", such as "fun_base_name", and the value are one function.
 
     Returns:
@@ -138,11 +138,27 @@ def path_regroup(pt: Union[str, path.Path, os.PathLike, pathlib.Path],
 
     assert "MXenes" in parents
     mx_site = parents.index("MXenes")
-    pre_parents = parents[:mx_site]
+    pre_parents = parents[:(mx_site+1)]
 
-    real_parents = parents[mx_site:]
+    real_parents = parents[(mx_site+1):]
     assert len(real_parents) > dir_max, "The deep of path should large than max number of marks,(label,site,...)"
 
+    if isinstance(base_num_class, tuple):
+        base_num_class = [real_parents[i] for i in base_num_class]
+    elif isinstance(base_num_class, int):
+        base_num_class = real_parents[base_num_class]
+    elif isinstance(base_num_class, str):
+        pass
+    else:
+        if not any([True if i in real_parents[0] else False for i in ["MC", "MN", "M1", "M2", "M3", "M4", "M5", "M6", "M7"]]):
+            print(f"The first dir {real_parents[0]} was not a standard form for base_num_class, such as 'M2N','M2C',\n"
+                  f"The input path could loss the base_num_class layer.\n"
+                  "   Try: path_regroup(pt=..., base_num_class='M2C',base_name=0, add=1,doping=2,absorb=3,site=4,label=5,...)\n"
+                  "Or Try: Change your data in disk, add base_num_class layer in you data.:\n"
+                  "Such as 'E:/x/MXenes/Mo2CO2/...' to 'E:/x/MXenes/M2C/Mo2CO2/...'")
+            base_num_class = "need_to_redefine"
+        else:
+            base_num_class = real_parents[0]
     if isinstance(add, tuple):
         add = [real_parents[i] for i in add]
     elif isinstance(add, int):
@@ -211,14 +227,16 @@ def path_regroup(pt: Union[str, path.Path, os.PathLike, pathlib.Path],
     else:
         label = "00"
 
-    mxene_ = kwargs["func_MXene"](real_parents[0]) if "func_MXene" in kwargs else real_parents[0]
+    base_num_class = kwargs["func_base_number"](base_num_class) if "func_base_number" in kwargs else base_num_class
     base_name = kwargs["func_base_name"](base_name) if "func_base_name" in kwargs else base_name
     add = kwargs["func_add"](add) if "fun_add" in kwargs else add
     absorb = kwargs["func_absorb"](absorb) if "func_absorb" in kwargs else absorb
     doping = kwargs["func_doping"](doping) if "func_doping" in kwargs else doping
 
+    if prefix:
+        pre_parents.insert(-1, prefix)
     new_pt = pre_parents
-    new_pt.extend([mxene_, base_name, add, doping, absorb])
+    new_pt.extend([base_num_class, base_name, add, doping, absorb])
     if site_ is not None:
         site = kwargs["func_site"](site) if "func_site" in kwargs else site
         new_pt.append(site)
@@ -402,12 +420,13 @@ def check_convergence(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=
         warnings.warn(f"Error to read OUTCAR.",
                       UnicodeWarning)
         msg.append(f"Error to read OUTCAR.")
+
         res = False, msg
 
     return res
 
 
-def get_recommend_path(pt: Union[str, path.Path, os.PathLike, pathlib.Path]):
+def get_recommend_path(pt: Union[str, path.Path, os.PathLike, pathlib.Path],**kwargs):
     """
     Get recommend path.
 
@@ -427,13 +446,18 @@ def get_recommend_path(pt: Union[str, path.Path, os.PathLike, pathlib.Path]):
         pt = path.Path(pt)
 
     msg = ["\nGET PATH:",
-           f"Standard PATH:           .../MXenes/基底名称/   负载/  搀杂/   吸附/   等效位点(路径名)/ 标签",
-           f"Standard PATH:           .../MXenes/base_name/add/doping/absorb/site_or_move_path/label\n", ]
+           f"Standard PATH:           .../MXenes/基地层数分类 /基底名称/   负载/  搀杂/   吸附/   等效位点(路径名)/ 标签",
+           f"Standard PATH:           .../MXenes/base_number/base_name/add/doping/absorb/site_or_move_path/label\n", ]
 
     contcar = pt / "CONTCAR"
+    if "site_name" in kwargs:
+        del kwargs["site_name"]
+    if "equ_name" in kwargs:
+        del kwargs["equ_name"]
+
+    from mxene.mxenes import MXene
     if contcar.isfile():
         try:
-            from mxene.mxenes import MXene
             mx = MXene.from_file(contcar)
             parents = pt.splitall()
 
@@ -441,7 +465,7 @@ def get_recommend_path(pt: Union[str, path.Path, os.PathLike, pathlib.Path]):
             mx_site = parents.index("MXenes")
             pre_parents = parents[:mx_site]
 
-            new_pt = mx.get_disk(disk=path.Path.joinpath(*pre_parents), site_name="xx", equ_name="xx")
+            new_pt = mx.get_disk(disk=path.Path.joinpath(*pre_parents), site_name="xx", equ_name="xx",**kwargs)
             new_pt = path.Path(new_pt)
             msg.append(f"Now PATH:                 {pt}")
             msg.append(f"Recommend PATH:    {new_pt}      (May Be Wrong, Use Carefully!)")
@@ -467,7 +491,7 @@ def check_pt(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=None):
         pt: (str, path.Path, os.PathLike,pathlib.Path), path of leaf node.
 
     Returns:
-        res:(tuple), bool and msg list
+        res:(tuple), bool and msg list.
 
     """
     if msg is None:
@@ -480,6 +504,15 @@ def check_pt(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=None):
     mx_site = parents.index("MXenes")
     # pre_parents = parents[:mx_site]
     real_parents = parents[mx_site:]
+
+    if any([True if i in real_parents[1] else False for i in ["MC","MN","M1","M2","M3","M4","M5","M6","M7"]]):
+        real_parents = real_parents[1:]
+    else:
+        msg.append(f"Warning to not find the base number class in PATH, such as 'M2C','M3C'. Check: {real_parents[1]} ")
+        warnings.warn(f"Warning to not find the base number class in PATH, such as 'M2C','M3C'. Check: {real_parents[1]} ",
+                      UnicodeWarning)
+        warnings.warn(f"Error If base number class not formed such as 'M2C','M3C'. The subsequent check may get Error",
+                      UnicodeWarning)
 
     # nm_list = ["H", "B", "C", "N", "O", "F", "Si", "P", "S", "Cl", "As", "Se", "Br", "I", "Te", "At"]
     # tm_list = ["Sc", "Y", "Ti", "Zr", "Hf", "V", "Nb", "Ta", "Cr", "Mo", "W", "Mn",
@@ -506,7 +539,7 @@ def check_pt(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=None):
                       f"check and make sure it is bare structure without terminal. Check: {real_parents[1]} ",
                       UnicodeWarning)
         msg.append(f"Not find the terminal atoms in base structure name, "
-                   f"check and make sure it is bare structure without terminal. . Check: {real_parents[1]} ")
+                   f"check and make sure it is bare structure without terminal. Check: {real_parents[1]} ")
 
     t4 = any([i for i in tm_list if i in real_parents[2]]) if real_parents[2] != "no_add" else True
     if not t4:
@@ -629,27 +662,9 @@ def check_mx_data(pt, ck_pt=True, ck_conver=True, ck_st=True, get_rcmd_pt=True, 
             print("Error report are stored in un_mark.txt")
 
 
-if __name__ == "__main__":
 
-    # 移动替换部分,用于原始数据初始路径移动（谨慎使用）
-    # pt = r"E:\MXenes_raw_data\MXenes"
-    # #
-    # paths = find_leaf_path(pt)
-    #
-    # for pi in paths:
-    #
-    #     npi = path_regroup(pi,base_name=(1,2,3),add=4,doping=None,absorb=None,site=5,label="00",
-    #                     func_site= lambda x:f"AS{x}",
-    #                     func_base_name =  lambda x: f"{x.split('-')[-2]}2{x.split('-')[-1]}O2",)
-    #
-    #     npi = npi.replace("MXene", "MXene_temp/MXene")
-    #     print(pi)
-    #     print(npi)
-    #     copy_disk(old_pt=pi, new_pt=npi, file = True, disk = False, cover = False,remove=False)
-    #     break
-
-    # 检查路径部分，用于检查路径是否合格 ###
-    pt = r"E:\MXenes_raw_data\MXenes"
+def comparison(pt):
+    """print if path is not standard."""
     paths = find_leaf_path(pt)
 
     for pi in paths:
@@ -668,19 +683,50 @@ if __name__ == "__main__":
             print(pi)
             print(npi)
 
+
+if __name__ == "__main__":
+
+    # 移动替换部分,用于原始数据初始路径移动（谨慎使用）
+    # pt = r"E:\MXenes_wxx_o\MXenes"
+    #
+    # paths = find_leaf_path(pt)
+    #
+    # for pi in paths:
+    #     npi = path_regroup(pi,base_num_class=0,base_name=1,add=None, doping=None,absorb=None,site=None,
+    #                           label=None, prefix="temp")
+    #
+    #     print(pi)
+    #     print(npi)
+    #     copy_disk(old_pt=pi, new_pt=npi, file = True, disk = False, cover = False, remove=False)
+        # break
+
     # 标记部分(可以重复运行)，用于检查数据是否有效 ###
-    pt = r"E:\MXenes_raw_data\MXenes\Mo2CO2"
+
+    pt = r"E:\MXenes_wxx_o\temp\MXenes"
     paths = find_leaf_path(pt)
 
     for pi in paths:
-        check_mx_data(pi, ck_pt=True, ck_conver=True, ck_st=True, get_rcmd_pt=True, out_file="un_mark.txt")
+        check_mx_data(pi, ck_pt=True, ck_conver=False, ck_st=True, get_rcmd_pt=True, out_file="un_mark.txt")
 
     temp = []
     for pi in paths:
         if (pi / "un_mark.txt").isfile():
-            print(pi)
-            temp.append(pi)
+
+            #####其他处理######
+
+            # npi = pi.replace("MXene", "MXene_temp/MXene")
+            # copy_disk(old_pt=pi, new_pt=npi, file = True, disk = False, cover = True, remove=False)
+            #
+            # print(pi)
+            #
             # if 'pure_static' in pi:
             #     shutil.copyfile(pi / "CONTCAR" ,pi / "POSCAR")
+
+            ######其他处理结束#######
+
+            temp.append(pi)
+
     with open("paths.temp", "w") as f:
         f.write("\n".join(temp))
+
+

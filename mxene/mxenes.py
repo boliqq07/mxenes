@@ -563,30 +563,30 @@ class MXene(Structure):
 
         **(1)不吸附**
 
-        MXenes -> 基底名称 -> 负载物 -> 搀杂物 -> pure/pure_static
+        MXenes -> 基底层数 -> 基底名称 -> 负载物 -> 搀杂物 -> pure/pure_static
 
         例子
 
-        MXenes -> Ti2NO2 -> no_add -> no_doping -> pure/pure_static
+        MXenes -> M2C -> Ti2NO2 -> no_add -> no_doping -> pure/pure_static
 
-        MXenes -> Ti2NO2 -> no_add -> Mo        -> pure/pure_static
+        MXenes -> M2N -> Ti2NO2 -> no_add -> Mo        -> pure/pure_static
 
         **(2)吸附**
 
-        MXenes -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物  -> 标签
+        MXenes -> 基底层数  -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物  -> 标签
 
         例子
-        MXenes -> Ti2NO2      -> no_add -> no_dopin -> H/add_H  -> top -> 00
+        MXenes -> M2N  -> Ti2NO2      -> no_add -> no_dopin -> H/add_H  -> top -> 00
 
-        MXenes -> TiNCrNTi-O2 -> Hf     -> C         -> Li -> S0  -> 00
+        MXenes -> M3N2 -> TiNCrNTi-O2 -> Hf     -> C         -> Li -> S0  -> 00
 
         **(3)NEB**
 
-        MXenes -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物 -> 等效位点 -> 路径名称
+        MXenes -> 基底层数  -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物 -> 等效位点 -> 路径名称
 
         例子
 
-        MXenes -> Ti2NO2 -> no_add -> no_doping -> H -> S0-S1 -> 00/01/01/03/04/ini/fin/...
+        MXenes -> M2N -> Ti2NO2 -> no_add -> no_doping -> H -> S0-S1 -> 00/01/01/03/04/ini/fin/...
 
         """
         absorb_ = absorb
@@ -594,8 +594,15 @@ class MXene(Structure):
         add_atoms_ = add_atoms
         terminal_ = terminal
         carbide_nitride_ = carbide_nitride
+
         names = [site.specie.name for site in self]
-        labels = self.split_layer(ignore_index=ignore_index,tol=0.4)
+        if len(names) <= 12:
+            mx = self.copy()
+            mx.make_supercell((2,2,1))
+            names = [site.specie.name for site in mx]
+        else:
+            mx=self
+        labels = mx.split_layer(ignore_index=ignore_index,tol=0.4)
         end = int(max(labels) + 1)
         start = int(max(min(labels), 0))
         layer_name = []
@@ -648,19 +655,28 @@ class MXene(Structure):
         if absorb_:
             absorb = absorb_
         else:
-            assert len(absorb) <= 1
-            absorb = None if len(absorb) == 0 else absorb[0]
+            if absorb is None:
+                pass
+            else:
+                assert len(absorb) <= 1
+                absorb = None if len(absorb) == 0 else absorb[0]
 
         if doping_:
             doping = doping_
         else:
-            assert len(doping) <= 1
-            doping = None if len(doping) == 0 else doping[0]
+            if doping is None:
+                pass
+            else:
+                assert len(doping) <= 1
+                doping = None if len(doping) == 0 else doping[0]
 
         if add_atoms_:
             add_atoms = add_atoms_
         else:
-            add_atoms = None if len(add_atoms) == 0 else add_atoms
+            if add_atoms is None:
+                pass
+            else:
+                add_atoms = None if len(add_atoms) == 0 else add_atoms
 
         assert len(list(set(terminal))) <= 1, "just for same terminal."
         terminal = terminal_ if terminal_ else terminal[0]
@@ -671,7 +687,7 @@ class MXene(Structure):
             assert len(carbide_nitride) < len(base), "carbide_nitride should less than base."
 
         self.out_dir = make_disk(disk, terminal, base, carbide_nitride, n_base=None, doping=doping, absorb=absorb,
-                                 equ_name=equ_name,
+                                 equ_name=equ_name, base_num_cls=None,
                                  site_name=site_name, add_atoms=add_atoms)
         return self.out_dir
 

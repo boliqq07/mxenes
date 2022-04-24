@@ -5,7 +5,7 @@ from pymatgen.io.vasp import VaspInput
 
 
 def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, absorb=None, equ_name=None,
-              site_name=None, add_atoms=None) -> pathlib.Path:
+              site_name=None, add_atoms=None, base_num_cls=None) -> pathlib.Path:
     nm_list = ["H", "B", "C", "N", "O", "F", "Si", "P", "S", "Cl", "As", "Se", "Br", "I", "Te", "At"]
     if isinstance(base, (tuple, list)):
         assert isinstance(carbide_nitride, (tuple, list)), "terminal and base should be same type, (str or list)."
@@ -21,6 +21,7 @@ def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, absorb=None
     else:
         assert n_base >= 2
         base_list = [base] * n_base
+        carbide_nitride_list = [base] * (n_base-1)
         name = {}
         name.update({base: n_base})
         name.update({carbide_nitride: n_base - 1})
@@ -28,6 +29,17 @@ def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, absorb=None
         name.update({terminal: 2})
     else:
         name.update({"bare": 2})
+
+    if base_num_cls is None:
+        if len(set(carbide_nitride_list))>1:
+            base_num_cls = "".join([f"M{len(base_list)}"] + carbide_nitride_list)
+        elif len(set(carbide_nitride_list)) == 1:
+            if len(carbide_nitride_list)==1:
+                base_num_cls = f"M{len(base_list)}{carbide_nitride_list[0]}"
+            else:
+                base_num_cls = f"M{len(base_list)}{carbide_nitride_list[0]}{len(carbide_nitride_list)}"
+        else:
+            base_num_cls = "need_to_redefine"
 
     if doping is None:
         nm_tm = None
@@ -75,7 +87,7 @@ def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, absorb=None
     if absorb is None:
         absorb = "no_absorb"
 
-    disk = pathlib.Path(disk) / "MXenes" / base_mx / add_atoms / dop / absorb
+    disk = pathlib.Path(disk) / "MXenes" / base_num_cls / base_mx / add_atoms / dop / absorb
 
     if site_name is not None:
         disk = disk / site_name

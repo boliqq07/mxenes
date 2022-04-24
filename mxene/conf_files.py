@@ -168,8 +168,8 @@ run_gjj_wang = """
 
 #!/bin/sh
 #JSUB -J CX_W       
-#JSUB -n 60
-#JSUB -R span[ptile=60]        
+#JSUB -n 64
+#JSUB -R span[ptile=64]        
 #JSUB -q cpu
 #JSUB -o out.%J                  
 #JSUB -e err.%J
@@ -240,8 +240,8 @@ mpirun -np $JH_NCPU -machinefile $JH_HOSTFILE vasp_std  > vasp.log
 gpaw_relax_py = '''
 from ase.optimize import QuasiNewton
 from gpaw import GPAW, PW
-from mxene.function2 import fixed_atoms
-from mxene.mxene import MXene, aaa
+from mxene.functions2 import fixed_atoms
+from mxene.mxenes import MXene, aaa
 
 mx = MXene.from_file("POSCAR")
 
@@ -262,7 +262,7 @@ atoms.calc = GPAW(xc='PBE',
 relax = QuasiNewton(atoms)
 
 try:
-    relax.run(fmax=0.1)
+    relax.run(fmax=0.05)
 
     st = aaa.get_structure(atoms)
     st.to("poscar","POSCAR")
@@ -274,8 +274,8 @@ except BaseException:
 run_gjj_wang_gpaw_relax = """
 #!/bin/sh
 #JSUB -J gpaw       
-#JSUB -n 60
-#JSUB -R span[ptile=60]        
+#JSUB -n 64
+#JSUB -R span[ptile=64]        
 #JSUB -q cpu
 #JSUB -o out.%J                  
 #JSUB -e err.%J
@@ -292,7 +292,7 @@ source /beegfs/jhinno/unischeduler/conf/unisched
 #   $JH_HOSTFILE:     List of computer hostfiles       #
 ########################################################
 
-$ mpirun -np $JH_NCPU -machinefile $JH_HOSTFILE gpaw python gpaw_relax.py
+mpirun -np $JH_NCPU -machinefile $JH_HOSTFILE gpaw python gpaw_relax.py
 
 """
 
