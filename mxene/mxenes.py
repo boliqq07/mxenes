@@ -273,7 +273,7 @@ class MXene(Structure):
         return coords_add
 
     def get_next_layer_sites(self, site_type: Union[None, str] = "fcc", ignore_index=None,
-                             up_down="up", site_atom="O", array=None):
+                             up_down="up", site_atom="O", array=None, tol=0.5):
         """
         按照结构中原子层，以及堆垛方式，获取下一层原子位置。
 
@@ -296,7 +296,7 @@ class MXene(Structure):
                                                                     reverse=reverse)
         else:
 
-            layer_label = self.split_layer(ignore_index=ignore_index, n_cluster=None, tol=0.5, axis=2,
+            layer_label = self.split_layer(ignore_index=ignore_index, n_cluster=None, tol=tol, axis=2,
                                            method=None, reverse=reverse)
 
         layer1_values = np.min(layer_label)
@@ -474,7 +474,7 @@ class MXene(Structure):
     def add_absorb(self, center=44, site_type: Union[None, str] = "fcc",
                    add_noise=True, up_down="up",
                    site_name="S0", equivalent="ini_opt", absorb="H", absorb_site=None,
-                   ignore_index=None, coords_are_cartesian=True, offset_z=0) -> "MXene":
+                   ignore_index=None, coords_are_cartesian=True, offset_z=0, tol=0.5) -> "MXene":
         """
         添加吸附原子。
 
@@ -516,7 +516,7 @@ class MXene(Structure):
             else:
 
                 sites = self.get_next_layer_sites(site_type=site_type, ignore_index=ignore_index,
-                                                  up_down=up_down, site_atom=absorb)
+                                                  up_down=up_down, site_atom=absorb,tol=tol)
 
                 st2 = copy.deepcopy(self)
                 [st2.append(species=i, coords=j, coords_are_cartesian=True) for i, j in
@@ -557,7 +557,7 @@ class MXene(Structure):
             return self
 
     def get_disk(self, disk='.', ignore_index=None, site_name="S0", equ_name="ini_opt",  nm_tm="TM",
-                 absorb=None, doping=None, terminal=None, carbide_nitride=None, add_atoms=None
+                 absorb=None, doping=None, terminal=None, carbide_nitride=None, add_atoms=None,tol=0.4
                  ) -> pathlib.Path:
         """Just for single doping, single absorb,single type terminal.
 
@@ -602,7 +602,7 @@ class MXene(Structure):
             names = [site.specie.name for site in mx]
         else:
             mx=self
-        labels = mx.split_layer(ignore_index=ignore_index,tol=0.4)
+        labels = mx.split_layer(ignore_index=ignore_index,tol=tol)
         end = int(max(labels) + 1)
         start = int(max(min(labels), 0))
         layer_name = []

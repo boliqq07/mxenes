@@ -288,6 +288,10 @@ def copy_disk(old_pt: Union[str, path.Path], new_pt: Union[str, path.Path], file
     if not isinstance(new_pt, path.Path):
         new_pt = path.Path(new_pt)
     ds = old_pt.dirs()
+    fs = old_pt.files()
+
+    fs = [old_pt.relpathto(fsi) for fsi in fs]
+    ds = [old_pt.relpathto(dsi) for dsi in ds]
 
     if file and disk:
         shutil.copytree(old_pt, new_pt, dirs_exist_ok=cover)
@@ -297,19 +301,20 @@ def copy_disk(old_pt: Union[str, path.Path], new_pt: Union[str, path.Path], file
             else:
                 shutil.rmtree(old_pt, )
     elif file:
+        os.makedirs(new_pt, exist_ok=cover)
         if len(ds) > 0:
             warnings.warn(f"{old_pt} is not the leaf node directory.", UserWarning)
             if cover:
-                for i in old_pt.files():
-                    shutil.copyfile(old_pt / i, new_pt / i)
+                for i in fs:
+                    shutil.copyfile(old_pt / i, new_pt /i)
                     if remove:
                         os.remove(old_pt / i)
             else:
-                for i in old_pt.files():
-                    if new_pt.isfile():
+                for i in fs:
+                    if (new_pt/i).isfile():
                         raise FileExistsError(f"{new_pt / i} is exist.")
                     else:
-                        shutil.copyfile(old_pt / i, new_pt / i)
+                        shutil.copyfile(old_pt / i, new_pt /i)
                         if remove:
                             os.remove(old_pt / i)
         else:
@@ -706,6 +711,7 @@ if __name__ == "__main__":
     paths = find_leaf_path(pt)
 
     for pi in paths:
+
         check_mx_data(pi, ck_pt=True, ck_conver=False, ck_st=True, get_rcmd_pt=True, out_file="un_mark.txt")
 
     temp = []
@@ -726,7 +732,7 @@ if __name__ == "__main__":
 
             temp.append(pi)
 
-    with open("paths.temp", "w") as f:
+    with open("un_mark_total.txt", "w") as f:
         f.write("\n".join(temp))
 
 
