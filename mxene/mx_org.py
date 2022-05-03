@@ -56,6 +56,7 @@ import pathlib
 import shutil
 import warnings
 from typing import Union, List
+
 import path
 
 nm_list = ["H", "B", "C", "N", "O", "F", "Si", "P", "S", "Cl", "As", "Se", "Br", "I", "Te", "At"]
@@ -138,9 +139,9 @@ def path_regroup(pt: Union[str, path.Path, os.PathLike, pathlib.Path],
 
     assert "MXenes" in parents
     mx_site = parents.index("MXenes")
-    pre_parents = parents[:(mx_site+1)]
+    pre_parents = parents[:(mx_site + 1)]
 
-    real_parents = parents[(mx_site+1):]
+    real_parents = parents[(mx_site + 1):]
     assert len(real_parents) > dir_max, "The deep of path should large than max number of marks,(label,site,...)"
 
     if isinstance(base_num_class, tuple):
@@ -150,7 +151,8 @@ def path_regroup(pt: Union[str, path.Path, os.PathLike, pathlib.Path],
     elif isinstance(base_num_class, str):
         pass
     else:
-        if not any([True if i in real_parents[0] else False for i in ["MC", "MN", "M1", "M2", "M3", "M4", "M5", "M6", "M7"]]):
+        if not any([True if i in real_parents[0] else False for i in
+                    ["MC", "MN", "M1", "M2", "M3", "M4", "M5", "M6", "M7"]]):
             print(f"The first dir {real_parents[0]} was not a standard form for base_num_class, such as 'M2N','M2C',\n"
                   f"The input path could loss the base_num_class layer.\n"
                   "   Try: path_regroup(pt=..., base_num_class='M2C',base_name=0, add=1,doping=2,absorb=3,site=4,label=5,...)\n"
@@ -306,15 +308,15 @@ def copy_disk(old_pt: Union[str, path.Path], new_pt: Union[str, path.Path], file
             warnings.warn(f"{old_pt} is not the leaf node directory.", UserWarning)
             if cover:
                 for i in fs:
-                    shutil.copyfile(old_pt / i, new_pt /i)
+                    shutil.copyfile(old_pt / i, new_pt / i)
                     if remove:
                         os.remove(old_pt / i)
             else:
                 for i in fs:
-                    if (new_pt/i).isfile():
+                    if (new_pt / i).isfile():
                         raise FileExistsError(f"{new_pt / i} is exist.")
                     else:
-                        shutil.copyfile(old_pt / i, new_pt /i)
+                        shutil.copyfile(old_pt / i, new_pt / i)
                         if remove:
                             os.remove(old_pt / i)
         else:
@@ -468,7 +470,7 @@ def check_vasprun(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=None
     return res
 
 
-def get_recommend_path(pt: Union[str, path.Path, os.PathLike, pathlib.Path],**kwargs):
+def get_recommend_path(pt: Union[str, path.Path, os.PathLike, pathlib.Path], **kwargs):
     """
     Get recommend path.
 
@@ -507,7 +509,7 @@ def get_recommend_path(pt: Union[str, path.Path, os.PathLike, pathlib.Path],**kw
             mx_site = parents.index("MXenes")
             pre_parents = parents[:mx_site]
 
-            new_pt = mx.get_disk(disk=path.Path.joinpath(*pre_parents), site_name="xx", equ_name="xx",**kwargs)
+            new_pt = mx.get_disk(disk=path.Path.joinpath(*pre_parents), site_name="xx", equ_name="xx", **kwargs)
             new_pt = path.Path(new_pt)
             msg.append(f"Now PATH:                 {pt}")
             msg.append(f"Recommend PATH:    {new_pt}      (May Be Wrong, Use Carefully!)")
@@ -547,12 +549,13 @@ def check_pt(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=None):
     # pre_parents = parents[:mx_site]
     real_parents = parents[mx_site:]
 
-    if any([True if i in real_parents[1] else False for i in ["MC","MN","M1","M2","M3","M4","M5","M6","M7"]]):
+    if any([True if i in real_parents[1] else False for i in ["MC", "MN", "M1", "M2", "M3", "M4", "M5", "M6", "M7"]]):
         real_parents = real_parents[1:]
     else:
         msg.append(f"Warning to not find the base number class in PATH, such as 'M2C','M3C'. Check: {real_parents[1]} ")
-        warnings.warn(f"Warning to not find the base number class in PATH, such as 'M2C','M3C'. Check: {real_parents[1]} ",
-                      UnicodeWarning)
+        warnings.warn(
+            f"Warning to not find the base number class in PATH, such as 'M2C','M3C'. Check: {real_parents[1]} ",
+            UnicodeWarning)
         warnings.warn(f"Error If base number class not formed such as 'M2C','M3C'. The subsequent check may get Error",
                       UnicodeWarning)
 
@@ -650,7 +653,8 @@ def find_leaf_path(root_pt: Union[str, path.Path, os.PathLike, pathlib.Path]) ->
     return res
 
 
-def check_mx_data(pt, ck_pt=True, ck_conver=True, ck_st=True, get_rcmd_pt=True, check_vasp=False, out_file="un_mark.txt"):
+def check_mx_data(pt, ck_pt=True, ck_conver=True, ck_st=True, get_rcmd_pt=True, check_vasp=True,
+                  out_file="un_mark.txt"):
     """
     Check MXene data in total.
 
@@ -693,7 +697,7 @@ def check_mx_data(pt, ck_pt=True, ck_conver=True, ck_st=True, get_rcmd_pt=True, 
     else:
         c5, msg5 = True, []
 
-    if c1 and any((c2,c5)) and c3:
+    if c1 and any((c2, c5)) and c3:
         if (pt / out_file).isfile():
             os.remove(pt / out_file)
     else:
@@ -710,26 +714,26 @@ def check_mx_data(pt, ck_pt=True, ck_conver=True, ck_st=True, get_rcmd_pt=True, 
                 f.write(msg)
             print(f"{pt}: Error report are stored in un_mark.txt")
 
+
 def comparison(pt):
     """print if path is not standard."""
     paths = find_leaf_path(pt)
 
     for pi in paths:
         try:
-            npi = path_regroup(pi, base_name=1,add=2,doping=3,absorb=4,site=5,label=6,)
+            npi = path_regroup(pi, base_name=1, add=2, doping=3, absorb=4, site=5, label=6, )
         except AssertionError:
             try:
-                npi = path_regroup(pi, base_name=1,add=2,doping=3,absorb=4,site=5,label=None)
-                npi = npi/"00"
+                npi = path_regroup(pi, base_name=1, add=2, doping=3, absorb=4, site=5, label=None)
+                npi = npi / "00"
             except AssertionError:
-                npi = path_regroup(pi,base_name=1, add=2,doping=3,absorb=4,site=None,label=None,)
+                npi = path_regroup(pi, base_name=1, add=2, doping=3, absorb=4, site=None, label=None, )
 
-        if pi==npi:
+        if pi == npi:
             pass
         else:
             print(pi)
             print(npi)
-
 
 # if __name__ == "__main__":
 #
@@ -776,5 +780,3 @@ def comparison(pt):
 #
 #     with open("un_mark_total.txt", "w") as f:
 #         f.write("\n".join(temp))
-
-

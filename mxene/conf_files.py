@@ -163,7 +163,6 @@ mpirun -np 12 vasp_std
 
 """
 
-
 run_gjj_wang = """
 
 #!/bin/sh
@@ -323,9 +322,9 @@ def write_batch():
     path = os.getcwd()
 
     cmd_sys(["mgetool makebatch -cmd 'jsub < $(find -name *.run)'",
-             f"mgetool makebatch -cmd 'cd .. \nmv fin_static \ncp -r fin_opt fin_static \ncp fin_opt/CONTCAR fin_static/POSCAR \ncp {path}/static_INCAR fin_static/INCAR' -o static_fin.sh",
-             f"mgetool makebatch -cmd 'cd .. \nmv ini_static \ncp -r ini_opt ini_static \ncp ini_opt/CONTCAR ini_static/POSCAR \ncp {path}/static_INCAR ini_static/INCAR' -o static_ini.sh",
-             f"mgetool makebatch -cmd 'cd .. \nmv pure_static \ncp -r pure_opt pure_static \ncp pure_opt/CONTCAR pure_static/POSCAR \ncp {path}/static_INCAR pure_static/INCAR' -o static_pure.sh",
+             f"mgetool makebatch -cmd 'cd .. \nrm -rf fin_static \ncp -r fin_opt fin_static \ncp fin_opt/CONTCAR fin_static/POSCAR \ncp {path}/static_INCAR fin_static/INCAR' -o static_fin.sh",
+             f"mgetool makebatch -cmd 'cd .. \nrm -rf ini_static \ncp -r ini_opt ini_static \ncp ini_opt/CONTCAR ini_static/POSCAR \ncp {path}/static_INCAR ini_static/INCAR' -o static_ini.sh",
+             f"mgetool makebatch -cmd 'cd .. \nrm -rf pure_static \ncp -r pure_opt pure_static \ncp pure_opt/CONTCAR pure_static/POSCAR \ncp {path}/static_INCAR pure_static/INCAR' -o static_pure.sh",
              f"mgetool makebatch -cmd 'cp {path}/cpu.run ../ini_opt' -o cpbatch.sh",
              f"mgetool makebatch -cmd 'cd .. \nnebmake.pl ini_static/CONTCAR fin_static/CONTCAR 3 \ncp ini_static/OUTCAR 00/OUTCAR \ncp fin_static/OUTCAR 04/OUTCAR \ncp ini_static/KPOINTS KPOINTS "
              f"\ncp ini_static/POTCAR POTCAR \ncp {path}/neb_cpu.run neb_cpu.run' -o nebbatch.sh"

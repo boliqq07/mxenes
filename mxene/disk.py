@@ -21,7 +21,7 @@ def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, absorb=None
     else:
         assert n_base >= 2
         base_list = [base] * n_base
-        carbide_nitride_list = [base] * (n_base-1)
+        carbide_nitride_list = [base] * (n_base - 1)
         name = {}
         name.update({base: n_base})
         name.update({carbide_nitride: n_base - 1})
@@ -31,10 +31,10 @@ def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, absorb=None
         name.update({"bare": 2})
 
     if base_num_cls is None:
-        if len(set(carbide_nitride_list))>1:
+        if len(set(carbide_nitride_list)) > 1:
             base_num_cls = "".join([f"M{len(base_list)}"] + carbide_nitride_list)
         elif len(set(carbide_nitride_list)) == 1:
-            if len(carbide_nitride_list)==1:
+            if len(carbide_nitride_list) == 1:
                 base_num_cls = f"M{len(base_list)}{carbide_nitride_list[0]}"
             else:
                 base_num_cls = f"M{len(base_list)}{carbide_nitride_list[0]}{len(carbide_nitride_list)}"
@@ -94,7 +94,6 @@ def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, absorb=None
 
     if equ_name is not None:
         disk = disk / equ_name
-
 
     return disk
 

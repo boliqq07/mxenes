@@ -516,7 +516,7 @@ class MXene(Structure):
             else:
 
                 sites = self.get_next_layer_sites(site_type=site_type, ignore_index=ignore_index,
-                                                  up_down=up_down, site_atom=absorb,tol=tol)
+                                                  up_down=up_down, site_atom=absorb, tol=tol)
 
                 st2 = copy.deepcopy(self)
                 [st2.append(species=i, coords=j, coords_are_cartesian=True) for i, j in
@@ -556,8 +556,8 @@ class MXene(Structure):
         else:
             return self
 
-    def get_disk(self, disk='.', ignore_index=None, site_name="S0", equ_name="ini_opt",  nm_tm="TM",
-                 absorb=None, doping=None, terminal=None, carbide_nitride=None, add_atoms=None,tol=0.4
+    def get_disk(self, disk='.', ignore_index=None, site_name="S0", equ_name="ini_opt", nm_tm="TM",
+                 absorb=None, doping=None, terminal=None, carbide_nitride=None, add_atoms=None, tol=0.4
                  ) -> pathlib.Path:
         """Just for single doping, single absorb,single type terminal.
 
@@ -598,11 +598,11 @@ class MXene(Structure):
         names = [site.specie.name for site in self]
         if len(names) <= 12:
             mx = self.copy()
-            mx.make_supercell((2,2,1))
+            mx.make_supercell((2, 2, 1))
             names = [site.specie.name for site in mx]
         else:
-            mx=self
-        labels = mx.split_layer(ignore_index=ignore_index,tol=tol)
+            mx = self
+        labels = mx.split_layer(ignore_index=ignore_index, tol=tol)
         end = int(max(labels) + 1)
         start = int(max(min(labels), 0))
         layer_name = []

@@ -156,7 +156,7 @@ def coarse_and_spilt_array_ignore_force_plane(array, ignore_index=None, n_cluste
             k_index = np.where(label == k)[0]
             k_array = np.mean(array[k_index])
             if force_label is None:
-                warnings.warn("Try to force dispense the single atom to group, please check carefully.",UserWarning)
+                warnings.warn("Try to force dispense the single atom to group, please check carefully.", UserWarning)
                 force_index = np.argsort(np.abs(array - k_array))[1]
                 force_label = label[force_index]
                 label[k_index] = force_label
