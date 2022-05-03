@@ -416,7 +416,7 @@ def check_convergence(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=
         if key_sentence0 not in outcar[-40:] and key_sentence1 not in outcar[-20:]:
             warnings.warn(f"Not converge and not get the final energy.",
                           UnicodeWarning)
-            msg.append(f"Not converge and not get the final energy..")
+            msg.append(f"Not converge and not get the final energy.")
             res = False, msg
         else:
             res = True, msg
@@ -425,6 +425,43 @@ def check_convergence(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=
         warnings.warn(f"Error to read OUTCAR.",
                       UnicodeWarning)
         msg.append(f"Error to read OUTCAR.")
+
+        res = False, msg
+
+    return res
+
+
+def check_vasprun(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=None):
+    """
+    Check final energy.
+
+    是否具有vasprun.xml
+
+    Args:
+        pt: (str, path.Path, os.PathLike,pathlib.Path), path
+        msg:(list of str), message.
+
+    Returns:
+        res:(tuple), bool and msg list
+
+    """
+    if msg is None:
+        msg = []
+    msg.append("\nCheck vasprun:")
+
+    if not isinstance(pt, path.Path):
+        pt = path.Path(pt)
+    try:
+        poscar = pt / "vasprun.xml"
+        if poscar.isfile():
+            res = True, msg
+        else:
+            res = False, msg
+
+    except BaseException:
+        warnings.warn(f"Error to read vasprun.xml.",
+                      UnicodeWarning)
+        msg.append(f"Error to read vasprun.xml.")
 
         res = False, msg
 
@@ -613,7 +650,7 @@ def find_leaf_path(root_pt: Union[str, path.Path, os.PathLike, pathlib.Path]) ->
     return res
 
 
-def check_mx_data(pt, ck_pt=True, ck_conver=True, ck_st=True, get_rcmd_pt=True, out_file="un_mark.txt"):
+def check_mx_data(pt, ck_pt=True, ck_conver=True, ck_st=True, get_rcmd_pt=True, check_vasp=False, out_file="un_mark.txt"):
     """
     Check MXene data in total.
 
@@ -626,6 +663,7 @@ def check_mx_data(pt, ck_pt=True, ck_conver=True, ck_st=True, get_rcmd_pt=True, 
         ck_st: (bool), check structure.
         get_rcmd_pt: (bool), check recommend path.
         out_file: (str), out file name.
+        check_vasp: (bool), vasprun.xml.
 
     """
     msg = ["### Check MXene Data ###"]
@@ -650,9 +688,14 @@ def check_mx_data(pt, ck_pt=True, ck_conver=True, ck_st=True, get_rcmd_pt=True, 
     else:
         c4, msg4 = True, []
 
-    if c1 and c2 and c3:
-        if (pi / out_file).isfile():
-            os.remove(pi / out_file)
+    if check_vasp:
+        c5, msg5 = check_vasprun(pt)
+    else:
+        c5, msg5 = True, []
+
+    if c1 and any((c2,c5)) and c3:
+        if (pt / out_file).isfile():
+            os.remove(pt / out_file)
     else:
         if out_file is None:
             pass
@@ -661,12 +704,11 @@ def check_mx_data(pt, ck_pt=True, ck_conver=True, ck_st=True, get_rcmd_pt=True, 
             msg.extend(msg2)
             msg.extend(msg3)
             msg.extend(msg4)
+            msg.extend(msg5)
             with open(pt / out_file, "w") as f:
                 msg = "\n".join(msg)
                 f.write(msg)
-            print("Error report are stored in un_mark.txt")
-
-
+            print(f"{pt}: Error report are stored in un_mark.txt")
 
 def comparison(pt):
     """print if path is not standard."""
@@ -689,50 +731,50 @@ def comparison(pt):
             print(npi)
 
 
-if __name__ == "__main__":
-
-    # 移动替换部分,用于原始数据初始路径移动（谨慎使用）
-    # pt = r"E:\MXenes_wxx_o\MXenes"
-    #
-    # paths = find_leaf_path(pt)
-    #
-    # for pi in paths:
-    #     npi = path_regroup(pi,base_num_class=0,base_name=1,add=None, doping=None,absorb=None,site=None,
-    #                           label=None, prefix="temp")
-    #
-    #     print(pi)
-    #     print(npi)
-    #     copy_disk(old_pt=pi, new_pt=npi, file = True, disk = False, cover = False, remove=False)
-        # break
-
-    # 标记部分(可以重复运行)，用于检查数据是否有效 ###
-
-    pt = r"E:\MXenes_wxx_o\temp\MXenes"
-    paths = find_leaf_path(pt)
-
-    for pi in paths:
-
-        check_mx_data(pi, ck_pt=True, ck_conver=False, ck_st=True, get_rcmd_pt=True, out_file="un_mark.txt")
-
-    temp = []
-    for pi in paths:
-        if (pi / "un_mark.txt").isfile():
-
-            #####其他处理######
-
-            # npi = pi.replace("MXene", "MXene_temp/MXene")
-            # copy_disk(old_pt=pi, new_pt=npi, file = True, disk = False, cover = True, remove=False)
-            #
-            # print(pi)
-            #
-            # if 'pure_static' in pi:
-            #     shutil.copyfile(pi / "CONTCAR" ,pi / "POSCAR")
-
-            ######其他处理结束#######
-
-            temp.append(pi)
-
-    with open("un_mark_total.txt", "w") as f:
-        f.write("\n".join(temp))
+# if __name__ == "__main__":
+#
+#     # 移动替换部分,用于原始数据初始路径移动（谨慎使用）
+#     # pt = r"E:\MXenes_wxx_o\MXenes"
+#     #
+#     # paths = find_leaf_path(pt)
+#     #
+#     # for pi in paths:
+#     #     npi = path_regroup(pi,base_num_class=0,base_name=1,add=None, doping=None,absorb=None,site=None,
+#     #                           label=None, prefix="temp")
+#     #
+#     #     print(pi)
+#     #     print(npi)
+#     #     copy_disk(old_pt=pi, new_pt=npi, file = True, disk = False, cover = False, remove=False)
+#         # break
+#
+#     # 标记部分(可以重复运行)，用于检查数据是否有效 ###
+#
+#     pt = r"E:\MXenes_wxx_o\temp\MXenes"
+#     paths = find_leaf_path(pt)
+#
+#     for pi in paths:
+#
+#         check_mx_data(pi, ck_pt=True, ck_conver=False, ck_st=True, get_rcmd_pt=True, out_file="un_mark.txt")
+#
+#     temp = []
+#     for pi in paths:
+#         if (pi / "un_mark.txt").isfile():
+#
+#             #####其他处理######
+#
+#             # npi = pi.replace("MXene", "MXene_temp/MXene")
+#             # copy_disk(old_pt=pi, new_pt=npi, file = True, disk = False, cover = True, remove=False)
+#             #
+#             # print(pi)
+#             #
+#             # if 'pure_static' in pi:
+#             #     shutil.copyfile(pi / "CONTCAR" ,pi / "POSCAR")
+#
+#             ######其他处理结束#######
+#
+#             temp.append(pi)
+#
+#     with open("un_mark_total.txt", "w") as f:
+#         f.write("\n".join(temp))
 
 
