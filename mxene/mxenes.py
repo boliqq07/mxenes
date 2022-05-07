@@ -762,7 +762,8 @@ class MXene(Structure):
         frac_coords = self._reform_frac(frac_coords)
         return self.__class__(self.lattice, self.species, frac_coords, coords_are_cartesian=False)
 
-    def add_face_random(self, number=100, random_state=0, add_atom="H", debug=False, up_down="up", perturb_base=0,
+    def add_face_random(self, number=100, random_state=0, random_xy=True, add_atom="H", debug=False,
+                        up_down="up", perturb_base=0,
                         offset_z=1.0, alpha=0.5) -> Union["MXene", List["MXene"]]:
         """
         随机添加原子。
@@ -770,6 +771,7 @@ class MXene(Structure):
         Args:
             number: (str), 添加数量
             random_state: (int), 随机种子。
+            random_xy:(bool), x,y是否随机。
             add_atom: (str), 添加原子名称
             debug: (bool), 调试，若调试，所有添加原子在一个结构中展示。
             up_down: (str), up and down
@@ -786,8 +788,13 @@ class MXene(Structure):
         b = self.lattice.b
         nn = int(number ** 0.5)
 
-        x = np.linspace(0, a, nn + 1, endpoint=False)
-        y = np.linspace(0, b, nn + 1, endpoint=False)
+        if random_xy:
+            x = rdm.randint(0, a, nn)
+            y = rdm.randint(0, b, nn)
+        else:
+            x = np.linspace(0, a, nn + 1, endpoint=False)
+            y = np.linspace(0, b, nn + 1, endpoint=False)
+
         x_mesh, y_mesh = np.meshgrid(x, y)
         z = f_interp(x, y, meshed=False)
         z = z.ravel()
