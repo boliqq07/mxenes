@@ -24,7 +24,9 @@ NELMIN = 5
 NELM = 200
 ALGO = F
 EDIFF = 1E-04
-EDIFFG = -0.001
+EDIFFG = -0.005
+NCORE = 8
+ISYM = 0
 
 # Ionic relaxation
 IBRION = 2
@@ -66,12 +68,14 @@ IBRION = 3
 ISIF = 2
 POTIM = 0
 NSW = 300
-EDIFFG = -0.001
+EDIFFG = -0.005
+ISYM = 0
 
 # Density of states related
 ISMEAR = 0
 SIGMA = 0.02
 #NEDOS = 301
+NCORE = 8
 
 # Output
 LCHARG = .FALSE.
@@ -106,7 +110,6 @@ static_incar = """
 # Basic
 PREC = Normal
 ISPIN = 2
-LORBIT=11
 
 # Initiaization
 ISTART = 0
@@ -119,6 +122,7 @@ NELM = 200
 ALGO = N
 EDIFF = 1E-05
 EDIFFG = -0.001
+NCORE = 8
 
 # Ionic relaxation
 IBRION = -1
@@ -131,9 +135,10 @@ SIGMA = 0.02
 NEDOS = 301
 
 # Output
-LCHARG = .FALSE.
-LWAVE = .FALSE.
-LAECHG= .FALSE.
+LCHARG = T
+LWAVE = T
+LAECHG= T
+LORBIT=11
 
 # Specific
 IVDW = 12

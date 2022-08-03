@@ -693,7 +693,7 @@ class Tetra:
 
 
 def structure_message(structure: Structure, prefix=None) -> Dict:
-    """Get message."""
+    """Get message by Tetra just for single doping MXenes."""
     # Tetra
 
     data_same = {}
@@ -726,20 +726,36 @@ def structure_message(structure: Structure, prefix=None) -> Dict:
 
 
 # def structure_message_simple_for_Mo(structure: Structure, prefix=None):
-#     """For Mo."""
-#     cart_coords = structure.cart_coords
+#     """Just for doping in Mo HER."""
+#     # site 0
+#     s0m0 = 44  #
+#     s0m1 = 33
+#     s0O0 = 13
+#     s0C0 = 5
+#
+#     # site 1
+#     s1m0 = 32
+#     s1m1 = 33
+#     s1O0 = 16
+#
+#     # site 2
+#     s2m0 = 29
+#     s2m1 = 33
+#     s2O0 = 11
 #
 #     data_same = {}
 #     data_sep = {}
 #     data = {}
 #
-#     m0_name = structure.species[44].symbol
-#     data_same.update({"same_d_m0_o0": (13, 44)})
-#     data_same.update({"same_d_m1_o0": (13, 33)})
-#     data_same.update({"same_d_m0_c0": (5, 44)})
+#     m0_name = structure.species[s0m0].symbol
+#     data_same.update({"same_d_m0_o0": (s0m0,s0O0)})
+#     data_same.update({"same_d_m1_o0": (s0m1, s0O0)})
+#     data_same.update({"same_d_m0_c0": (s0m0, s0C0)})
 #
-#     data_sep.update({"ind_d_m0_o0": ((13, 44), (16, 32), (11, 29))})
-#     data_sep.update({"ind_d_m1_o0": ((13, 30), (16, 33), (11, 33))})
+#     data_sep.update({"ind_d_m0_o0": ((s0m0,s0O0), (s1m0,s1O0), (s2m0,s2O0))})
+#     data_sep.update({"ind_d_m1_o0": ((s0m1,s0O0), (s1m1,s1O0), (s2m1,s2O0))})
+#
+#     # distance
 #
 #     if prefix is None:
 #         prefix_m0_name = m0_name
@@ -757,8 +773,7 @@ def structure_message(structure: Structure, prefix=None) -> Dict:
 #             else:
 #                 data[f"{prefix_m0_name}-S{i}"].update({k: vi})
 #
-#     dz = cart_coords[29][2] - cart_coords[44][2]
-#     data_same.update({"same_dz": dz})
+#     # other add
 #
 #     data_same.update({"r_m0": structure.species[44].data["Atomic radius calculated"]})
 #     data_same.update({"r_m_base": structure.species[33].data["Atomic radius calculated"]})
@@ -767,17 +782,24 @@ def structure_message(structure: Structure, prefix=None) -> Dict:
 #     data_same.update({"X": structure.species[44].X})
 #     data_same.update({"Z": structure.species[44].Z})
 #
-#     # structure_Mo = Poscar.from_file(r"C:\Users\Administrator\PycharmProjects\samples\Instance\Instance_mo2co2"
-#     #                                 r"\MoCMo-O-4\Mo\pure_static\Prim_Mo2CO2_CONTCAR", check_for_POTCAR=False).structure
-#     ini_mo = np.array([1.43176042, 4.13308642, 13.86915])  # structure_Mo.cart_coords[44]
-#     ini_o = np.array([2.86348217, 4.95971115, 15.0897])  # structure_Mo.cart_coords[17]
+#     # r，z
+#     """
+#     ## structure_Mo = Poscar.from_file(r"../../Mo/pure_static/CONTCAR", check_for_POTCAR=False).structure
+#     ## ini_mo = structure_Mo.cart_coords[s0m0]
+#     ## ini_o = structure_Mo.cart_coords[s0O0]
+#     """
+#     ini_mo = np.array([1.43176277,  4.13308444, 13.86916021])
+#     ini_o = np.array([1.43173683,  2.47986109, 15.0897003 ])
+#
 #     init_r = np.sum((ini_mo[:2] - ini_o[:2]) ** 2) ** 0.5
-#     mo = structure.cart_coords[44]
-#     o = structure.cart_coords[17]
+#
+#     mo = structure.cart_coords[s0m0]
+#     o = structure.cart_coords[s0O0]
 #     dr = np.sum((mo[:2] - o[:2]) ** 2) ** 0.5 - init_r
 #     dh = mo[2] - ini_mo[2]
 #     data_same.update({"dr": dr, "dh": dh})
 #
+#     # finall
 #     data_same = {f"{prefix_m0_name}-Sall": data_same}
 #
 #     data.update(data_same)
@@ -834,90 +856,3 @@ def structure_message(structure: Structure, prefix=None) -> Dict:
 #
 #     return data
 
-
-class DataSameTep():
-    """settle data."""
-
-    def __init__(self, data: Dict, sep="-", sites_name="S", dup=3, prefix=None):
-        """
-        Make sure the key are formatted by {label}-{Si or Sall} !!! and all values is dict type.
-
-        Args:
-            data: (dict), key are formated by {label}{sep}{Si or Sall}.
-            sep: (str), default "-".
-            sites_name: (str),default "S".
-            dup: (int), default 3.
-            prefix:(str), the class prefix of one batch data.
-        """
-        self.data = data
-        self.sites_name = sites_name
-        self.dup = dup
-        self.data2 = {}
-        self.sep = sep
-        self.data3 = self.data
-        self.label = []
-        self.mark = [f"{sites_name}{i}" for i in range(dup)] + [f"{sites_name}all"]
-        self.check()
-        self.prefix = prefix
-
-    def check(self):
-        key = list(self.data.keys())
-        try:
-            labels, marks = list(zip(*[i.split(self.sep) for i in key]))
-        except BaseException:
-            try:
-                prefixs, labels, marks = list(zip(*[i.split(self.sep) for i in key]))
-                prefix = list(set(prefixs))
-                if len(prefix) >= 1:
-                    print(f"There are {len(prefix)} prefix.")
-            except BaseException:
-                raise ValueError("The key should named '{label}-{Sx}' or '{prefix}-{label}-{Sx}'. ")
-        self.label = list(set(labels))
-        mark = set(marks)
-
-        assert set(self.mark) == mark
-
-    def __setitem__(self, key, value: Dict):
-        assert self.sep in key
-        assert key.split(self.sep)[-1] in self.mark
-        assert len(key.split(self.sep)) in [2, 3], "The key should named '{label}-{Sx}' or '{prefix}-{label}-{Sx}'."
-        if self.prefix:
-            if len(key.split(self.sep)) != 3:
-                raise UserWarning(f"There are {self.prefix} in definition but the key  {key} is with out prefix."
-                                  f"Advise use {{prefix}}-{{label}}-{{Sx}}")
-        self.data[key].update(value)
-
-    def update2(self, label: str, site: Union[int, str], value: Dict, prefix=None):
-        if isinstance(site, int):
-            pass
-        else:
-            assert f"{self.sites_name}{site}" in self.mark, "Keep site is int or 'all'."
-        if prefix:
-            key = f"{prefix}{self.sep}{label}{self.sep}{self.sites_name}{site}"
-        elif self.prefix:
-            key = f"{self.prefix}{self.sep}{label}{self.sep}{self.sites_name}{site}"
-        else:
-            key = f"{label}{self.sep}{self.sites_name}{site}"
-        self.data.update({key: value})
-
-    def settle(self):
-        self.check()
-        for key in self.data.keys():
-            if "all" in key:
-                label = key.replace(f"{self.sep}{self.sites_name}all", "")
-                for site in range(self.dup):
-                    nk = f"{label}{self.sep}{self.sites_name}{site}"
-                    if nk in self.data2:
-                        self.data2[nk].update(self.data[key])
-                    else:
-                        self.data2.update({nk: self.data[key]})
-            else:
-                if key in self.data2:
-                    self.data2[key].update(self.data[key])
-                else:
-                    self.data2.update({key: self.data[key]})
-        return self.data2
-
-    def settle_to_pd(self):
-        data = self.settle()
-        return pd.DataFrame.from_dict(data).T
