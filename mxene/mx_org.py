@@ -697,7 +697,7 @@ def check_mx_data(pt, ck_pt=True, ck_conver=True, ck_st=True, get_rcmd_pt=True, 
     else:
         c5, msg5 = True, []
 
-    if c1 and any((c2, c5)) and c3:
+    if c1 and c2 and c3 and c5:
         if (pt / out_file).isfile():
             os.remove(pt / out_file)
     else:
