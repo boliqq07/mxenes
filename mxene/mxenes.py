@@ -335,7 +335,7 @@ class MXene(Structure):
                       base="Ti", carbide_nitride="C",
                       n_base=2, add_noise=True,
                       super_cell=(3, 3, 1), add_atoms=None, add_atoms_site=None,
-                      coords_are_cartesian=True) -> "MXene":
+                      coords_are_cartesian=True,) -> "MXene":
         """
         Generate single atom doping MXenes.
         产生理想的单原子掺杂MXenes结构。
@@ -393,7 +393,7 @@ class MXene(Structure):
 
         z_axis = 2.5 * (n_layer - 3) + 25
         lattice = Lattice.from_parameters(3.0, 3.0, z_axis, 90.0000, 90.0000, 120)
-        z_setp = 1.25 / z_axis
+        z_step = 1.25 / z_axis
 
         ter_axis = cls.tem_z_axis
         if terminal in ter_axis:
@@ -404,7 +404,7 @@ class MXene(Structure):
         fracs = []
         for i in np.arange(0, n_layer):
             index = -round((n_layer - 1) / 2) + i
-            fracs.append(d[abs(index % 3)] + [index * z_setp + 0.5])
+            fracs.append(d[abs(index % 3)] + [index * z_step + 0.5])
         if terminal_site is None:
             pass
         else:
@@ -416,10 +416,10 @@ class MXene(Structure):
                 sam1, sam2 = 0, -1
 
             start = copy.copy(fracs[sam1])
-            start[-1] = -oz_step - round((n_layer - 1) / 2) * z_setp + 0.5
+            start[-1] = -oz_step - round((n_layer - 1) / 2) * z_step + 0.5
             fracs.insert(0, start)
             end = copy.copy(fracs[sam2])
-            end[-1] = oz_step + round((n_layer - 1) / 2) * z_setp + 0.5
+            end[-1] = oz_step + round((n_layer - 1) / 2) * z_step + 0.5
             fracs.append(end)
             mx_list.insert(0, terminal)
             mx_list.append(terminal)

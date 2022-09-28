@@ -175,7 +175,7 @@ class MyTestCase(unittest.TestCase):
                                  n_base=2, add_noise=True,
                                  super_cell=(3, 3, 1), add_atoms=None, add_atoms_site=None)
         st = mx.add_face_random(number=40, debug=False)
-        st[39].show()
+        st[30].show()
 
     def test_add_random_16(self):
         import matplotlib.pyplot as plt

@@ -11,6 +11,7 @@ import pandas as pd
 
 pd.set_option("display.max_columns", None)
 pd.set_option("display.max_rows", None)
+pd.set_option("display.width", 1000)
 
 
 def get_message(msg, names=('Job_Id', 'job_state', 'comment', 'init_work_dir',)):
