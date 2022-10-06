@@ -106,7 +106,7 @@ def coarse_and_spilt_array_ignore_force_plane(array, ignore_index=None, n_cluste
         method:(str) default None. others: "agg", "k_means", None.
         n_cluster: (int) number of cluster for "agg", "k_means".
         ignore_index: jump some atoms.
-        force_plane: change the single atom to nearest group.
+        force_plane: change the single atom to the nearest group.
         reverse: reverse the label.
 
     Returns:
@@ -125,22 +125,25 @@ def coarse_and_spilt_array_ignore_force_plane(array, ignore_index=None, n_cluste
 
     label = coarse_and_spilt_array(array, tol=tol, method=method, n_cluster=n_cluster, reverse=reverse)
 
-    # if len(label) < len(array):
     label_dict = Counter(label)
     common_num = Counter(list(label_dict.values())).most_common(1)[0][0]
-    # common_num = label_dict.most_common(1)[0][1]
 
     force_label = []
     for k in label_dict.keys():
         if label_dict[k] >= common_num - 2 and label_dict[k] < common_num:
             force_label.append(k)
     if len(force_label) > 1:
-        raise TypeError("just for single doping.")
+        if not force_plane:
+            warnings.warn("Find 2 or more atoms, can't to be split.")
+        else:
+            raise ValueError("Find 2 or more atoms, can't to be split, use 'ignore_index' to jump them"
+                             " or use your self defined 'array'.")
     elif len(force_label) == 1:
         force_label = force_label[0]
     else:
         force_label = None
-    if force_plane and common_num >= 4:
+
+    if force_plane and common_num >= 3:
         err = []
         d = list(set(label))
         d.sort()
@@ -187,6 +190,37 @@ def coarse_and_spilt_array_ignore_force_plane(array, ignore_index=None, n_cluste
             res_label[res_label > i] -= s
         i += 1
         m = max(res_label)
+
+    if not force_plane:
+        if np.any(np.isinf(res_label)):
+            warnings.warn("Some atoms is not be split (grouped), The code try to reformed it, "
+                          "but it could lead to an error, manual checking is suggested.")
+
+            res_label[np.isinf(res_label)] = np.inf
+            if np.sum(np.isinf(res_label)) == 1:
+                err_index = np.where(np.isinf(res_label))[0]
+                val_index = np.isfinite(res_label)
+                layer1_values = np.min(res_label)
+                layer2_values = layer1_values + 1 if layer1_values + 1 in res_label else layer1_values + 2
+                la1 = len(np.where(res_label == layer1_values)[0])
+                la2 = len(np.where(res_label == layer2_values)[0])
+                if la1 == la2 - 1:
+                    res_label[err_index] = layer1_values
+                elif la2 == la1 - 1:
+                    res_label[err_index] = layer2_values
+                elif la1 == 1 and la2 == 1:
+                    res_label[err_index] = max(res_label[val_index]) + 1
+                else:
+                    raise ValueError("Some atoms is not be split (grouped), and The code reformed failed. "
+                                     "One solution: use 'array' directly. "
+                                     "One another solution: use 'ignore_index' to jump it.")
+            else:
+                raise ValueError("Some atoms is not be split (grouped), One solution: use 'array' directly. "
+                                 "One another solution: use 'ignore_index' to jump it.")
+
+    if np.all(np.isfinite(res_label)):
+        res_label = res_label.astype(int)
+
     return res_label
 
 
@@ -297,15 +331,16 @@ def get_plane_neighbors_to_center_raw(st: Structure, center, neighbors_name: Uni
     return points_indices, offset_vectors, distances
 
 
-def get_plane_neighbors_to_center(st: Structure, center, neighbors_name: Union[List, Tuple, str] = "O",
-                                  ignore_index: Union[int, List, Tuple] = None,
+def get_plane_neighbors_to_center(st: Structure, center_name, neighbors_name: Union[List, Tuple, str] = "O",
+                                  ignore_index: Union[int, List, Tuple] = None, center_index = 44,
                                   r=6.0, top=3, tol=0.6, plane=True, n_cluster=2) -> Dict[int, Dict]:
     """
     Get neighbor to center atom.
 
     Args:
+        center_index: center index.  center_name or center_index should be offered.
         st: (Structure),
-        center: (str), name of center.
+        center_name: (str), name of center.
         neighbors_name: (str, tuple of str) neighbors_name or names tuple.
         ignore_index:(int,list),  ignore_index. refer to all structure atom list.
         r: (float), cut radius.
@@ -319,10 +354,9 @@ def get_plane_neighbors_to_center(st: Structure, center, neighbors_name: Union[L
     """
     # Make sure in same z-axis level, get the index of O
     sites = st.sites
-    center_m0 = center
 
     if plane is True:
-        samez_o_index = get_nearest_plane_atom_index(st, center, special_name=neighbors_name, n_cluster=n_cluster)
+        samez_o_index = get_nearest_plane_atom_index(st, center_name, special_name=neighbors_name, n_cluster=n_cluster)
     else:
         if isinstance(neighbors_name, str):
             samez_o_index = np.array(list(st.indices_from_symbol(neighbors_name)))
@@ -342,7 +376,7 @@ def get_plane_neighbors_to_center(st: Structure, center, neighbors_name: Union[L
     # get distance
 
     center_indices, points_indices, offset_vectors, distances = st.get_neighbor_list(r=r,
-                                                                                     sites=[sites[center_m0], ],
+                                                                                     sites=[sites[center_index], ],
                                                                                      numerical_tol=1e-4,
                                                                                      exclude_self=True)
     # Relative to the center
@@ -450,6 +484,8 @@ def get_common_name(structure: Structure, jump_atom_type=("C", "O", "N", "H", "P
     base_metal = counter_name.most_common(1)[0][0]
     return base_metal, structure.indices_from_symbol(base_metal)
 
+# def get_pure_center()
+
 
 def check_random_state(seed):
     """Turn seed into a np.random.RandomState instance
@@ -460,7 +496,7 @@ def check_random_state(seed):
         If seed is None, return the RandomState singleton used by np.random.
         If seed is an int, return a new RandomState instance seeded with seed.
         If seed is already a RandomState instance, return it.
-        Otherwise raise ValueError.
+        Otherwise, raise ValueError.
     """
     if seed is None or seed is np.random:
         return np.random.mtrand._rand
