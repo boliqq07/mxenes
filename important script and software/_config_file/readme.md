@@ -1,0 +1,1 @@
+This dir contains some config file or general batch.
