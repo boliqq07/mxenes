@@ -30,3 +30,5 @@ to generate the configuration file.
 >>> from mxene.conf_files import write_batch
 >>> write_batch()
 ```
+
+install 
