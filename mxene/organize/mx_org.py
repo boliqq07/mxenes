@@ -1,4 +1,56 @@
 """
+**** This script is used to reorganize the MXenes folder ****
+
+0. This code can be used as a script alone, need to install python3, if you need to obtain the recommended path, need to install pymatgen,ase,mxene and other packages.
+
+1. This code does not change the file content, but only adjusts the directory (pay attention to the data backup first, ensure that everything is correct, and then delete the original folder).
+
+2. If the code fails to pass after analysis, add the un_mark.txt file to the path to output the necessary information.
+
+3. If both the optimization structure folder and the static computing folder exist, only the static computing (not added, under development) is saved by default.
+
+4. After sorting out the data, the data cannot appear in the same folder, that is, the calculation file and the sub-folder, (except for auxiliary files).
+
+5. All un-calculated or un_mark data is not recommended to be uploaded to the database.
+
+6. This script can be distributed freely and can be used freely. The version in the mxene package is the source version. If you need to change the source version of any bug or important content, please contact me.
+
+The final unified folder format is:
+
+**(1) does not adsorb **
+
+MXenes ->  Basal number classification -> Base name -> Load content -> Dopant -> pure/pure_static
+
+Examples
+
+MXenes ->  M2C ->  Ti2NO2 ->  no_add ->  no_doping ->  pure/pure_static
+
+MXenes ->  M2N ->  Ti2NO2 ->  no_add ->  Mo        ->  pure/pure_static
+
+* * * * (2) adsorption
+
+MXenes ->  Basal number classification -> Base name -> Load content -> Dopant -> Adsorbate -> The label
+
+Examples
+
+MXenes ->  M2N  ->  Ti2NO2      ->  no_add ->  no_dopin ->  H/add_H  ->  top ->  00
+
+MXenes ->  M3N2 ->  TiNCrNTi-O2 ->  Hf     ->  C         ->  Li ->  S0  ->  00
+
+**(3)NEB**
+
+MXenes ->  Basal number classification -> Base name -> Load content -> Dopant -> Adsorbate -> Equivalent site -> Path name
+
+Examples
+
+MXenes ->  M2N ->  Ti2NO2 ->  no_add ->  no_doping ->  H ->  S0-S1 ->  00/01/01/03/04/ini/fin/...
+
+'->' represents the 'next level'.
+'/' means 'or'.
+
+"""
+
+"""
 
 ****此脚本用来重新组织 MXenes文件夹****
 
@@ -274,7 +326,7 @@ def copy_disk(old_pt: Union[str, path.Path], new_pt: Union[str, path.Path], file
               cover=False, remove=False):
     """
     Copy files,disks of old path to new path.
-    复制旧路径下的子文件，子文件夹到新的路径下。
+    Copy the subfiles in the old path and the sub-folders in the new path.
 
     Args:
         old_pt: (str, path.Path, os.PathLike,pathlib.Path), old path
@@ -341,9 +393,7 @@ def copy_disk(old_pt: Union[str, path.Path], new_pt: Union[str, path.Path], file
 
 def check_structure_contcar(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=None):
     """
-    Check structure of contar and poscar are consistent.
-
-    检查POSCAR，CONTCAR结构是否对应。
+    Check that the POSCAR, CONTCAR constructs correspond.
 
     Args:
         pt: (str, path.Path, os.PathLike,pathlib.Path), path
@@ -392,9 +442,7 @@ def check_structure_contcar(pt: Union[str, path.Path, os.PathLike, pathlib.Path]
 
 def check_convergence(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=None):
     """
-    Check final energy.
-
-    检查结构是否收敛。
+    Check final energy. Check the structure for convergence.
 
     Args:
         pt: (str, path.Path, os.PathLike,pathlib.Path), path
@@ -435,9 +483,7 @@ def check_convergence(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=
 
 def check_vasprun(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=None):
     """
-    Check final energy.
-
-    是否具有vasprun.xml
+    Check final energy with vasprun.xml.
 
     Args:
         pt: (str, path.Path, os.PathLike,pathlib.Path), path
@@ -474,8 +520,10 @@ def get_recommend_path(pt: Union[str, path.Path, os.PathLike, pathlib.Path], **k
     """
     Get recommend path.
 
-    根据结构，获取推荐路径（不一定是对的，需要检查）。
-    需要安装 mxene 包:
+    Based on the structure, get the recommended path (not necessarily correct, need to check).
+
+    The mxene package is required:
+
     pip install mxene
 
     Args:
@@ -499,7 +547,7 @@ def get_recommend_path(pt: Union[str, path.Path, os.PathLike, pathlib.Path], **k
     if "equ_name" in kwargs:
         del kwargs["equ_name"]
 
-    from mxene.mxenes import MXene
+    from mxene.core.mxenes import MXene
     if contcar.isfile():
         try:
             mx = MXene.from_file(contcar)
@@ -528,7 +576,6 @@ def get_recommend_path(pt: Union[str, path.Path, os.PathLike, pathlib.Path], **k
 def check_pt(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=None):
     """
     Check the path is in standard.
-    检查路径是否符合标准
 
     Args:
         msg: (list), message.
@@ -631,7 +678,6 @@ def check_pt(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=None):
 def find_leaf_path(root_pt: Union[str, path.Path, os.PathLike, pathlib.Path]) -> List[path.Path]:
     """
     Find the leaf path.
-    获取所有叶节点路径.
 
     Args:
         root_pt: pt: (str, path.Path, os.PathLike,pathlib.Path), path.
@@ -657,8 +703,6 @@ def check_mx_data(pt, ck_pt=True, ck_conver=True, ck_st=True, get_rcmd_pt=True, 
                   out_file="un_mark.txt"):
     """
     Check MXene data in total.
-
-    总检查MXene数据.
 
     Args:
         pt: pt: (str, path.Path, os.PathLike,pathlib.Path), path.

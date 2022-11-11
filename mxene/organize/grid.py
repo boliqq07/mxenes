@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from collections import Counter
+
 # @Time  : 2022/10/2 13:20
 # @Author : boliqq07
 # @Software: PyCharm
 # @License: MIT License
-
+import itertools
 from typing import List, Tuple
 
 import numpy as np
@@ -12,7 +12,7 @@ from pymatgen.core import Structure
 from sklearn.utils import check_random_state
 
 from mgetool.tool import group_spilt_array
-from mxene.mxenes import MXene
+from mxene.core.mxenes import MXene
 
 
 def group_space(structures: List[Structure]) -> Tuple[List[Structure], List[np.ndarray]]:
@@ -101,10 +101,11 @@ def group_space(structures: List[Structure]) -> Tuple[List[Structure], List[np.n
 # kwarg_strain_list = [i for i in pg22]
 
 
-def augment_base_mxene(structures: List[MXene], numbers=512, random_state=None, lr=1.0,
-                       extrusion=True, strain=True, tun_layer=True, add_noise=True,
-                       kwarg_strain_list=None, kwarg_extrusion_list=None):
+def random_augment_base_mxene(structures: List[MXene], numbers=512, random_state=None, lr=1.0,
+                              extrusion=True, strain=True, tun_layer=True, add_noise=True,
+                              kwarg_strain_list=None, kwarg_extrusion_list=None):
     """添加结构变化，批量产生随机数据。用于随机优化。
+    Add structural changes to generate random data in batches. Used for stochastic optimization.
 
     1. 晶胞整体尺寸 adjust_lattice
     2. 层间距  tun_layer
@@ -159,6 +160,51 @@ def augment_base_mxene(structures: List[MXene], numbers=512, random_state=None, 
 
     return res
 
+def augment_base_mxene(structure: MXene, lr=1.0, extrusion=True, strain=True, tun_layer=True,
+                       add_noise=False, kwarg_strain_list=None, kwarg_extrusion_list=None):
+    if extrusion:  # drop this , but use one auto get.
+        pass
+    if kwarg_extrusion_list is None:
+        kwarg_extrusion_list = [{}]
+    if kwarg_strain_list is None:
+        kwarg_strain_list = [{}]
+    resi = []
+    mxi = structure
+
+    is_dop_for_extrusion = True if mxi.symbol_set[-1] in mxi._predefined_dop_list \
+                                   and mxi.symbol_set[-1] != "O" else False
+
+    for kwarg_extrusion, kwarg_strain in itertools.product(kwarg_extrusion_list, kwarg_strain_list):
+        mxi0 = mxi.relax_base(random_state=None, lr=lr, extrusion=is_dop_for_extrusion, strain=strain,
+                              add_noise=add_noise, tun_layer=tun_layer, kwarg_extrusion=kwarg_extrusion,
+                              kwarg_strain=kwarg_strain)
+        mxi0.mark_label = mxi.mark_label
+        resi.append(mxi0)
+    return resi
+def exhaustion_augment_base_mxene(structures: List[MXene], lr=1.0,
+                                  extrusion=True, strain=True, tun_layer=True, add_noise=False,
+                                  kwarg_strain_list=None, kwarg_extrusion_list=None):
+    """仅用于测试！！！ 添加结构变化，批量产生随机数据。用于穷举测试。
+    For testing only!! Add structural changes to generate random data in batches. Used for exhaustive testing.
+
+    1. 晶胞整体尺寸 adjust_lattice
+    2. 层间距  tun_layer
+    3. 掺杂原子位置局部变形 extrusion
+    4. 随机位移 add_noise
+    """
+
+    res = []
+
+    for label, mxi in enumerate(structures):
+        resi = augment_base_mxene(mxi, lr =lr, extrusion = extrusion, strain = strain, tun_layer = tun_layer,
+                           add_noise = add_noise,kwarg_strain_list = kwarg_strain_list,
+                           kwarg_extrusion_list = kwarg_extrusion_list)
+
+        res.extend(resi)
+
+    return res
+
+
 #### Augment absorb mxene ####
 
 # factor = itertools.product(np.linspace(-0.1, 0.1, 20), np.linspace(-0.01, 0.01, 20))
@@ -171,21 +217,6 @@ def augment_base_mxene(structures: List[MXene], numbers=512, random_state=None, 
 # kwarg_extrusion_list = [i for i in pg2]
 
 
-def augment_absorb_mxene(structures: List[MXene], numbers=512, random_state=None, lr=1,
-                         extrusion=True, strain=False, tun_layer=False, add_noise=True,
-                         kwarg_strain_list=None, kwarg_extrusion_list=None):
-    """添加吸附后的结构变化，批量产生随机数据。用于随即优化。
-    考虑到 单个原子的吸附对结构不大， 晶胞整体优化，及层间距优化关闭。
-
-    1. 掺杂原子位置局部变形 extrusion
-    2. 随机位移 add_noise
-    """
-
-    return augment_base_mxene(structures, numbers=numbers, random_state=random_state,
-                              lr=lr, extrusion=extrusion, strain=strain, tun_layer=tun_layer,
-                              add_noise=add_noise, kwarg_strain_list=kwarg_strain_list,
-                              kwarg_extrusion_list=kwarg_extrusion_list)
-
 ##### Add H  ########
 
 # absorb_space = {'site_name': ['S0', 'S1', 'S2'],
@@ -197,8 +228,8 @@ def augment_absorb_mxene(structures: List[MXene], numbers=512, random_state=None
 # kwarg_absorb_list = [i for i in pg3]
 
 
-def add_absorb_H_batch(structures: List[MXene], random_state=None,
-                       kwarg_absorb_list=None):
+def random_add_absorb_H_batch(structures: List[MXene], random_state=None,
+                              kwarg_absorb_list=None):
     """Add H the number is changed."""
     rdm = check_random_state(random_state)
 
@@ -232,4 +263,45 @@ def add_absorb_H_batch(structures: List[MXene], random_state=None,
 
         res.append(mxi0)
 
+    return res
+
+
+def add_absorb_H_batch(structure: MXene, kwarg_absorb_list=None):
+    """Testing!!!  Add H the number is changed."""
+
+    if kwarg_absorb_list is None:
+        kwarg_absorb_list = [{}]
+
+    mxi = structure
+
+    resi = []
+    for kwarg_absorb in kwarg_absorb_list:
+        mxi0 = mxi.copy()
+        nm = True if mxi0.symbol_set[-1] in mxi0._predefined_nm_list else False
+        doped = mxi0.doped
+        if not nm:
+            kwarg_absorb['site_type'] = "top"
+
+        if not doped:
+            kwarg_absorb['site_type'] = "center"
+            kwarg_absorb['pure'] = True
+            kwarg_absorb['center'] = None
+
+        mxi0 = mxi0.add_absorb(add_noise=False, up_down="up",
+                               equivalent="fin_opt", absorb="H",
+                               ignore_index=-1, tol=0.2, **kwarg_absorb)
+
+        mxi0.mark_label = mxi.mark_label
+
+        resi.append(mxi0)
+
+    return resi
+
+def exhaustion_add_absorb_H_batch(structures: List[MXene],
+                                  kwarg_absorb_list=None):
+    """Testing!!!  Add H the number is changed."""
+    res = []
+    for mxi in structures:
+        resi = add_absorb_H_batch(mxi, kwarg_absorb_list=kwarg_absorb_list)
+        res.append(resi)
     return res

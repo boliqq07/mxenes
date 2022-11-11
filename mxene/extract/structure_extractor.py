@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+
+# @Time  : 2022/10/2 13:20
+# @Author : boliqq07
+# @Software: PyCharm
+# @License: MIT License
+
 import functools
 import itertools
 import warnings
@@ -10,146 +17,8 @@ import numpy as np
 import pandas as pd
 from pymatgen.core import Structure, Element
 
-from mxene.functions import get_common_name, get_center_name, get_plane_neighbors_to_center, \
+from mxene.core.functions import get_common_name, get_center_name, get_plane_neighbors_to_center, \
     get_nearest_plane_atom_index, coarse_and_spilt_array
-
-
-def tetra_sites(st: Structure, base_metal="Ti", s: int = None, r=6.0, tol=0.6, ignore_index=45, center_m0=None,
-                return_numpy=True):
-    """
-    Get tetra sites (4 sites) of one O.
-
-    Args:
-        st: (Structure), pymatgen structure.
-        base_metal: (str), base metal name.
-        center_m0: (int), index of center element. None is automatic judgement.
-        s: (int,), specific the index of O manually.
-        None is automatic judgement.
-        return_numpy: (bool), return type, default numpy. or could be dict.
-        r: (float), cut radius.
-        ignore_index: (int,list), jump index for judge center. such as adsorbed atoms.
-        tol: (float), tolerance to find neighbor.
-
-    Returns:
-        sites_msg: (dict), if np.ndarray, shape(20,) [center (1),neighbors(3),distance_c_vs_n (4*1=4),offset(4*3=12)].
-    """
-    if isinstance(st, str):
-        st = Structure.from_file(st)
-
-    if base_metal is None:
-        base_metal, _ = get_common_name(st)
-    else:
-        counts = Counter([i.species_string for i in st.sites])
-        assert counts[base_metal] >= 3, f"Please heck your base metal, is '{base_metal}' or not."
-
-    center_m0_name, center_m0 = get_center_name(st, center_index=center_m0, ignore_index=ignore_index)
-
-    points_and_distance_to_si = get_plane_neighbors_to_center(st, center=s, neighbors_name=(base_metal, center_m0_name),
-                                                              ignore_index=ignore_index,
-                                                              r=r, top=1, tol=tol)
-
-    points_and_distance_to_si = points_and_distance_to_si[0]
-    triangular_pyramid_sites = {s: points_and_distance_to_si}
-    if return_numpy:
-        # np.array type result for use convenience.
-        for k, v in triangular_pyramid_sites.items():
-            resi = [k, ]
-            resi.extend(v.keys())
-
-            for d in zip([0.0, np.array([0.0, 0.0, 0.0])], list(v.values())[0], list(v.values())[1],
-                         list(v.values())[2]):
-                if isinstance(d[0], float):
-                    resi.extend(d)
-                else:
-                    [resi.extend(i) for i in d]
-
-            return np.array(resi)
-
-            # shape(20,) [center (1),neighbors(3),distance_c_vs_n (4*1=4),offset(4*3=12)]
-
-    else:
-        return points_and_distance_to_si
-
-
-def s012_tetra_sites(st: Structure, base_metal="Ti", center_m0=None, s=None, return_numpy=True, r=6.0,
-                     tol=0.6, ignore_index=45):
-    """
-    Get tetra sites (4 sites) of three O's sites: S0,S1,S2.
-
-    Args:
-        st: (Structure), pymatgen structure.
-        base_metal: (str), base metal name.
-        center_m0: (int), index of center element. None is automatic judgement.
-        s: (list), list of all top site indexes of tetra (such as for three O atoms). specific the index of O manually.
-        None is automatic judgement.
-        return_numpy: (bool), return type, default numpy. or could be dict.
-        r: (float), cut radius.
-        ignore_index: (int,list), jump index for judge center. such as adsorbed atoms.
-        tol: (float), tolerance to find neighbor.
-
-    Returns:
-        sites_msg: (dict,np.ndarray), if np.ndarray : for each line with shape(20,) [center (1),neighbors(3),
-        distance_c_vs_n (4*1=4),offset(4*3=12)].
-    """
-
-    if isinstance(st, str):
-        st = Structure.from_file(st)
-
-    if base_metal is None:
-        base_metal, _ = get_common_name(st)
-    else:
-        counts = Counter([i.species_string for i in st.sites])
-        assert counts[base_metal] >= 3, f"Please heck your base metal, is '{base_metal}' or not."
-
-    center_m0_name, center_m0 = get_center_name(st, center_index=center_m0, ignore_index=ignore_index)
-
-    if s is None:
-        points_and_distance_to_m0 = get_plane_neighbors_to_center(st, center=center_m0, ignore_index=ignore_index,
-                                                                  r=6.0, top=3)
-        s0 = list(points_and_distance_to_m0[0].keys())[0]
-        s1 = list(points_and_distance_to_m0[1].keys())[0]
-        s2 = list(points_and_distance_to_m0[2].keys())[0]
-        s = [s0, s1, s2]
-
-    triangular_pyramid_sites = {}
-    for i, si in enumerate(s):
-        points_and_distance_to_si = get_plane_neighbors_to_center(st, center=si,
-                                                                  neighbors_name=(base_metal, center_m0_name),
-                                                                  ignore_index=ignore_index,
-                                                                  r=r, top=1, tol=tol)
-
-        points_and_distance_to_si = points_and_distance_to_si[0]
-
-        if i == 0 and len(points_and_distance_to_si) == 2:
-            # for m0-o0, with large deformation, add it manually.
-            points_and_distance_to_si[center_m0] = (
-                np.sum(((st.cart_coords[center_m0] - st.cart_coords[si]) ** 2)) ** 0.5,
-                np.array([0.0, 0.0, 0.0]))
-        elif len(points_and_distance_to_si) != 3:
-            raise UserWarning("Bad structure, 1. try please pass the top sites to 's', or set point4 manually by "
-                              "'set_point4','setp4i'")
-        triangular_pyramid_sites[si] = points_and_distance_to_si
-
-    point_array = []
-    if return_numpy:
-        # np.array type result for use convenience.
-        for k, v in triangular_pyramid_sites.items():
-            resi = [k, ]
-            resi.extend(v.keys())
-
-            for d in zip([0.0, np.array([0.0, 0.0, 0.0])], list(v.values())[0], list(v.values())[1],
-                         list(v.values())[2]):
-                if isinstance(d[0], float):
-                    resi.extend(d)
-                else:
-                    [resi.extend(i) for i in d]
-
-            point_array.append(np.array(resi))
-
-        # [center,neighbor,*,distance_c_vs_n,offset,distance_c_vs_n,offset,distance_c_vs_n,offset]
-        return point_array
-    else:
-        return triangular_pyramid_sites
 
 
 class SingleTetra:
@@ -589,7 +458,7 @@ class Tetra:
         """
 
         self.point4 = s012_tetra_sites(self.st, base_metal=base_metal, r=r, tol=tol,
-                                       center_m0=self.center_m0, s=s, return_numpy=True,
+                                       center_index=self.center_m0, s=s, return_numpy=True,
                                        ignore_index=self.ignore_index)
         self.preprocess()
 
@@ -692,6 +561,146 @@ class Tetra:
         self.checked = True
 
 
+def tetra_sites(st: Structure, base_metal="Ti", s: int = None, r=6.0, tol=0.6, ignore_index=45, center_m0=None,
+                return_numpy=True):
+    """
+    Get tetra sites (4 sites) of one O.
+
+    Args:
+        st: (Structure), pymatgen structure.
+        base_metal: (str), base metal name.
+        center_m0: (int), index of center element. None is automatic judgement.
+        s: (int,), specific the index of O manually.
+        None is automatic judgement.
+        return_numpy: (bool), return type, default numpy. or could be dict.
+        r: (float), cut radius.
+        ignore_index: (int,list), jump index for judge center. such as adsorbed atoms.
+        tol: (float), tolerance to find neighbor.
+
+    Returns:
+        sites_msg: (dict), if np.ndarray, shape(20,) [center (1),neighbors(3),distance_c_vs_n (4*1=4),offset(4*3=12)].
+    """
+    if isinstance(st, str):
+        st = Structure.from_file(st)
+
+    if base_metal is None:
+        base_metal, _ = get_common_name(st)
+    else:
+        counts = Counter([i.species_string for i in st.sites])
+        assert counts[base_metal] >= 3, f"Please heck your base metal, is '{base_metal}' or not."
+
+    center_m0_name, center_m0 = get_center_name(st, center_index=center_m0, ignore_index=ignore_index)
+
+    points_and_distance_to_si = get_plane_neighbors_to_center(st, center_index=s,
+                                                              neighbors_name=(base_metal, center_m0_name),
+                                                              ignore_index=ignore_index,
+                                                              r=r, top=1, tol=tol)
+
+    points_and_distance_to_si = points_and_distance_to_si[0]
+    triangular_pyramid_sites = {s: points_and_distance_to_si}
+    if return_numpy:
+        # np.array type result for use convenience.
+        for k, v in triangular_pyramid_sites.items():
+            resi = [k, ]
+            resi.extend(v.keys())
+
+            for d in zip([0.0, np.array([0.0, 0.0, 0.0])], list(v.values())[0], list(v.values())[1],
+                         list(v.values())[2]):
+                if isinstance(d[0], float):
+                    resi.extend(d)
+                else:
+                    [resi.extend(i) for i in d]
+
+            return np.array(resi)
+
+            # shape(20,) [center (1),neighbors(3),distance_c_vs_n (4*1=4),offset(4*3=12)]
+
+    else:
+        return points_and_distance_to_si
+
+
+def s012_tetra_sites(st: Structure, base_metal="Ti", center_index=None, s=None, return_numpy=True, r=6.0,
+                     tol=0.6, ignore_index=45):
+    """
+    Get tetra sites (4 sites) of three O's sites: S0,S1,S2.
+
+    Args:
+        st: (Structure), pymatgen structure.
+        base_metal: (str), base metal name.
+        center_index: (int), index of center element. None is automatic judgement.
+        s: (list), list of all top site indexes of tetra (such as for three O atoms).
+            specific the index of O manually. None is automatic judgement.
+        return_numpy: (bool), return type, default numpy. or could be dict.
+        r: (float), cut radius.
+        ignore_index: (int,list), jump index for judge center. such as adsorbed atoms.
+        tol: (float), tolerance to find neighbor.
+
+    Returns:
+        sites_msg: (dict,np.ndarray), if np.ndarray : for each line with shape(20,) [center (1),neighbors(3),
+        distance_c_vs_n (4*1=4),offset(4*3=12)].
+    """
+
+    if isinstance(st, str):
+        st = Structure.from_file(st)
+
+    if base_metal is None:
+        base_metal, _ = get_common_name(st)
+    else:
+        counts = Counter([i.species_string for i in st.sites])
+        assert counts[base_metal] >= 3, f"Please heck your base metal, is '{base_metal}' or not."
+
+    center_m0_name, center_index = get_center_name(st, center_index=center_index, ignore_index=ignore_index)
+
+    if s is None:
+        points_and_distance_to_m0 = get_plane_neighbors_to_center(st, center_index=center_index,
+                                                                  ignore_index=ignore_index,
+                                                                  r=6.0, top=3)
+        s0 = list(points_and_distance_to_m0[0].keys())[0]
+        s1 = list(points_and_distance_to_m0[1].keys())[0]
+        s2 = list(points_and_distance_to_m0[2].keys())[0]
+        s = [s0, s1, s2]
+
+    triangular_pyramid_sites = {}
+    for i, si in enumerate(s):
+        points_and_distance_to_si = get_plane_neighbors_to_center(st, center_index=si,
+                                                                  neighbors_name=(base_metal, center_m0_name),
+                                                                  ignore_index=ignore_index,
+                                                                  r=r, top=1, tol=tol)
+
+        points_and_distance_to_si = points_and_distance_to_si[0]
+
+        if i == 0 and len(points_and_distance_to_si) == 2:
+            # for m0-o0, with large deformation, add it manually.
+            points_and_distance_to_si[center_index] = (
+                np.sum(((st.cart_coords[center_index] - st.cart_coords[si]) ** 2)) ** 0.5,
+                np.array([0.0, 0.0, 0.0]))
+        elif len(points_and_distance_to_si) != 3:
+            raise UserWarning("Bad structure, 1. try please pass the top sites to 's', or set point4 manually by "
+                              "'set_point4','setp4i'")
+        triangular_pyramid_sites[si] = points_and_distance_to_si
+
+    point_array = []
+    if return_numpy:
+        # np.array type result for use convenience.
+        for k, v in triangular_pyramid_sites.items():
+            resi = [k, ]
+            resi.extend(v.keys())
+
+            for d in zip([0.0, np.array([0.0, 0.0, 0.0])], list(v.values())[0], list(v.values())[1],
+                         list(v.values())[2]):
+                if isinstance(d[0], float):
+                    resi.extend(d)
+                else:
+                    [resi.extend(i) for i in d]
+
+            point_array.append(np.array(resi))
+
+        # [center,neighbor,*,distance_c_vs_n,offset,distance_c_vs_n,offset,distance_c_vs_n,offset]
+        return point_array
+    else:
+        return triangular_pyramid_sites
+
+
 def structure_message(structure: Structure, prefix=None) -> Dict:
     """Get message by Tetra just for single doping MXenes."""
     # Tetra
@@ -723,7 +732,6 @@ def structure_message(structure: Structure, prefix=None) -> Dict:
     data.update(data_same)
 
     return data
-
 
 # def structure_message_simple_for_Mo(structure: Structure, prefix=None):
 #     """Just for doping in Mo HER."""
@@ -855,4 +863,3 @@ def structure_message(structure: Structure, prefix=None) -> Dict:
 #     data.update(data_same)
 #
 #     return data
-

@@ -1,9 +1,9 @@
 import unittest
 
 import numpy as np
-from pymatgen.core import Lattice
+from pymatgen.core import Lattice, Structure
 
-from mxene.mxenes import MXene
+from mxene.core.mxenes import MXene
 
 
 class MyTestCase(unittest.TestCase):
@@ -58,56 +58,17 @@ class MyTestCase(unittest.TestCase):
         frac = np.array(frac).reshape(-1, 3)
         mx = MXene(lattice, ["C"] * 9 + ["O"] * 18 + ["Mo"] * 17 + ["Cr"] * 1, frac)
         print(mx.cart_coords)
-        self.assertEqual(True, True)
 
     def test_from_poscar(self):
         mx = MXene.from_file("Y-POSCAR")
         print(mx)
 
-    def test_split_layer(self):
-        mx = MXene.from_file("Mo-POSCAR")
-        label = mx.split_layer(ignore_index=None, n_cluster=None, tol=0.5, axis=2, method=None,
-                               force_plane=False, reverse=False)
-        mx.make_supercell((3, 3, 1))
-        print(label)
-        print(mx.cart_coords)
+    def test_from_structure(self):
+        mx = Structure.from_file("Y-POSCAR")
+        mx = MXene.from_structure(mx)
+        print(mx)
 
-    def test_split_layer2(self):
-        mx = MXene.from_file("Y-POSCAR")
-        label2 = mx.split_layer(ignore_index=None, n_cluster=None, tol=0.5, axis=2, method=None,
-                                force_plane=False, reverse=False)
-        print(label2)
-
-    def test_split_layer3(self):
-        mx = MXene.from_file("Y-POSCAR")
-        label3 = mx.split_layer(ignore_index=None, n_cluster=None, tol=0.5, axis=2, method=None,
-                                force_plane=True, reverse=False)
-        print(label3)
-
-    def test_split_layer4(self):
-        mx = MXene.from_file("Y-POSCAR")
-        label3 = mx.split_layer(ignore_index=[-1], n_cluster=None, tol=0.5, axis=2, method=None,
-                                force_plane=True, reverse=False)
-        print(label3)
-
-    def test_split_layer5(self):
-        mx = MXene.from_file("Y-POSCAR")
-        label3 = mx.split_layer(ignore_index=[-1], n_cluster=None, tol=0.5, axis=2, method=None,
-                                force_plane=True, reverse=True)
-        print(label3)
-
-    def test_split_layer6(self):
-        mx = MXene.from_file("Y-POSCAR")
-        label3 = mx.split_layer(ignore_index=[-1], n_cluster=None, tol=0.5, axis=2, method=None,
-                                force_plane=True, reverse=True)
-        print(label3)
-
-    def test_next_layery(self):
-        mx = MXene.from_file("Y-POSCAR")
-        coor = mx.get_next_layer_sites()
-        print(coor)
-
-    def test_from_stand(self):
+    def test_from_stand1(self):
         mx = MXene.from_standard(terminal_site="fcc", doping=None,
                                  terminal="O",
                                  base="Ti", carbide_nitride="C",
@@ -115,7 +76,15 @@ class MyTestCase(unittest.TestCase):
                                  super_cell=(3, 3, 1), add_atoms=None, add_atoms_site=None)
         print(mx)
 
-    def test_from_stand2(self):
+    def test_from_stand_terminal_site_None(self):
+        mx = MXene.from_standard(terminal_site=None, doping="Ag",
+                                 terminal="O",
+                                 base="Ti", carbide_nitride="C",
+                                 n_base=3, add_noise=True,
+                                 super_cell=(3, 3, 1), add_atoms=None, add_atoms_site=None)
+        print(mx)
+
+    def test_from_stand_doping(self):
         mx = MXene.from_standard(terminal_site="fcc", doping="Zr",
                                  terminal="O",
                                  base="Ti", carbide_nitride="C",
@@ -152,6 +121,47 @@ class MyTestCase(unittest.TestCase):
         mx.get_disk()
         print(mx.out_dir)
 
+    def test_absorb_pure(self):
+        mx = MXene.from_standard(terminal_site="fcc",
+                                 terminal="O",
+                                 base="Ti", carbide_nitride="C",
+                                 n_base=2, add_noise=True,
+                                 super_cell=(3, 3, 1), )
+        mx.add_absorb(center=None, absorb="H", pure=True)
+        mx.get_disk()
+
+        print(mx)
+        print(mx.out_dir)
+
+    def test_absorb_pure2(self):
+        mx = MXene.from_standard(terminal_site="fcc",doping="Zr",
+                                 terminal="O",
+                                 base="Ti", carbide_nitride="C",
+                                 n_base=2, add_noise=True,
+                                 super_cell=(3, 3, 1), )
+        mx.add_absorb(center=None, absorb="H", pure=True, absorb_site = np.array([0.9,0.9,0.65]),
+                      coords_are_cartesian=False)
+        mx.get_disk()
+
+        print(mx)
+        print(mx.out_dir)
+
+    def test_add_layer(self):
+        mx = MXene.from_standard(terminal_site="fcc",doping="Zr",
+                                 terminal="O",
+                                 base="Ti", carbide_nitride="C",
+                                 n_base=2, add_noise=True,
+                                 super_cell=(3, 3, 1), )
+        mx.add_next_layer_atoms(site_type= "fcc", ignore_index = None,
+                             force_plane=False, force_finite = True,
+                             up_down="up_and_down", site_atom = "Ag",
+                                reformed_array = None, tol = 0.5)
+        mx.get_disk()
+        mx.show()
+
+        print(mx)
+        print(mx.out_dir)
+
     def test_add_interp(self):
         import matplotlib.pyplot as plt
         mx = MXene.from_standard(terminal_site="fcc", doping="Zr",
@@ -162,10 +172,11 @@ class MyTestCase(unittest.TestCase):
         f = mx.get_interp2d()
         x = np.arange(-12, 23, 0.2)
         y = np.arange(0, 21, 0.2)
-        z = f(x, y, meshed=False)
+        z = f(x, y, mesh=False)
 
-        plt.imshow(z.T)
-        plt.show()
+        # plt.imshow(z.T)
+        # plt.show()
+        # plt.show()
 
     def test_add_random(self):
         import matplotlib.pyplot as plt
@@ -196,6 +207,58 @@ class MyTestCase(unittest.TestCase):
                                  n_base=2, add_noise=True,
                                  super_cell=(3, 3, 1), add_atoms=None, add_atoms_site=None)
         sites = mx.non_equivalent_site(center=44, ignore_index=None, base_m=None, terminal=None)
+
+
+    def test_split_layer(self):
+        mx = MXene.from_file("Mo-POSCAR")
+        label = mx.split_layer(ignore_index=None, tol=0.5, axis=2,
+                               force_plane=False, reverse=False)
+        mx.make_supercell((3, 3, 1))
+        print(label)
+        print(mx.cart_coords)
+
+    def test_split_layer2(self):
+        mx = MXene.from_file("Y-POSCAR")
+        label2 = mx.split_layer(ignore_index=None, tol=0.5, axis=2,
+                                force_plane=False, reverse=False)
+        print(label2)
+
+    def test_split_layer3(self):
+        mx = MXene.from_file("Y-POSCAR")
+        label3 = mx.split_layer(ignore_index=None, tol=0.5, axis=2,
+                                force_plane=True, reverse=False)
+        print(label3)
+
+    def test_split_layer4(self):
+        mx = MXene.from_file("Y-POSCAR")
+        label3 = mx.split_layer(ignore_index=[-1], tol=0.5, axis=2,
+                                force_plane=True, reverse=False)
+        print(label3)
+
+    def test_split_layer5(self):
+        mx = MXene.from_file("Y-POSCAR")
+        label3 = mx.split_layer(ignore_index=[-1], tol=0.5, axis=2,
+                                force_plane=True, reverse=True)
+        print(label3)
+
+    def test_split_layer6(self):
+        mx = MXene.from_file("Y-POSCAR")
+        label3 = mx.split_layer(ignore_index=[-1],  tol=0.5, axis=2,
+                                force_plane=True, reverse=True)
+        print(label3)
+
+    def test_next_layery(self):
+        mx = MXene.from_file("Y-POSCAR")
+        coor = mx.get_next_layer_sites(ignore_index=-1,
+                             force_plane=True, force_finite=False,
+                             up_down="up", site_atom="O", reformed_array=None, tol=0.5)
+        print(coor)
+
+    def test_next_relax(self):
+        mx = MXene.from_file("Y-POSCAR")
+        coor = mx.relax_base(random_state=None, lr=1, extrusion=True, strain=True, tun_layer=True, add_noise=True,
+                   kwarg_extrusion=None, kwarg_strain=None, )
+        print(coor)
 
 
 if __name__ == '__main__':

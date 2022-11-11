@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+
+# @Time  : 2022/10/2 13:20
+# @Author : boliqq07
+# @Software: PyCharm
+# @License: MIT License
+
 from typing import Union
 
 import numpy as np
@@ -29,16 +36,16 @@ def fixed_atoms(atoms: Atoms, fixed_type: Union[str, float, None] = "base", dopi
     fixed_array = get_fixed_atoms(atoms, fixed_type=fixed_type, coords_are_cartesian=coords_are_cartesian)
     fixed_array = ~fixed_array[:, -1]
     fixed_array[-1] = False
-    con = FixAtoms(mask=fixed_array)
+    FixAtoms(mask=fixed_array)
 
     if doping_fixed_type == "line":
-        con2 = FixedLine(len(atoms) - 1,
+        FixedLine(len(atoms) - 1,
                          direction=doping_direction, )
 
     elif doping_fixed_type == "plane":
-        con2 = FixedPlane(len(atoms) - 1,
+        FixedPlane(len(atoms) - 1,
                           direction=doping_direction, )
     else:
         raise TypeError
-    atoms.set_constraint(constraint=[con, con2])
+    atoms.set_constraint()
     return atoms

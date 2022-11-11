@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+
+# @Time  : 2022/10/2 13:20
+# @Author : boliqq07
+# @Software: PyCharm
+# @License: MIT License
+
 import copy
 import itertools
 import pathlib
@@ -7,51 +14,55 @@ from itertools import chain
 from typing import Union, Sequence, List
 
 import numpy as np
-from ase.visualize import view
-from numpy.typing import ArrayLike
 from pymatgen.core import Structure, Lattice, SymmOp, PeriodicSite
-from pymatgen.io.ase import AseAtomsAdaptor
 
-try:
-    from pymatgen.util.typing import CompositionLike
-except BaseException:
-    CompositionLike = str
+from mxene.utility.typing import CompositionLike, ArrayLike, ListTuple
 
-from mxene.functions import coarse_and_spilt_array_ignore_force_plane, get_plane_neighbors_to_center, \
-    interp2d_nearest, coarse_and_spilt_array, check_random_state
-from mxene.disk import make_disk
-from mxene.structure_extractor import structure_message
-
-aaa = AseAtomsAdaptor()
+from mxene.core.functions import coarse_and_spilt_array_ignore_force_plane, \
+    get_plane_neighbors_to_center, Interp2dNearest, coarse_and_spilt_array, check_random_state
 
 
 class MXene(Structure):
-    """One structure for MXene.
-    ###下面为常见函数###
+    """MXene object.
 
-    # 0.创建
-    从种类创建虚拟结构：from_standard
-    读取POSCAR等文件：from_file
+    ### Bellowing is the common function ###
 
-    # 1.修改
-    插入： insert
-    添加： append
-    替换为单原子： substitute
-    替换为官能团： replace
-    删除某个种类的所有原子：remove_species
-    删除某个位点：remove_sites
-    重排序：sort
-    旋转：rotate_sites
-    随机扰动：perturb
-    超胞：make_supercell
-    添加吸附物:add_absorb
+    1. Create:
+        from_standard: Create a virtual structure from the category.
 
-    # 3.读取结构信息
-    get_structure_message
+        from_file: Read POSCAR and other files.
 
-    # 4.读取结构信息
-    add_absorb: 添加吸附原子
-    add_face_random_*****: 随机批量添加原子
+    2. Change:
+        insert: Insert atoms.
+
+        append: Add atoms.
+
+        substitute:  Replace with a single atom.
+
+        replace:  replace with the functional group.
+
+        remove_species:  Removes all atoms of a species.
+
+        remove_sites:  Delete a site.
+
+        sort:  Resort.
+
+        rotate_sites:  Rotation.
+
+        perturb:  Random disturbance.
+
+        make_supercell:  supercell.
+
+        add_absorb: Adds an adsorbed atom.
+
+        add_face_random_*****: Add atoms in random batch.
+
+        extrusion: add move affect by center atom.
+
+        tuning_layer_space: ture the layer sapce.
+
+    3. Read structural information:
+        get_structure_message : get bond, face message.
 
     """
 
@@ -117,41 +128,40 @@ class MXene(Structure):
         self.out_dir = ""
         self.mark_label = None
 
-    def get_similar_layer_atoms(self, z0=0.0, tol=0.005, axis=2, frac=True, frac_coords=None, ):
+    def get_similar_layer_atoms(self, z0=0.0, tol=0.005, axis=2, frac=True, coords=None):
         """
-        Get all same layer atoms by sites.
-        获取z位置的整个面上的原子。
+        Get all same layer atoms by z0 site.
 
         Args:
-            z0: z位置
-            tol: 容忍因子
-            axis: 默认z轴
-            frac: 是否为 分数/笛卡尔坐标
-            frac_coords: 分数/笛卡尔坐标
+            z0: float, site.
+            tol: float, tolerance factor.
+            axis: int, default the z axis.
+            frac: bool, whether it is fractional/Cartesian coordinates.
+            coords: np.ndarray, use this coordinates directly.
 
         Returns:
-            atom_list: 原子位置
+            atom_list: np.ndarray, atom index.
         """
-        if frac_coords is None:
+        if coords is None:
             if frac is True:
                 coords = self.frac_coords if isinstance(self, Structure) else self
             else:
                 coords = self.cart_coords if isinstance(self, Structure) else self
         else:
-            coords = frac_coords
+            coords = coords
         coords = coords[:, axis]
-        z0_atoms = [i for i, z in enumerate(coords) if abs(z - z0) < tol]
+        z0_atoms = np.array([i for i, z in enumerate(coords) if abs(z - z0) < tol])
         return z0_atoms
 
     def __add__(self, other: Structure) -> "MXene":
         """
-        Add the 2 MXenes with same Lattice.
+        Add 2 MXenes with same lattice.
 
         Args:
-            other: (MXenes), MXenes.
+            other: (MXenes), added MXenes.
 
         Returns:
-            result: (MXenes), MXenes.
+            result: (MXenes), new MXenes.
 
         """
         assert isinstance(other, Structure)
@@ -161,20 +171,35 @@ class MXene(Structure):
         spe.extend(other.species)
         return self.__class__(species=spe, coords=frac, lattice=self.lattice)
 
-    def split_layer(self, ignore_index=None, n_cluster=None, tol=0.5, axis=2, method=None,
-                    force_plane=True, reverse=True):
+    def split_layer(self, ignore_index=None, tol=0.5, axis=2,
+                    force_plane=True, reverse=True, force_finite=False):
         """
-        Split sites by distance or group (default z-axis).
-        根据划分原子层。
+        Split layer.
+
+        'ignore_index' means the atoms is not used to calculated.
+        'force_finite' and 'force_plane' are two method to settle the un-grouped atoms.
+
+        (1). For easily compartmentalized array, use the default parameters.
+
+        (2). Used 'ignore_index' and 'force_finite' to drop the add (absorb) atom to make the left atoms to be grouped,
+             change the 'tol' to check the result.
+        (3). Used 'ignore_index'=None and 'force_plane' to make the 'out-of-station' doped atom to be grouped.
+             the 'tol' could be appropriate smaller (less than interlayer spacing).
+        (4). For absorb + doped system, 'ignore_index', 'force_finite' and 'force_plane' could be used together,
+             change the 'tol' to check the result.But, for large structural deformations array.
+             This function is not effective always.
+        (5). If all the parameter are failed, please generate the input array by hand or tune the value in array.
+
+        See Also:
+            :doc:`functions.coarse_and_spilt_array_ignore_force_plane`
 
         Args:
-            tol: (float) tolerance distance for spilt.
-            method:(str) default None. others: "agg", "k_means", None.
-            n_cluster: (int) number of cluster for "agg", "k_means".
-            axis:(int), z-axis
-            ignore_index: jump some atoms.
-            force_plane: change the single atom to the nearest group.
-            reverse: reverse the label.
+            axis: (int), axis to be grouped.
+            tol: (float), tolerance distance for spilt.(less than interlayer spacing)
+            ignore_index: (int, np.ndarray), jump 'out-of-station' atoms.
+            force_plane: (bool), change the single atom to the nearest group.
+            force_finite: (bool), force to change the index finite.
+            reverse: (bool), reverse the label.
 
         Returns:
             labels: (np.ndarray) with shape (n,).
@@ -182,23 +207,21 @@ class MXene(Structure):
         """
         array = self.cart_coords[:, axis]
         layer_label = coarse_and_spilt_array_ignore_force_plane(array, ignore_index=ignore_index,
-                                                                n_cluster=n_cluster, tol=tol,
-                                                                method=method, force_plane=force_plane,
-                                                                reverse=reverse)
+                                                                tol=tol, force_plane=force_plane,
+                                                                reverse=reverse, force_finite=force_finite)
         return layer_label
 
     @staticmethod
     def check_terminal_sites_by_3_layer(array, up_down="up", tol=0.5):
         """
-        Check the site.
-        检查表面三层的堆垛方式类型。
+        Check the type of stacking type of the surface three layers.
 
         The up and down are different in some instance.
 
         Args:
-            array: coords of 3 layer atoms.
-            up_down: (str) up,down
-            tol: (float) tol to split.
+            array: (np.ndarray), coords of 3 layer atoms.
+            up_down: (str), up,down
+            tol: (float), tol to split.
 
         Returns:
             name: (str)
@@ -238,7 +261,8 @@ class MXene(Structure):
     def get_next_layer_sites_xy(array, site_type: Union[None, str] = "fcc",
                                 up_down="up", ):
         """
-        按照目前原子层位点，以及堆垛方式，获取下一层原子位置。
+        According to the current atomic layer site, and stacking method,
+        to obtain the atomic position (x, y) of the next layer.
 
         Args:
             array: (np.array), with shape (Nx2), site of all atoms
@@ -246,13 +270,13 @@ class MXene(Structure):
             up_down: (str),  up and down
 
         Returns:
-
+            array: (np.array),array.
         """
 
         reverse = True if up_down == "up" else False
 
-        layer_label = coarse_and_spilt_array_ignore_force_plane(array[:, -1], tol=0.5, reverse=reverse,
-                                                                )
+        layer_label = coarse_and_spilt_array_ignore_force_plane(array[:, -1], tol=0.5,
+                                                                reverse=reverse, )
 
         layer1_values = np.max(layer_label)
         layer2_values = layer1_values - 1
@@ -276,22 +300,31 @@ class MXene(Structure):
         return coords_add
 
     def get_next_layer_sites(self, site_type: Union[None, str] = "fcc", ignore_index=None,
-                             up_down="up", site_atom="O", reformed_array=None, tol=0.5):
+                             force_plane=False, force_finite=True, terminal_z_axis=1.2,
+                             up_down="up", site_atom="O", reformed_array=None, tol=0.5)->np.ndarray:
         """
-        按照结构中原子层，以及堆垛方式，获取下一层原子位置。
-        1.针对对于单原子掺杂体系。建议tol改小，并ignore_index过滤掺杂原子。
-            如: tol=0.1, ignore_index= -1
-        2.对于复杂体系。建议重新设计 reformed_array ，使得其能够被合理分开。
+        According to the atomic layer in the structure and the stacking method,
+        the position of the next layer of atoms is obtained.
+
+        1. For single-atom doping system.
+            It is recommended that the `tol` be set to smaller and force_plane.
+            Example: tol=0.1, force_plane=False, force_finite=True.
+        2. For complex systems.
+            It is recommended to redesign the reformed_array so that it can be properly separated.
 
         Args:
+            terminal_z_axis:(float) Add site of z axis.
             tol: (float), tolerance.
-            reformed_array: np.ndarray, use this array for spilt directly. (1D)
-            ignore_index: (list of int), ignore index to split layer
-            site_atom: (str), name of next layer atoms
-            site_type: (str), fcc, hcp, top
-            up_down: (str),  up and down
+            reformed_array: (np.ndarray), use this array for spilt directly. (1D).
+            ignore_index: (list of int), ignore index to split layer.
+            site_atom: (str), name of next layer atoms.
+            site_type: (str), fcc, hcp, top.
+            up_down: (str),  up and down.
+            force_plane: (bool), change the single atom to the nearest group.
+            force_finite: (bool), force to change the index finite.
 
         Returns:
+            coord: (np.ndarray),
 
         """
 
@@ -300,10 +333,11 @@ class MXene(Structure):
 
         if reformed_array:
             layer_label = coarse_and_spilt_array_ignore_force_plane(reformed_array, ignore_index=ignore_index,
+                                                                    force_plane=True,
                                                                     reverse=reverse, tol=tol)
         else:
-            layer_label = self.split_layer(ignore_index=ignore_index, reverse=reverse, tol=tol, n_cluster=None,
-                                           axis=2, method=None, force_plane=True)
+            layer_label = self.split_layer(ignore_index=ignore_index, reverse=reverse, tol=tol,
+                                           axis=2, force_plane=force_plane, force_finite=force_finite)
 
         layer1_values = np.min(layer_label)
         layer2_values = layer1_values + 1 if layer1_values + 1 in layer_label else layer1_values + 2
@@ -327,7 +361,8 @@ class MXene(Structure):
         elif isinstance(site_atom, str):
             terminal_z_axis = 1.2
         else:
-            terminal_z_axis = None
+            pass
+            # terminal_z_axis = 1.2
 
         if site_type == "fcc":
             coords_add = coords1 + offset12
@@ -342,6 +377,56 @@ class MXene(Structure):
 
         return coords_add
 
+    def add_next_layer_atoms(self,site_atom:Union[str, List[str]] = "Ag",
+                             site_type: Union[None, str] = "fcc", ignore_index = None,
+                             force_plane=False, force_finite = True, terminal_z_axis=1.2,
+                             up_down="up_and_down",
+                             reformed_array = None, tol = 0.5):
+        """
+        Add next layer atoms.
+
+        1. For single-atom doping system.
+            It is recommended that the `tol` be set to smaller and force_plane.
+            Example: tol=0.1, force_plane=False, force_finite=True.
+        2. For complex systems.
+            It is recommended to redesign the reformed_array so that it can be properly separated.
+
+        Args:
+            terminal_z_axis:(float) Add site of z axis.
+            tol: (float), tolerance.
+            reformed_array: (np.ndarray), use this array for spilt directly. (1D).
+            ignore_index: (list of int), ignore index to split layer.
+            site_atom: (str), name of next layer atoms.
+            site_type: (str), fcc, hcp, top.
+            up_down: (str),  up and down.
+            force_plane: (bool), change the single atom to the nearest group.
+            force_finite: (bool), force to change the index finite.
+        """
+        arr = []
+
+        if "up" in up_down:
+            coords_add1 = self.get_next_layer_sites(site_type=site_type, ignore_index = ignore_index,
+                                 force_plane=force_plane, force_finite = force_finite,terminal_z_axis=terminal_z_axis,
+                                 up_down="up", site_atom = site_atom, reformed_array = reformed_array, tol = tol)
+            arr.append(coords_add1)
+        if "down" in up_down:
+            coords_add2 = self.get_next_layer_sites(site_type=site_type, ignore_index = ignore_index,
+                                 force_plane=force_plane, force_finite = force_finite,terminal_z_axis=terminal_z_axis,
+                                 up_down="down", site_atom=site_atom, reformed_array = reformed_array, tol=tol)
+            arr.append(coords_add2)
+
+        if len(arr)==2:
+            arr = np.concatenate(arr,axis=0)
+        else:
+            arr = arr[0]
+
+        if isinstance(site_atom, str):
+            site_atom = [site_atom]*(arr.shape[0])
+
+        if isinstance(site_atom, (list, tuple)):
+            for n, s in zip(site_atom, arr):
+                self.append(n, coords=s, coords_are_cartesian=True)
+
     @classmethod
     def from_standard(cls, terminal_site: Union[None, str] = "fcc",
                       doping: Union[None, str] = None, terminal: Union[None, str] = "O",
@@ -350,8 +435,11 @@ class MXene(Structure):
                       coords_are_cartesian=True, lattice: Union[Lattice, tuple, list] = None,
                       layer_space=1.25, terminal_z_axis=None, random_state=None, random_factor=0.001) -> "MXene":
         """
-        Generate single atom doping MXenes.
-        产生理想的单原子掺杂MXenes结构.
+        Generate ideal single atom doping MXenes.
+
+        Examples:
+            >>> # Mo2CO2-Ti
+            >>> mx = MXene.from_standard(base="Mo",doping="Ti",n_base=3,terminal="O",terminal_site="hcp")
 
         Args:
             random_factor: float, random factor.
@@ -367,7 +455,7 @@ class MXene(Structure):
             base: str,tuple,list. base atoms.
             carbide_nitride: srt, "N" or "C" type.
             n_base:int, number of base atoms layer.
-            super_cell: tuple with szie 3.
+            super_cell: tuple with size 3.
             add_atoms: str,list add atoms.
             add_atoms_site:: str,list add atoms site. fractional
 
@@ -460,7 +548,7 @@ class MXene(Structure):
 
         st = cls(lattice=lattice, species=mx_list, coords=fracs)
 
-        st = st.get_sorted_structure(reverse=True)
+        st = st.get_sorted_structure(key=lambda x: x.specie.Z)
 
         if super_cell is not None:
             st.make_supercell(super_cell)
@@ -499,13 +587,35 @@ class MXene(Structure):
         return cls.from_sites(sites=list(st.sites))
 
     def get_structure_message(self):
-        """获取结果信息"""
+        """Obtaining bond, face Information"""
+        from mxene.extract.structure_extractor import structure_message
         return structure_message(self)
 
-    def extrusion(self, center=-1, factors=(0.01, 0.001), affect_radius=5.0,
+    @classmethod
+    def from_structure(cls, structrue: Structure):
+        """From structure to mxenes object."""
+        return cls(lattice=structrue.lattice,
+                   species=structrue.species,
+                   coords=structrue.frac_coords,
+                   charge=structrue.charge,
+                   validate_proximity=False,
+                   to_unit_cell=False,
+                   coords_are_cartesian=False,
+                   site_properties=structrue.site_properties)
+
+    def extrusion(self, center=-1, factors=(0.01, 0.001), affect_radius=6.0,
                   center_move=0, center_move_is_frac=False, axis=2):
         """Get structure defects for doping system.
-         Just for the one axis is vertical with the 2 other axis.(cubic, square,orthogonality)"""
+         Just for the one axis is vertical with the 2 other axis.(cubic, square, orthogonality).
+
+        Args:
+            center: (int), center index.
+            factors: (float), move factor for nearst, second nearst, ... atoms  .
+            affect_radius: (float), radius.
+            center_move: (float), center atoms move in z axis or 3 axis.
+            center_move_is_frac: (bool), center move is fractional or not.
+            axis: (int), axis, the same size as center_move.
+         """
 
         st2 = self.copy()
 
@@ -518,8 +628,8 @@ class MXene(Structure):
         points_indices = points_indices[index]
         distances = distances[index]
         label = coarse_and_spilt_array(distances, tol=0.02)
-        zer = np.where(label == 0)
 
+        zer = np.where(label == 0)
         if distances[zer[0]] < 0.001:
             s = 1
         else:
@@ -548,46 +658,47 @@ class MXene(Structure):
 
     @property
     def doped(self):
-        label = coarse_and_spilt_array(self.cart_coords[:,2],tol=0.1)
+        """Check it is doped or not."""
+        label = coarse_and_spilt_array(self.cart_coords[:, 2], tol=0.1)
         label[label == 0] = max(label) + 1
 
         typess = set(self.atomic_numbers)
         label2 = np.array(list(self.atomic_numbers))
-        index = [label2==ti for ti in typess]
+        index = [label2 == ti for ti in typess]
         for i, ti in enumerate(index):
             label2[ti] = i
 
-        label = label*label2
+        label = label * label2 + 0.01 * (label - label2)
         label_dict = Counter(label)
         numbers = list(label_dict.values())
 
         if len(set(numbers)) != 1:
-            return False
-        else:
             return True
+        else:
+            return False
 
-    def add_noise(self, random_state=None, random_factor=0.001, axis_factor=(1,1,1))->"MXene":
+    def add_noise(self, random_state=None, random_factor=0.001, axis_factor=(1, 1, 1)) -> "MXene":
         """The same with self.perturb but change in new object."""
         rdm = check_random_state(random_state)
         st_frac_coords = self.frac_coords
-        axis_factor = np.array(list(axis_factor)).reshape(1,-1)
-        st_frac_coords = np.array(st_frac_coords) + (rdm.random(st_frac_coords.shape)-0.5) * random_factor * axis_factor
+        axis_factor = np.array(list(axis_factor)).reshape(1, -1)
+        st_frac_coords = np.array(st_frac_coords) + (
+                    rdm.random(st_frac_coords.shape) - 0.5) * random_factor * axis_factor
         st = self.__class__(lattice=self.lattice, species=self.species, coords=st_frac_coords)
         return st
 
-    def append_noise(self, random_state=None, random_factor=0.001, axis_factor=(1,1,1))->None:
+    def append_noise(self, random_state=None, random_factor=0.001, axis_factor=(1, 1, 1)) -> None:
         """The same with self.perturb."""
-
         rdm = check_random_state(random_state)
         st_frac_coords = self.frac_coords
         axis_factor = np.array(list(axis_factor)).reshape(1, -1)
 
-        ve_frac_coords = rdm(st_frac_coords.shape) * random_factor * axis_factor
+        ve_frac_coords = rdm.random(st_frac_coords.shape) * random_factor * axis_factor
         for i in range(len(self._sites)):
             self.translate_sites([i], ve_frac_coords[i], frac_coords=True)
 
-    def tuning_layer_space(self, random_state=None, max_turing=0.2):
-        """For the structure is centerd in z axis !!! ."""
+    def tuning_layer_space(self, random_state=None, max_turing=0.05):
+        """For the structure is centered in z axis !!!"""
         rdm = check_random_state(random_state)
 
         layer_label = self.split_layer(tol=0.02, force_plane=False, reverse=False).astype(int)
@@ -627,12 +738,13 @@ class MXene(Structure):
         frac_coords = np.copy(self.frac_coords)
         frac_coords[:, 2] = new_frac_coords_z
 
-        st = self.__class__(lattice=self.lattice, species=self.species, coords=frac_coords,coords_are_cartesian= False)
+        st = self.__class__(lattice=self.lattice, species=self.species, coords=frac_coords, coords_are_cartesian=False)
         return st
 
     def surface_pure_center(self, up_down="up", atom_type="O"):
+        """Get the surface center index for no-doped mxene."""
         if self.doped is True:
-            warnings.warn("Just for no doped mxenes.")
+            warnings.warn("Just for no doped mxene.")
 
         frac_coords = self.frac_coords
         frac_coords_xy = frac_coords[:, (0, 1)]
@@ -641,7 +753,7 @@ class MXene(Structure):
 
         index = np.array([True if i.specie.name == atom_type else False for i in self.sites])
 
-        labels = coarse_and_spilt_array(frac_coords_z,tol=0.02).astype(float)
+        labels = coarse_and_spilt_array(frac_coords_z, tol=0.02).astype(float)
         labels[~index] = np.nan
 
         s = max(labels) if up_down == "up" else min(labels)
@@ -650,19 +762,20 @@ class MXene(Structure):
 
         frac_coords_xy_temp[index2] = frac_coords_xy[index2]
 
-        l = np.sum((frac_coords_xy_temp-0.5)**2,axis=1)**0.5
+        l = np.sum((frac_coords_xy_temp - 0.5) ** 2, axis=1) ** 0.5
 
         center = np.argmin(l)
 
         return center
 
-    def add_absorb(self, center=-1, site_type: Union[None, str] = "top",
-                   add_noise=True, up_down="up",site_name="S0", equivalent="ini_opt",
-                   absorb="H", absorb_site=None,ignore_index=None, coords_are_cartesian=True,
-                   offset_z=0, tol=0.3, random_state=None,
-                   random_factor=0.001, reformed_array=None,pure=False) -> "MXene":
+    def add_absorb(self, center: Union[int, None] = -1, site_type: Union[None, str] = "top", offset_z: float = 0,
+                   add_noise: bool = True, up_down: str = "up", site_name: str = "S0", equivalent: str = "ini_opt",
+                   absorb: str = "H", absorb_site: Union[np.ndarray, ListTuple] = None, reformed_array: np.ndarray = None,
+                   ignore_index: Union[np.ndarray, tuple, int, List] = None,
+                   coords_are_cartesian: bool = True, tol: float = 0.3, random_state=None,
+                   random_factor: float = 0.001,  pure: bool = False) -> "MXene":
         """
-        添加吸附原子。改变原数据。
+        Add adsorbent atoms. Change the original data!!!
 
         Args:
             random_state: random_state seed.
@@ -674,7 +787,7 @@ class MXene(Structure):
             center: (int,None), center index.
             site_type: (str), terminal atom type: ["fcc","bcc","hcp","center"]. such as 'top' for H and 'fcc' for metals.
             absorb: (list,str) name or list of name of absorb atoms.
-            absorb_site: (None, np.ndarray), np.ndarray with (Nx3) size.
+            absorb_site: (None, np.ndarray), np.ndarray with (Nx3) or np.ndarray s in list with (3,) size .
             add_noise:(bool), add noise to site.
             site_name: (str), equivalent site name
             equivalent: (str), class name of equivalent site
@@ -685,27 +798,32 @@ class MXene(Structure):
         Returns:
 
         """
-        # just for up_down="up"
 
-        ignore_index = list(range(len(self)))[ignore_index]
+        if ignore_index is not None:
+            ignore_index = list(range(len(self)))[ignore_index]
 
         if pure and center is None:
-            center = self.surface_pure_center(up_down = "up")
+            center = self.surface_pure_center(up_down="up")
+
+        center = list(range(len(self)))[center]
+
+        rdm = check_random_state(random_state)
 
         if absorb_site is None:
             # 自动确定位置
             if site_type == "center":
                 coef = 1 if up_down == "up" else -1
                 if isinstance(absorb, str) and absorb in self._predefined_tem_z_axis:
-                    offset_z = (self._predefined_tem_z_axis[absorb] + offset_z)* coef
+                    offset_z = (self._predefined_tem_z_axis[absorb] + offset_z) * coef
                 elif isinstance(absorb, str) and absorb in self._predefined_tem_z_axis:
                     offset_z = (self._predefined_am_z_axis[absorb] + offset_z) * coef
                 elif isinstance(absorb, str):
-                    offset_z = coef * ( offset_z + 1.0)
+                    offset_z = coef * (offset_z + 1.0)
                 else:
-                    offset_z = offset_z*coef
+                    offset_z = offset_z * coef
 
-                absorb_site = self.cart_coords[center] + np.array([0, 0, offset_z])
+                absorb_site = self.cart_coords[center] + np.array([0, 0, offset_z]) + rdm.random(
+                    size=3) * 50 * random_factor
 
                 self.append(absorb, coords=absorb_site, coords_are_cartesian=coords_are_cartesian)
 
@@ -719,7 +837,7 @@ class MXene(Structure):
                 [st2.append(species=i, coords=j, coords_are_cartesian=True) for i, j in
                  zip([absorb] * sites.shape[0], list(sites))]
 
-                points_and_distance_to_m0 = get_plane_neighbors_to_center(st2, center, center_index=ignore_index,
+                points_and_distance_to_m0 = get_plane_neighbors_to_center(st2, center_index=center,
                                                                           neighbors_name=absorb,
                                                                           plane=False, ignore_index=ignore_index, r=7.0)
 
@@ -734,12 +852,13 @@ class MXene(Structure):
 
                 index = list(points_and_distance_to_m0[si].keys())[sel]
 
-                absorb_site = st2.cart_coords[index] + np.array([0, 0, offset_z])
+                absorb_site = st2.cart_coords[index] + np.array([0, 0, offset_z]) + rdm.random(
+                    size=3) * 50 * random_factor
 
                 self.append(absorb, coords=absorb_site, coords_are_cartesian=coords_are_cartesian)
 
         else:
-            if isinstance(absorb_site, np.ndarray) and len(absorb_site) >= 6:  # multi
+            if isinstance(absorb_site, np.ndarray) and len(absorb_site) >= 6:  # multi atoms
                 absorb_site = [i for i in absorb_site]
             if isinstance(absorb_site, (list, tuple)):
                 if isinstance(absorb, str):
@@ -755,14 +874,17 @@ class MXene(Structure):
             self.num_absorb = list(range(len(self) - len(absorb), len(self)))
 
         if add_noise:
-            self.append_noise(random_state=random_state,random_factor=random_factor)
+            self.append_noise(random_state=random_state, random_factor=random_factor)
 
         return self
 
-    def get_disk(self, disk='.', ignore_index=None, site_name="S0", equ_name="ini_opt", nm_tm="TM",
-                 absorb=None, doping=None, terminal=None, carbide_nitride=None, add_atoms=None, tol=0.4
+    def get_disk(self, disk='.', site_name="S0", equ_name="ini_opt", nm_tm="TM",
+                 ignore_index=None,add_atoms=None, tol=0.4,
+                 absorb=None, doping=None, terminal=None, carbide_nitride=None,
                  ) -> pathlib.Path:
-        """Just for single doping, single absorb,single type terminal.
+        """Just for single doping, single absorb, single type terminal.
+        for some name, the code could judge the parameter automatically, and for others, you should offer it.
+        such as site_name="S0", equ_name="ini_opt", nm_tm="TM",
 
         **(1)不吸附**
 
@@ -889,14 +1011,31 @@ class MXene(Structure):
             assert isinstance(carbide_nitride, (tuple, list)), "terminal and base should be same type, (str or list)."
             assert len(carbide_nitride) < len(base), "carbide_nitride should less than base."
 
+        from mxene.organize.disk import make_disk
+
         self.out_dir = make_disk(disk, terminal, base, carbide_nitride, n_base=None, doping=doping, absorb=absorb,
                                  equ_name=equ_name, base_num_cls=None,
                                  site_name=site_name, add_atoms=add_atoms)
         return self.out_dir
 
-    def relax_base(self, random_state=None, lr=1, extrusion=True, strain=True, tun_layer=True,add_noise=True,
+    def relax_base(self, random_state=None, lr=1, extrusion=True, strain=True, tun_layer=True, add_noise=True,
                    kwarg_extrusion=None, kwarg_strain=None, ):
-        """relax the structure."""
+        """
+        Change the structure.
+
+        Args:
+            random_state: randomstate.
+            lr: bool, learning rate.
+            extrusion: bool, extrusion.
+            strain: bool, strain.
+            tun_layer: bool, tune the layer spacing.
+            add_noise: bool, add noise.
+            kwarg_extrusion: dict, the extrusion parameter.
+            kwarg_strain: dict, the extrusion parameter.
+
+        Returns:
+            mxi: MXene, Changed structure.
+        """
 
         if kwarg_extrusion is None:
             kwarg_extrusion = {}
@@ -909,7 +1048,7 @@ class MXene(Structure):
 
         if extrusion:
             if "center_move" in kwarg_extrusion:
-                kwarg_extrusion["center_move"] = kwarg_extrusion["center_move"]*lr
+                kwarg_extrusion["center_move"] = kwarg_extrusion["center_move"] * lr
             mxi = mxi.extrusion(**kwarg_extrusion)
 
         if strain:
@@ -918,14 +1057,14 @@ class MXene(Structure):
             mxi = mxi.adjust_lattice(**kwarg_strain)
 
         if tun_layer:
-            mxi = mxi.tuning_layer_space(random_state=rdm, max_turing=0.2*lr)
+            mxi = mxi.tuning_layer_space(random_state=rdm, max_turing=0.05 * lr)
 
         if add_noise:
-            mxi = mxi.add_noise(random_state=rdm, random_factor=0.001,)
+            mxi = mxi.add_noise(random_state=rdm, random_factor=0.005, )
 
         return mxi
 
-    def adjust_lattice(self, strain: ArrayLike=None):
+    def adjust_lattice(self, strain: ArrayLike = None):
         """
         Apply a strain to the lattice.
 
@@ -945,13 +1084,12 @@ class MXene(Structure):
         self.lattice = Lattice(np.dot(self._lattice.matrix.T, s).T)
         return self
 
-
     def get_interp2d(self, up_down="up"):
         """Not for 'top' terminals."""
         reverse = True if up_down == "up" else False
         st = copy.deepcopy(self)
         st.make_supercell((3, 3, 1))
-        labels = st.split_layer(ignore_index=None, n_cluster=None, tol=0.5, axis=2, method=None,
+        labels = st.split_layer(ignore_index=None, tol=0.5, axis=2,
                                 force_plane=True, reverse=reverse)
         marks = []
         for i in range(int(max(labels))):
@@ -966,8 +1104,8 @@ class MXene(Structure):
         mark = mark1 | mark2
         data = st.cart_coords[mark]
         x, y, z = data[:, 0], data[:, 1], data[:, 2]
-        # assert np.std(z) > 0.02, "Not for 'top' terminals."
-        iterp = interp2d_nearest(x, y, z)
+        # assert np.std(z) > 0.02,
+        iterp = Interp2dNearest(x, y, z)
         return iterp
 
     def extend(self, species: Sequence[CompositionLike], coords, coords_are_cartesian: bool = False, ):
@@ -1010,7 +1148,7 @@ class MXene(Structure):
         return frac_coords
 
     def reform_structure(self):
-        """把结构原子坐标统一到初始晶胞。"""
+        """The atomic coordinates of the structure are unified to the initial cell."""
         frac_coords = copy.copy(self.frac_coords)
         frac_coords = self._reform_frac(frac_coords)
         return self.__class__(self.lattice, self.species, frac_coords, coords_are_cartesian=False)
@@ -1019,18 +1157,18 @@ class MXene(Structure):
                         up_down="up", perturb_base=0,
                         offset_z=1.0, alpha=0.5) -> Union["MXene", List["MXene"]]:
         """
-        随机添加原子。
+        Add atoms at randomly.
 
         Args:
-            number: (str), 添加数量
-            random_state: (int), 随机种子。
-            random_xy:(bool), x,y是否随机。
-            add_atom: (str), 添加原子名称
-            debug: (bool), 调试，若调试，所有添加原子在一个结构中展示。
+            number: (str), samples.
+            random_state: (int), randomstate.
+            random_xy:(bool),Whether x and y are random.
+            add_atom: (str), Add atom name
+            debug: (bool), Debug. If debugged, all added atoms are displayed in one structure.
             up_down: (str), up and down
-            perturb_base:  (str),扰动初始结构。
-            offset_z: (str), Z高度。
-            alpha: (str), 移动Z波动系数。
+            perturb_base:  (str),Perturbed the initial structure.
+            offset_z: (str),  height along Z
+            alpha: (str), Shift coefficient in of surface.
 
         Returns:
             result: (MXenes,list of MXenes)
@@ -1049,7 +1187,7 @@ class MXene(Structure):
             y = np.linspace(0, b, nn + 1, endpoint=False)
 
         x_mesh, y_mesh = np.meshgrid(x, y)
-        z = f_interp(x, y, meshed=False)
+        z = f_interp(x, y, mesh=False)
         z = z.ravel()
         x_mesh, y_mesh = x_mesh.ravel(), y_mesh.ravel()
         if up_down == "up":
@@ -1074,20 +1212,20 @@ class MXene(Structure):
     def add_face_random_z(self, x, y, number_each=1, random_state=0, add_atom="H", debug=False, up_down="up",
                           perturb_base=0, offset_z=1.0, alpha=1.0, method='random') -> Union["MXene", List["MXene"]]:
         """
-        随机添加z原子，x，y使用输入值。
+        Add z atoms randomly, x, y using the input values.
 
         Args:
-            x: (np.array), x
-            y: (np.array), y
-            number_each: (int)，每对x，y对应多少z样本。
-            random_state: (int), 随机种子。
-            add_atom: (str), 添加原子名称
-            debug: (bool), 调试，若调试，所有添加原子在一个结构中展示。
+            x: np.ndarray, x values of point.
+            y: np.ndarray, x values of point.
+            method:(str), method to add.
+            number_each: (str), samples.
+            random_state: (int), randomstate.
+            add_atom: (str), Add atom name
+            debug: (bool), Debug. If debugged, all added atoms are displayed in one structure.
             up_down: (str), up and down
-            perturb_base:  (str),扰动初始结构。
-            offset_z: (str), Z高度。
-            alpha: (str), 移动Z波动系数。
-            method: (str), 'random','uniform','linspace'
+            perturb_base:  (str),Perturbed the initial structure.
+            offset_z: (str),  height along Z
+            alpha: (str), Shift coefficient in of surface.
 
         Returns:
             result: (MXenes,list of MXenes)
@@ -1096,7 +1234,7 @@ class MXene(Structure):
         f_interp = self.get_interp2d(up_down=up_down)
 
         x_mesh, y_mesh = x, y
-        z = f_interp(x, y, meshed=True)
+        z = f_interp(x, y, mesh=True)
         z = z.ravel()
         x_mesh, y_mesh = x_mesh.ravel(), y_mesh.ravel()
         if number_each > 1:
@@ -1129,28 +1267,21 @@ class MXene(Structure):
             [si.append(add_atom[0], cari, coords_are_cartesian=True) for si, cari in zip(sts, car)]
             return sts
 
-    def show(self):
-        """
-        展示画图。
-        """
-        atomss = aaa.get_atoms(self)
-        view(atomss)
-
     def non_equivalent_site(self, center=44, ignore_index=None, base_m=None, terminal=None):
         """
-        Just for MXenes with terminals， 获取16个等效位置（fcc，hcp适用。）
+        Just for MXene with terminals. Obtain 16 equivalent positions (fcc, hcp applicable.)
 
         Args:
-            center:(int),重心原子位置。
-            ignore_index:(list),跳过干扰原子。
-            base_m:(str),基础原子名称。
-            terminal:(str),终端原子名称。
+            center:(int), Center of gravity atomic position.
+            ignore_index:(list),Skip the interfering atoms.
+            base_m:(str), Name of the base atom.
+            terminal:(str), Terminal atom name.
 
         Returns:
             res:(np.array)
         """
 
-        label = self.split_layer(ignore_index=ignore_index, n_cluster=None, tol=0.5, axis=2, method=None,
+        label = self.split_layer(ignore_index=ignore_index, tol=0.5, axis=2,
                                  force_plane=True, reverse=True)
         marks = []
         for i in range(int(max(label))):
@@ -1169,7 +1300,7 @@ class MXene(Structure):
 
         mark = mark1 | mark2
 
-        m_dict = get_plane_neighbors_to_center(self, center_name=center, neighbors_name=[base_m],
+        m_dict = get_plane_neighbors_to_center(self, center_index=center, neighbors_name=[base_m],
                                                ignore_index=ignore_index,
                                                r=5.5, plane=True)
 
@@ -1209,7 +1340,7 @@ class MXene(Structure):
         core_index_mark = np.argmin(np.sum(np.abs(top2_0 - core), axis=1))
         core_index = np.where(mark)[0][core_index_mark]
 
-        o_dict = get_plane_neighbors_to_center(self, center_name=core_index, neighbors_name=[terminal],
+        o_dict = get_plane_neighbors_to_center(self, center_index=core_index, neighbors_name=[terminal],
                                                ignore_index=ignore_index,
                                                r=5, plane=True, )
         sel = 0
@@ -1268,21 +1399,21 @@ class MXene(Structure):
                                   random_state=0, add_atom="H", debug=False, up_down="up", perturb_base=0,
                                   offset_z=1.0, alpha=1.0, method="random") -> Union["MXene", List["MXene"]]:
         """
-        随机添加z原子，x，y使用输入值。
+        Add z atoms randomly, x, y using the input values.
 
         Args:
-            center:(int),重心原子位置。
-            ignore_index:(list),跳过干扰原子。
-            base_m:(str),基础原子名称。
-            terminal:(str),终端原子名称。
-            number_each: (int),每对x，y对应多少z样本。
-            random_state: (int), 随机种子。
-            add_atom: (str), 添加原子名称
-            debug: (bool), 调试，若调试，所有添加原子在一个结构中展示。
+            center:(int), Center of gravity atomic position.
+            ignore_index:(list),Skip the interfering atoms.
+            base_m:(str), Name of the base atom.
+            terminal:(str), Terminal atom name.
+            number_each: (int), How many z samples are there for each pair of x and y.
+            random_state: (int), random state.
+            add_atom: (str), Add atom name.
+            debug: (bool), Debug. If debugged, all added atoms are displayed in one structure.
             up_down: (str), up and down
-            perturb_base:  (str),扰动初始结构。
-            offset_z: (str), Z高度。
-            alpha: (str), 移动Z波动系数。
+            perturb_base:  (str), Perturbed the initial structure.
+            offset_z: (str), height along Z
+            alpha: (str), Shift the Z-wave coefficient.
 
         Returns:
             result: (MXenes, list of MNXenes)
@@ -1299,7 +1430,10 @@ class MXene(Structure):
     def apply_operation_no_lattice(self, symmop: SymmOp, fractional: bool = False):
         """
         Apply a symmetry operation to the structure and return the new
-        structure. The lattice is operated by the rotation matrix only.
+        structure.
+
+        The lattice is operated by the rotation matrix only!!!
+
         Coords are operated in full and then transformed to the new lattice.
 
         Args:
@@ -1338,5 +1472,20 @@ class MXene(Structure):
         self._sites = [operate_site(s) for s in self._sites]
 
     def to_ase_atoms(self):
-
+        from pymatgen.io.ase import AseAtomsAdaptor
+        aaa = AseAtomsAdaptor()
         return aaa.get_atoms(self)
+
+    def show(self):
+        """
+        Plot by ase.
+        """
+        from pymatgen.io.ase import AseAtomsAdaptor
+        aaa = AseAtomsAdaptor()
+        atoms_s = aaa.get_atoms(self)
+        from ase.visualize import view
+        view(atoms_s)
+
+    def view(self):
+        """The same as show. plot by ase."""
+        self.show()

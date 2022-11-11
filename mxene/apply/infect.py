@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+
+# @Time  : 2022/10/2 13:20
+# @Author : boliqq07
+# @Software: PyCharm
+# @License: MIT License
+
 from functools import wraps
 
 import numba

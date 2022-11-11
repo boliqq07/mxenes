@@ -1,11 +1,17 @@
+# -*- coding: utf-8 -*-
+
+# @Time  : 2022/10/2 13:20
+# @Author : boliqq07
+# @Software: PyCharm
+# @License: MIT License
+
 import pathlib
 from collections import Counter
-
-from pymatgen.io.vasp import VaspInput
 
 
 def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, absorb=None, equ_name=None,
               site_name=None, add_atoms=None, base_num_cls=None) -> pathlib.Path:
+    """Organize the name to one path."""
     nm_list = ["H", "B", "C", "N", "O", "F", "Si", "P", "S", "Cl", "As", "Se", "Br", "I", "Te", "At"]
     if isinstance(base, (tuple, list)):
         assert isinstance(carbide_nitride, (tuple, list)), "terminal and base should be same type, (str or list)."
@@ -97,38 +103,3 @@ def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, absorb=None
 
     return disk
 
-
-class MXVaspInput(VaspInput):
-    """
-    Class to contain a set of vasp input objects corresponding to a run.
-    """
-
-    def __init__(self, incar, kpoints, poscar, potcar, optional_files=None, **kwargs):
-        """
-        Args:
-            incar: Incar object.
-            kpoints: Kpoints object.
-            poscar: Poscar object.
-            potcar: Potcar object.
-            optional_files: Other input files supplied as a dict of {
-                filename: object}. The object should follow standard pymatgen
-                conventions in implementing a as_dict() and from_dict method.
-        """
-        super().__init__(incar, kpoints, poscar, potcar, optional_files=optional_files, **kwargs)
-        self.out_dir = "."
-        if hasattr(poscar, "out_dir"):
-            self.out_dir = poscar.out_dir
-
-    def write_input(self, output_dir="auto", make_dir_if_not_present=True):
-        """
-        Write VASP input to a directory.
-
-        Args:
-            output_dir (str): Directory to write to. Defaults to current
-                directory (".").
-            make_dir_if_not_present (bool): Create the directory if not
-                present. Defaults to True.
-        """
-        if output_dir == "auto":
-            output_dir = self.out_dir
-            super().write_input(output_dir=output_dir, make_dir_if_not_present=make_dir_if_not_present)

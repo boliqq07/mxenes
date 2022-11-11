@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# @Time     : 2021/10/25 17:23
-# @Software : PyCharm
-# @Author   : xxx
+# @Time  : 2022/10/2 13:20
+# @Author : boliqq07
+# @Software: PyCharm
+# @License: MIT License
 
-"""This is a structure extractor for one atom doping 2D MXenes-STM, such as Ti2CO2-STM."""
+"""This is some base support function for mxene.py."""
 import functools
 import itertools
 import numbers
@@ -20,13 +21,13 @@ from pymatgen.core import Structure
 from pymatgen.io.vasp import Poscar
 
 
-def middle(st: Structure, deprecated=None, tol=0.01):
-    """计算核心层，最终中间层"""
+def middle(st: Structure, ignore_index=None, tol=0.01):
+    """Calculate the core layer - middle layer."""
     frac = st.frac_coords[:, -1]
-    if deprecated:
+    if ignore_index:
         mark = np.full_like(frac, True)
-        mark[deprecated] = False
-        frac_mark = frac[deprecated]
+        mark[ignore_index] = False
+        frac_mark = frac[ignore_index]
     else:
         frac_mark = frac
     mid = np.mean(frac_mark)
@@ -96,18 +97,41 @@ def coarse_and_spilt_array(array: np.ndarray, tol: float = 0.5, method: str = No
         return labels
 
 
-def coarse_and_spilt_array_ignore_force_plane(array, ignore_index=None, n_cluster=None, tol=0.5,
-                                              method=None, force_plane=True, reverse=True):
+def coarse_and_spilt_array_ignore_force_plane(array: np.ndarray, ignore_index: Union[int, np.ndarray] = None,
+                                              tol=0.5, force_plane: bool = True, reverse: bool = True,
+                                              force_finite: bool = True,method=None,n_cluster: int = 3) -> np.ndarray:
     """
-    Split sites by distance or group (default z-axis).
+    Split 1D by distance or group.
+
+    'ignore_index' means the atoms is not used to calculated.
+    'force_finite' and 'force_plane' are two method to settle the un-grouped atoms.
+
+    (1). For easily compartmentalized array, use the default parameters.
+
+    (2). Used 'ignore_index' and 'force_finite' to drop the add (absorb) atom to make the left atoms to be grouped,
+         change the 'tol' to check the result.
+    (3). Used 'ignore_index'=None and 'force_plane' to make the 'out-of-station' doped atom to be grouped.
+         the 'tol' could be appropriate smaller (less than interlayer spacing).
+    (4). For absorb + doped system, 'ignore_index', 'force_finite' and 'force_plane' could be used together,
+         change the 'tol' to check the result.But, for large structural deformations array.
+         This function is not effective always.
+    (5). If all the parameter are failed, please generate the input array by hand or tune the value in array.
+
+    Examples:
+        >>> coarse_and_spilt_array_ignore_force_plane(np.array([0.1,0.11,0.12,0.15,0.16,0.17]),
+        ...                                                 ignore_index= None, tol=0.02,force_plane=True,
+        ...                                                 reverse=True, force_finite=True)
+        array([1, 1, 1, 0, 0, 0])
 
     Args:
-        tol: (float) tolerance distance for spilt.
-        method:(str) default None. others: "agg", "k_means", None.
-        n_cluster: (int) number of cluster for "agg", "k_means".
-        ignore_index: jump some atoms.
-        force_plane: change the single atom to the nearest group.
-        reverse: reverse the label.
+        array: (np.ndarray), the array to be grouped.
+        tol: (float), tolerance distance for spilt.(less than interlayer spacing)
+        ignore_index: (int, np.ndarray), jump 'out-of-station' atoms.
+        force_plane: (bool), change the single atom to the nearest group.
+        force_finite: (bool), force to change the index finite.
+        reverse: (bool), reverse the label.
+        method: deprecated.
+        n_cluster: deprecated.
 
     Returns:
         labels: (np.ndarray) with shape (n,).
@@ -117,13 +141,13 @@ def coarse_and_spilt_array_ignore_force_plane(array, ignore_index=None, n_cluste
         ignore_index = [ignore_index, ]
 
     mark = np.full_like(array, True).astype(bool)
-    res_label = np.full_like(array, -np.inf)
+    res_label = np.full_like(array, -np.inf)  # all is -np.inf now
     if ignore_index is not None:
         mark[ignore_index] = False
         array = array[mark]
     sel = np.where(array)[0]
 
-    label = coarse_and_spilt_array(array, tol=tol, method=method, n_cluster=n_cluster, reverse=reverse)
+    label = coarse_and_spilt_array(array, tol=tol, reverse=reverse, method=method, n_cluster=n_cluster)
 
     label_dict = Counter(label)
     common_num = Counter(list(label_dict.values())).most_common(1)[0][0]
@@ -180,7 +204,7 @@ def coarse_and_spilt_array_ignore_force_plane(array, ignore_index=None, n_cluste
         else:
             pass
 
-    res_label[sel] = label
+    res_label[sel] = label  # ignore is -np.inf
 
     i = 0
     m = max(res_label)
@@ -191,7 +215,7 @@ def coarse_and_spilt_array_ignore_force_plane(array, ignore_index=None, n_cluste
         i += 1
         m = max(res_label)
 
-    if not force_plane:
+    if not force_plane and force_finite:
         if np.any(np.isinf(res_label)):
             warnings.warn("Some atoms is not be split (grouped), The code try to reformed it, "
                           "but it could lead to an error, manual checking is suggested.")
@@ -247,8 +271,7 @@ def _get_same_level(names: Tuple, zs: Tuple, center: int, neighbors_name: Union[
 
 
 def get_nearest_plane_atom_index(structure: Structure, center: int, special_name: Union[str, List, Tuple] = "O",
-                                 axis: int = 2,
-                                 n_cluster: int = 2, tol: float = 0.5, method: str = "k_means"
+                                 axis: int = 2, n_cluster: int = 2, tol: float = 0.5, method: str = "k_means"
                                  ) -> np.ndarray:
     """
     Get the nearest atom indexes (one plane of special atoms) to center.
@@ -280,7 +303,7 @@ def get_nearest_plane_atom_index(structure: Structure, center: int, special_name
 
 def get_plane_neighbors_to_center_raw(st: Structure, center, neighbors_name: Union[List, Tuple, str] = "O",
                                       ignore_index: Union[int, List, Tuple] = None,
-                                      r=6.0, plane=True, n_cluster=2) -> tuple:
+                                      r=6.0, plane=True, n_cluster=2) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Get neighbor to center atom for next process.
 
@@ -294,7 +317,7 @@ def get_plane_neighbors_to_center_raw(st: Structure, center, neighbors_name: Uni
         n_cluster: n for plane.
 
     Returns:
-        np.ndarray,np.ndarray,np.ndarray
+        np.ndarray, np.ndarray, np.ndarray
     """
     # Make sure in same z-axis level, get the index of O
     sites = st.sites
@@ -331,16 +354,16 @@ def get_plane_neighbors_to_center_raw(st: Structure, center, neighbors_name: Uni
     return points_indices, offset_vectors, distances
 
 
-def get_plane_neighbors_to_center(st: Structure, center_name, neighbors_name: Union[List, Tuple, str] = "O",
-                                  ignore_index: Union[int, List, Tuple] = None, center_index = 44,
+def get_plane_neighbors_to_center(st: Structure, neighbors_name: Union[List, Tuple, str] = "O",
+                                  ignore_index: Union[int, List, Tuple] = None, center_index=44,
                                   r=6.0, top=3, tol=0.6, plane=True, n_cluster=2) -> Dict[int, Dict]:
     """
     Get neighbor to center atom.
 
     Args:
         center_index: center index.  center_name or center_index should be offered.
-        st: (Structure),
-        center_name: (str), name of center.
+        st: (Structure), pymatgen structure.
+
         neighbors_name: (str, tuple of str) neighbors_name or names tuple.
         ignore_index:(int,list),  ignore_index. refer to all structure atom list.
         r: (float), cut radius.
@@ -348,7 +371,6 @@ def get_plane_neighbors_to_center(st: Structure, center_name, neighbors_name: Un
         tol: (float), tolerance for group.
         plane: just for nearest plane.
         n_cluster: number of plane
-
     Returns:
         points_and_distance_to_center: (dict), points and distance.
     """
@@ -356,7 +378,7 @@ def get_plane_neighbors_to_center(st: Structure, center_name, neighbors_name: Un
     sites = st.sites
 
     if plane is True:
-        samez_o_index = get_nearest_plane_atom_index(st, center_name, special_name=neighbors_name, n_cluster=n_cluster)
+        samez_o_index = get_nearest_plane_atom_index(st, center_index, special_name=neighbors_name, n_cluster=n_cluster)
     else:
         if isinstance(neighbors_name, str):
             samez_o_index = np.array(list(st.indices_from_symbol(neighbors_name)))
@@ -410,20 +432,21 @@ def get_plane_neighbors_to_center(st: Structure, center_name, neighbors_name: Un
 
 
 def get_center_name(structure: Structure, jump_atom_type: Tuple = ("C", "O", "N", "H", "P"),
-                    center_index: int = None, ref_center_index=None, ignore_index: [int, List, Tuple] = None) -> Tuple:
+                    center_index: int = None, ref_center_index=None,
+                    ignore_index: [int, List, Tuple] = None) -> Tuple:
     """
     Judge the center and return the name of center, return name and index.
 
     Args:
-        structure: (Structure),
+        structure: (Structure), pymatgen structure.
         jump_atom_type: (tuple,), jump atom type.
-        center_index: (int), use the centor_index directly.
+        center_index: (int), use the center_index directly.
         ignore_index:(int,list),  ignore_index. refer to all structure atom list.
         ref_center_index:(int), if cant find center, use this ref_center_index.
 
     Returns:
         name:(str), center name.
-        index:(int), centor index.
+        index:(int), center index.
     """
 
     if center_index is not None:
@@ -484,19 +507,20 @@ def get_common_name(structure: Structure, jump_atom_type=("C", "O", "N", "H", "P
     base_metal = counter_name.most_common(1)[0][0]
     return base_metal, structure.indices_from_symbol(base_metal)
 
-# def get_pure_center()
-
 
 def check_random_state(seed):
-    """Turn seed into a np.random.RandomState instance
+    """
+    Check the random state the same as sklearn.
 
-    Parameters
-    ----------
-    seed : None, int or instance of RandomState
-        If seed is None, return the RandomState singleton used by np.random.
-        If seed is an int, return a new RandomState instance seeded with seed.
-        If seed is already a RandomState instance, return it.
-        Otherwise, raise ValueError.
+    Args:
+        seed: None, int or instance of RandomState
+            If seed is None, return the RandomState singleton used by np.random.
+            If seed is an int, return a new RandomState instance seeded with seed.
+            If seed is already a RandomState instance, return it.
+            Otherwise, raise ValueError.
+
+    Returns:
+        RandomState
     """
     if seed is None or seed is np.random:
         return np.random.mtrand._rand
@@ -508,41 +532,63 @@ def check_random_state(seed):
                      ' instance' % seed)
 
 
-class interp2d_nearest:
-    def __init__(self, x, y, z, s=2):
-        # self.tx=x
-        # self.ty=y
+class Interp2dNearest:
+    """An interp2d method to get grid interpolation by neighbor points.
+    interp2d means the approximate method is just in x, y axes and assess the value of z.
+    Return the 'new_z' sites of the input grid (new_x,new_y).
+
+    Examples
+    # Get
+    >>> x, y = np.meshgrid(np.arange(20), np.arange(10))
+    >>> z = np.random.random((20,10))
+    >>> iterp = Interp2dNearest(x, y, z)
+    # Use
+    >>> x = np.arange(-12, 23, 0.2)
+    >>> y = np.arange(0, 21, 0.2)
+    >>> z = iterp(x,y)
+    # Show
+    >>> import matplotlib.pyplot as plt
+    >>> plt.imshow(z.T)
+    >>> plt.show()
+    """
+
+    def __init__(self, x: np.ndarray, y: np.ndarray, z: np.ndarray, s: float = 2.0):
+        """
+
+        Args:
+            x: 1D array, initial x data.
+            y: 1D array, initial y data.
+            z: 1D array, initial z data.
+            s: float, smoothness factor.
+        """
+        assert len(x) == len(y) == len(z)
         self.tz = z
         self.s = s
-
         self.t_data = np.hstack((x.reshape(-1, 1), y.reshape(-1, 1)))
 
-    def __call__(self, x, y, meshed=True):
-        """Interpolate the function.
+    def __call__(self, new_x: np.ndarray, new_y: np.ndarray, mesh: bool = True) -> np.ndarray:
+        """
+        Interpolate in grid.
 
-        Parameters
-        ----------
-        x : 1-D array
-            x-coordinates of the mesh on which to interpolate.
-        y : 1-D array
-            y-coordinates of the mesh on which to interpolate.
-        meshed: bool
-            if False: x_mesh, y_mesh = np.meshgrid(x,y), else use the x,and y directly.
+        Args:
+            new_x: 1D array, x-coordinates of the mesh on which to interpolate.
+            new_y: 1D array, y-coordinates of the mesh on which to interpolate.
+            mesh: bool, if False, new_x, new_y should be the grid (Each xi, and yi point with same size),
+                  please offer by yourself.
+                  if True (default), use the x and y to get grid by np.meshgrid function.
+        Returns:
+            new_z : 2D array, with shape (len(x), len(y)) if not meshed else len(x). The interpolated values.
 
-        Returns
-        -------
-        z : 2-D array with shape (len(x), len(y)) if not meshed else len(x)
-            The interpolated values.
         """
         t_data = self.t_data
         tz = self.tz
 
-        x = atleast_1d(x)
-        y = atleast_1d(y)
+        x = atleast_1d(new_x)
+        y = atleast_1d(new_y)
 
         if x.ndim != 1 or y.ndim != 1:
             raise ValueError("x and y should both be 1-D arrays")
-        if not meshed:
+        if not mesh:
             x_mesh, y_mesh = np.meshgrid(x, y)
         else:
             assert x.shape[0] == y.shape[0]
@@ -562,13 +608,30 @@ class interp2d_nearest:
 
         w = np.exp(-dis * self.s)
         w = w / np.sum(w, axis=0)
-        z = np.sum(w * np.repeat(tz.reshape(-1, 1), w.shape[1], axis=1), axis=0)
-        if not meshed:
-            z = z.reshape((y.shape[0], x.shape[0])).T
-        return z
+        new_z = np.sum(w * np.repeat(tz.reshape(-1, 1), w.shape[1], axis=1), axis=0)
+        if not mesh:
+            new_z = new_z.reshape((y.shape[0], x.shape[0])).T
+        return new_z
 
 
-def fixed_poscar(poscar, fixed_type: Union[str, float, None] = "base", fixed_array=None, coords_are_cartesian=True):
+def fixed_poscar(poscar: str, fixed_type: Union[str, float, None] = "base",
+                 fixed_array: np.ndarray = None, coords_are_cartesian=True, cover=False) -> None:
+    """
+    Fix the atom in poscar with selective_dynamics.
+
+    Args:
+        poscar: str, file name.
+        fixed_type: str,float,None.
+            (1) if is float, the atoms in z axis larger than the float would be fixed.
+            (2) if is "base", the last atoms would be fixed.
+            (2) if is None, no fixed.
+        fixed_array: np.ndarray, array of bool. if fixed array, use this array to fixed directly.
+        coords_are_cartesian: bool, The coords is cartesian or not, for fixed_type.
+        cover: bool, generate one new file or cover the old.
+
+    Returns:
+        None. The result is stored in file.
+    """
     if fixed_type is None:
         pass
     else:
@@ -588,4 +651,7 @@ def fixed_poscar(poscar, fixed_type: Union[str, float, None] = "base", fixed_arr
                         index = st.cart_coords[:, -1] > fixed_type
                     fixed_array[index] = True
         poscar = Poscar(poscar.structure, selective_dynamics=fixed_array.tolist())
-        poscar.write_file(str(pathi))
+        if cover:
+            poscar.write_file(str(pathi))
+        else:
+            poscar.write_file(str(pathi) + "(1)")

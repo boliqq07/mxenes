@@ -1,10 +1,14 @@
-import functools
-import itertools
-import os
-from typing import Union
+# -*- coding: utf-8 -*-
 
-from pymatgen.core import Structure
-from pymatgen.io.vasp import Kpoints, Potcar, Poscar
+# @Time  : 2022/10/2 13:20
+# @Author : boliqq07
+# @Software: PyCharm
+# @License: MIT Licens
+
+"""
+This file is used to generated vasp input file (INCAR, run script)
+Custom modifications are recommended.
+"""
 
 # 1. INCAR file
 
@@ -146,7 +150,7 @@ IVDW = 12
 IOPTCELL = 1 1 0 1 1 0 0 0 0
 """
 
-# 2. run file
+# 2. run script
 
 run_192_168_3_6_wang = """
 #PBS -S /bin/bash
@@ -244,8 +248,8 @@ mpirun -np $JH_NCPU -machinefile $JH_HOSTFILE vasp_std  > vasp.log
 gpaw_relax_py = '''
 from ase.optimize import QuasiNewton
 from gpaw import GPAW, PW
-from mxene.functions2 import fixed_atoms
-from mxene.mxenes import MXene, aaa
+from mxene.core.functions2 import fixed_atoms
+from mxene.core.mxenes import MXene, aaa
 
 mx = MXene.from_file("POSCAR")
 
@@ -300,6 +304,8 @@ mpirun -np $JH_NCPU -machinefile $JH_HOSTFILE gpaw python gpaw_relax.py
 
 """
 
+import os
+
 
 def cmd_sys(cmds):
     for i in cmds:
@@ -335,68 +341,3 @@ def write_batch():
              f"\ncp ini_static/POTCAR POTCAR \ncp {path}/neb_cpu.run neb_cpu.run' -o nebbatch.sh"
              ])
 
-
-# 3.POT-database
-
-potpath = r"POT-database"  # POT-database should be offered
-
-
-def check_potcar(potpath):
-    try:
-        potpaths = os.listdir(potpath)
-        sym_potcar_map = {}
-        for i in potpaths:
-            with open(potpath + "/" + i) as f:
-                te = f.readlines()
-                text = "".join(te)
-                i = i.split("-")[0]
-                i = i.split("_")[0]
-                sym_potcar_map.update({i: text})
-    except BaseException:
-        sym_potcar_map = None
-    return sym_potcar_map
-
-
-sym_potcar_map = check_potcar(potpath=r"POT-database")
-
-
-@functools.lru_cache(200)
-def get_potcar_lru(sym):
-    return Potcar(sym, sym_potcar_map=sym_potcar_map, )
-
-
-def get_potcar(poscar: Union[Poscar, Structure], sym_potcar_map=sym_potcar_map):
-    if isinstance(poscar, Structure):
-        syms = [site.specie.symbol for site in poscar]
-        site_symbols = [a[0] for a in itertools.groupby(syms)]
-        sym = tuple(site_symbols)
-    else:
-        sym = tuple(poscar.site_symbols)
-
-    if sym_potcar_map is not None:
-        POTCAR = Potcar(sym, sym_potcar_map=sym_potcar_map, )
-    else:
-        POTCAR = Potcar(sym)
-    return POTCAR
-
-
-"""
-
-sym_potcar_map = check_potcar(potpath=r"POT-database")
-potcar = get_potcar(poscar, sym_potcar_map=sym_potcar_map)
-
-
-# or quick method
-
-sym_potcar_map = check_potcar(potpath=r"POT-database")
-
-@functools.lru_cache(200)
-def get_potcar_lru(sym):
-    return Potcar(sym, sym_potcar_map=sym_potcar_map)
-potcar = get_potcar_lru(tuple(poscar.site_symbols), sym_potcar_map=sym_potcar_map)
-
-"""
-
-# 4.kpoints
-
-kpoints = Kpoints(kpts=((3, 3, 1),))
