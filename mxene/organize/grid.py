@@ -265,6 +265,50 @@ def random_add_absorb_H_batch(structures: List[MXene], random_state=None,
 
     return res
 
+# absorb_space = {'site_name': ['S0', 'S1', 'S2'],
+#                    'site_type': ["top", "center"],
+#                    'offset_z': np.linspace(-0.1, 0.1, 20)}
+#
+# pg3 = ParameterGrid(absorb_space)
+#
+# kwarg_absorb_list = [i for i in pg3]
+def random_add_absorb_atom_batch(structures: List[MXene], random_state=None,
+                                 kwarg_absorb_list=None):
+    """Add metal the number is changed."""
+    rdm = check_random_state(random_state)
+
+    if kwarg_absorb_list is None:
+        kwarg_absorb_list = [{}]
+
+    res = []
+    for mxi in structures:
+
+        mxi0 = mxi.copy()
+
+        kwarg_absorb = rdm.choice(kwarg_absorb_list)
+
+        nm = True if mxi0.symbol_set[-1] in mxi0._predefined_nm_list else False
+
+        doped = mxi0.doped
+
+        if not nm:
+            kwarg_absorb['site_type'] = "top"
+
+        if not doped:
+            kwarg_absorb['site_type'] = "center"
+            kwarg_absorb['pure'] = True
+            kwarg_absorb['center'] = None
+
+        mxi0s = mxi0.add_face_random_z_16_site(add_noise=False, up_down="up",
+                               equivalent="fin_opt", absorb="H",
+                               ignore_index=-1, tol=0.2, **kwarg_absorb)
+        for n,i in enumerate(mxi0s):
+            i.mark_label =mxi.mark_label+"#%s"%n
+
+        res.append(mxi0)
+
+    return res
+
 
 def add_absorb_H_batch(structure: MXene, kwarg_absorb_list=None):
     """Testing!!!  Add H the number is changed."""
