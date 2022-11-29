@@ -40,6 +40,12 @@ def coarse_and_spilt_array(array: np.ndarray, tol: float = 0.5, method: str = No
     """
     Split 1D ndarray by distance or group.
 
+    Examples:
+    >>> ay= np.array([1,2,3,4,5,6,7,10,11,20])
+    >>> labels = coarse_and_spilt_array(ay, tol = 1.5)
+    >>> print(labels)
+    [0 0 0 0 0 0 0 1 1 2]
+
     Args:
         array: (np.ndarray) with shape (n,).
         tol: (float) tolerance distance for spilt.

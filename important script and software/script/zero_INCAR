@@ -1,0 +1,41 @@
+# Basic
+PREC = Normal
+ISPIN = 2
+
+# Initialization
+ISTART = 0
+ICHARG = 2
+
+# Electronic relaxation
+ENCUT = 600
+NELMIN = 5
+NELM = 100
+ALGO = Fast
+EDIFF = 1E-06
+
+# Ionic relaxation
+IBRION = 5
+#ISIF = 3
+POTIM = 0.015
+NSW = 1
+EDIFFG = -0.01
+NFREE = 2
+
+# Density of states related
+ISMEAR = 0
+SIGMA = 0.02
+NEDOS = 301
+
+# Output
+LCHARG = .FALSE.
+LWAVE = .FALSE.
+
+# VDW
+IVDW = 12
+
+#parallel
+IRMMD = 4
+NSIM = 4
+#NPAR = 4
+
+IOPTCELL = 1 1 0 1 1 0 0 0 0
