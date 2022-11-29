@@ -7,7 +7,6 @@
 
 from pymatgen.io.vasp import VaspInput
 
-
 class MXVaspInput(VaspInput):
     """
     Class to contain a set of vasp input objects corresponding to a run.
