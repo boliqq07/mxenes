@@ -24,9 +24,8 @@ class MXVaspInput(VaspInput):
                 conventions in implementing as_dict() and from_dict method.
         """
         super().__init__(incar, kpoints, poscar, potcar, optional_files=optional_files, **kwargs)
-        self.out_dir = "."
-        if hasattr(poscar, "out_dir"):
-            self.out_dir = poscar.out_dir
+        if hasattr(poscar.structure, "out_dir"):
+            self.out_dir = poscar.structure.out_dir
 
     def write_input(self, output_dir="auto", make_dir_if_not_present=True):
         """
@@ -38,6 +37,8 @@ class MXVaspInput(VaspInput):
             make_dir_if_not_present (bool): Create the directory if not
                 present. Defaults to True.
         """
-        if output_dir == "auto":
+        if output_dir == "auto" and hasattr(self, "out_dir"):
             output_dir = self.out_dir
+        elif output_dir == "auto" and not hasattr(self, "out_dir"):
+            raise NotImplementedError("No default dir to store. please set ``output_dir``.")
         super().write_input(output_dir=output_dir, make_dir_if_not_present=make_dir_if_not_present)
