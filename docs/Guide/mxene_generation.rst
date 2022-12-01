@@ -61,6 +61,21 @@ Examples:
 >>> from pymatgen.io.vasp import Incar
 >>> incar = Incar.from_string(opt_incar)
 
+# run file (depend on your machine.)
+>>> from pymatgen.io.vasp import Incar
+>>> run_f = """#PBS -S /bin/bash
+... #PBS -N vasp
+... #PBS -l nodes=1:ppn=12
+... #PBS -l walltime=120:00:00
+... #PBS -q master
+... source /opt/intel/oneapi/mkl/latest/env/vars.sh intel64
+... source /opt/intel/oneapi/compiler/latest/env/vars.sh intel64
+... source /opt/intel/oneapi/mpi/2021.4.0/env/vars.sh intel64
+... export PATH=/opt/software/vasp.5.4.4/bin:$PATH
+... cd ${PBS_O_WORKDIR}
+... mpirun -np 40 vasp_std"""
+>>> incar = Incar.from_string(opt_incar)
+
 # ALL
 >>> mxinput = MXVaspInput(incar, kpoints, poscar, potcar, optional_files=None, **kwargs)
 >>> mxinput.write_input(output_dir=".",make_dir_if_not_present=True)
