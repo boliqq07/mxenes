@@ -1,11 +1,6 @@
 Generation
 ==================
 
-mxene includes some tools for batch generation of mxene structures and extraction of crystal structure features, which
-can be used as the input of VASP for subsequent calculation, and can also analyze and extract some calculation results
-to achieve data mining in universities. In addition, mxene can also be used to check the rationality of vasp calculation
-process and results.
-
 Generate MXene Structural Data
 :::::::::::::::::::::::::::::::::
 

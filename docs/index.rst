@@ -6,7 +6,10 @@ Welcome to mxene's documentation!
    :caption: Contents:
 
 
-mxene is one software to solving parallel problems for VASP calculation.
+mxene includes some tools for batch generation of mxene structures and extraction of crystal structure features, which
+can be used as the input of VASP for subsequent calculation, and can also analyze and extract some calculation results
+to achieve data mining in universities. In addition, mxene can also be used to check the rationality of vasp calculation
+process and results.
 
 This software is optimized for 'MXene' material generation,
 calculation and analysis to achieve efficient data mining.
@@ -32,10 +35,8 @@ pip install mxene
 Before first using, we recommend using the following methods
 to generate the configuration file.
 
-```
 >>> from mxene.conf_files import write_batch
 >>> write_batch()
-```
 
 Indices and tables
 ==================
