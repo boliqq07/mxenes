@@ -5,6 +5,11 @@ Welcome to mxene's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   mxene_tools
+   Guide/index
+   Examples/index
+   Contact/index
+   src/modules
 
 mxene includes some tools for batch generation of mxene structures and extraction of crystal structure features, which
 can be used as the input of VASP for subsequent calculation, and can also analyze and extract some calculation results

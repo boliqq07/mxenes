@@ -13,7 +13,7 @@
 
 5. All un-calculated or un_mark data is not recommended to be uploaded to the database.
 
-6. This script can be distributed freely and can be used freely. The version in the mxene package is the source version. If you need to change the source version of any bug or important content, please contact me.
+6. This script can be distributed freely and can be used freely. The version in the mxene package is the source version. If you need to change the source version of any bug or important content, please Contact me.
 
 The final unified folder format is:
 

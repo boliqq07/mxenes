@@ -37,6 +37,7 @@ The files are "POSCAR","INCAR","KPOINTS","POTCAR","pbs.run" .etc.
 Examples:
 
 # POSCAR
+
 >>> from mxene.core.mxenes import MXene
 >>> from mxene.prepare.vaspinput import MXVaspInput
 >>> from pymatgen.io.vasp.inputs import Poscar
@@ -44,19 +45,23 @@ Examples:
 >>> poscar = Poscar(structure)
 
 # POTCAR
+
 >>> sym_potcar_map = check_potcar(potpath=r"POT-database")
 >>> potcar = get_potcar(poscar, sym_potcar_map=sym_potcar_map)
 
 # KPOINTS
+
 >>> from pymatgen.io.vasp import Kpoints
 >>> kpoints = Kpoints(kpts=((3, 3, 1),))
 
 # INCAR
+
 >>> from mxene.prepare.conf_files import opt_incar
 >>> from pymatgen.io.vasp import Incar
 >>> incar = Incar.from_string(opt_incar)
 
 # run file (depend on your machine.)
+
 >>> from pymatgen.io.vasp import Incar
 >>> run_f = """#PBS -S /bin/bash
 ... #PBS -N vasp
@@ -72,5 +77,6 @@ Examples:
 >>> incar = Incar.from_string(opt_incar)
 
 # ALL
+
 >>> mxinput = MXVaspInput(incar, kpoints, poscar, potcar, optional_files=None, **kwargs)
 >>> mxinput.write_input(output_dir=".",make_dir_if_not_present=True)
