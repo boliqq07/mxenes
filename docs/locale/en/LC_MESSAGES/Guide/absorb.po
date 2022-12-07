@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mxene \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-05 20:19+0800\n"
+"POT-Creation-Date: 2022-12-08 00:42+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,29 +24,57 @@ msgstr ""
 #: ../../Guide/absorb.rst:4
 msgid ""
 "In the fields of catalysis and battery materials, various adsorbents are "
-"often designed, and various adsorption models need to be built. MXene "
-"provides this tool:"
+"often designed, and various adsorption models need to be built. ``mxene``"
+" provides this tool:"
 msgstr ""
 
 #: ../../Guide/absorb.rst:10
 msgid ""
 "There are three common adsorption sites: top, bridge and hollow. You can "
-"use the tools in mxene to define the location and type of adsorption "
+"use the tools in ``mxene`` to define the location and type of adsorption "
 "atoms."
 msgstr ""
 
 #: ../../Guide/absorb.rst:18
 msgid ""
-"mxene also provides a tool for batch generation of randomly adsorbed "
+"``mxene`` also provides a tool for batch generation of randomly adsorbed "
 "atomic crystal structures on material surfaces, which may be conveniently"
 " used in the calculation of isoenergetic surface."
 msgstr ""
 
 #: ../../Guide/absorb.rst:28
-msgid "At the same time, mxene also supports layered adsorption."
+msgid "At the same time, ``mxene`` also supports layered adsorption."
 msgstr ""
 
 #: ../../Guide/absorb.rst:33
 msgid "which is often used in the calculation of battery materials."
 msgstr ""
+
+#~ msgid ""
+#~ "In the fields of catalysis and "
+#~ "battery materials, various adsorbents are "
+#~ "often designed, and various adsorption "
+#~ "models need to be built. MXene "
+#~ "provides this tool:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "There are three common adsorption sites:"
+#~ " top, bridge and hollow. You can "
+#~ "use the tools in mxene to define"
+#~ " the location and type of adsorption"
+#~ " atoms."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "mxene also provides a tool for "
+#~ "batch generation of randomly adsorbed "
+#~ "atomic crystal structures on material "
+#~ "surfaces, which may be conveniently used"
+#~ " in the calculation of isoenergetic "
+#~ "surface."
+#~ msgstr ""
+
+#~ msgid "At the same time, mxene also supports layered adsorption."
+#~ msgstr ""
 

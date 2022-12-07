@@ -2,12 +2,12 @@ Absorb
 =======
 
 In the fields of catalysis and battery materials, various adsorbents are often designed, and various adsorption models
-need to be built. MXene provides this tool:
+need to be built. ``mxene`` provides this tool:
 
 .. figure:: single_absorb.png
     :align: center
 
-There are three common adsorption sites: top, bridge and hollow. You can use the tools in mxene to define the location
+There are three common adsorption sites: top, bridge and hollow. You can use the tools in ``mxene`` to define the location
 and type of adsorption atoms.
 
     >>> from mxene.core.mxenes import MXene
@@ -15,7 +15,7 @@ and type of adsorption atoms.
     >>> pos = MXene.from_file('POSCAR')
     >>> pos.add_absorb(site_type= "top", absorb= "H")
 
-mxene also provides a tool for batch generation of randomly adsorbed atomic crystal structures on
+``mxene`` also provides a tool for batch generation of randomly adsorbed atomic crystal structures on
 material surfaces, which may be conveniently used in the calculation of isoenergetic surface.
 
     >>> from mxene.core.mxenes import MXene
@@ -25,7 +25,7 @@ material surfaces, which may be conveniently used in the calculation of isoenerg
     >>> print(structures[0])
     >>> structures[0].show()
 
-At the same time, mxene also supports layered adsorption.
+At the same time, ``mxene`` also supports layered adsorption.
 
 .. figure:: layer_absorb.png
     :align: center

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mxene \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-06 20:35+0800\n"
+"POT-Creation-Date: 2022-12-08 01:01+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,7 +34,7 @@ msgid "This is some base support function for mxene.py."
 msgstr ""
 
 #: mxene.core.functions.Interp2dNearest:1 of
-msgid "基类：:class:`object`"
+msgid "基类：:py:class:`object`"
 msgstr ""
 
 #: mxene.core.functions.Interp2dNearest:1 of
@@ -145,7 +145,7 @@ msgstr ""
 #: mxene.core.functions.coarse_and_spilt_array:9
 #: mxene.core.functions.coarse_and_spilt_array:15
 #: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:33
-#: mxene.core.mxenes.MXene.split_layer:26 of
+#: mxene.core.mxenes.MXene.split_layer:27 of
 msgid "(np.ndarray) with shape (n,)."
 msgstr ""
 
@@ -168,7 +168,7 @@ msgstr ""
 
 #: mxene.core.functions.coarse_and_spilt_array:13
 #: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:29
-#: mxene.core.mxenes.MXene.split_layer:24 of
+#: mxene.core.mxenes.MXene.split_layer:25 of
 msgid "(bool), reverse the label."
 msgstr ""
 
@@ -202,58 +202,66 @@ msgid ""
 msgstr ""
 
 #: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:6
-#: mxene.core.mxenes.MXene.split_layer:6 of
+#: mxene.core.mxenes.MXene.split_layer:8 of
 msgid "(1). For easily compartmentalized array, use the default parameters."
 msgstr ""
 
 #: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:8
-#: mxene.core.mxenes.MXene.split_layer:8 of
+#: mxene.core.mxenes.MXene.split_layer:10 of
 msgid ""
 "(2). Used 'ignore_index' and 'force_finite' to drop the add (absorb) atom"
 " to make the left atoms to be grouped,"
 msgstr ""
 
 #: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:9
-#: mxene.core.mxenes.MXene.split_layer:9 of
+#: mxene.core.mxenes.MXene.split_layer:11 of
 msgid "change the 'tol' to check the result."
 msgstr ""
 
 #: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:10
-#: mxene.core.mxenes.MXene.split_layer:10 of
+#: mxene.core.mxenes.MXene.split_layer:12 of
 msgid ""
 "(3). Used 'ignore_index'=None and 'force_plane' to make the 'out-of-"
 "station' doped atom to be grouped."
 msgstr ""
 
 #: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:11
-#: mxene.core.mxenes.MXene.split_layer:11 of
+#: mxene.core.mxenes.MXene.split_layer:13 of
 msgid "the 'tol' could be appropriate smaller (less than interlayer spacing)."
 msgstr ""
 
 #: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:13
-#: mxene.core.mxenes.MXene.split_layer:13 of
+#: mxene.core.mxenes.MXene.split_layer:15 of
 msgid ""
 "(4). For absorb + doped system, 'ignore_index', 'force_finite' and "
 "'force_plane' could be used together,"
 msgstr ""
 
 #: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:13
-#: mxene.core.mxenes.MXene.split_layer:13 of
+#: mxene.core.mxenes.MXene.split_layer:15 of
 msgid ""
 "change the 'tol' to check the result.But, for large structural "
 "deformations array. This function is not effective always."
 msgstr ""
 
-#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:15
-#: mxene.core.mxenes.MXene.split_layer:15 of
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:16 of
 msgid ""
 "(5). If all the parameter are failed, please generate the input array by "
-"hand or tune the value in array."
+"hand or"
 msgstr ""
 
-#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:18
-#: mxene.core.mxenes.MXene.from_standard:4 of
-msgid "实际案例"
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:16 of
+msgid "tune the value in array."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:18 of
+msgid ""
+"Examples: >>> "
+"coarse_and_spilt_array_ignore_force_plane(np.array([0.1,0.11,0.12,0.15,0.16,0.17]),"
+" ...                                                 ignore_index= None, "
+"tol=0.02,force_plane=True, ..."
+"                                                 reverse=True, "
+"force_finite=True) array([1, 1, 1, 0, 0, 0])"
 msgstr ""
 
 #: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:24 of
@@ -261,26 +269,26 @@ msgid "(np.ndarray), the array to be grouped."
 msgstr ""
 
 #: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:25
-#: mxene.core.mxenes.MXene.split_layer:20 of
+#: mxene.core.mxenes.MXene.split_layer:21 of
 msgid "(float), tolerance distance for spilt.(less than interlayer spacing)"
 msgstr ""
 
 #: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:26
-#: mxene.core.mxenes.MXene.split_layer:21 of
+#: mxene.core.mxenes.MXene.split_layer:22 of
 msgid "(int, np.ndarray), jump 'out-of-station' atoms."
 msgstr ""
 
 #: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:27
 #: mxene.core.mxenes.MXene.add_next_layer_atoms:16
 #: mxene.core.mxenes.MXene.get_next_layer_sites:17
-#: mxene.core.mxenes.MXene.split_layer:22 of
+#: mxene.core.mxenes.MXene.split_layer:23 of
 msgid "(bool), change the single atom to the nearest group."
 msgstr ""
 
 #: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:28
 #: mxene.core.mxenes.MXene.add_next_layer_atoms:17
 #: mxene.core.mxenes.MXene.get_next_layer_sites:18
-#: mxene.core.mxenes.MXene.split_layer:23 of
+#: mxene.core.mxenes.MXene.split_layer:24 of
 msgid "(bool), force to change the index finite."
 msgstr ""
 
@@ -461,7 +469,7 @@ msgid "mxene.core.mxenes module"
 msgstr ""
 
 #: mxene.core.mxenes.MXene:1 of
-msgid "基类：:class:`pymatgen.core.structure.Structure`"
+msgid "基类：:py:class:`pymatgen.core.structure.Structure`"
 msgstr ""
 
 #: mxene.core.mxenes.MXene:1 of
@@ -1041,6 +1049,10 @@ msgstr ""
 msgid "Generate ideal single atom doping MXenes."
 msgstr ""
 
+#: mxene.core.mxenes.MXene.from_standard:4 of
+msgid "实际案例"
+msgstr ""
+
 #: mxene.core.mxenes.MXene.from_standard:8 of
 msgid "float, random factor."
 msgstr ""
@@ -1296,11 +1308,21 @@ msgstr ""
 msgid "Split layer."
 msgstr ""
 
-#: mxene.core.mxenes.MXene.split_layer:17 of
-msgid ":doc:`functions.coarse_and_spilt_array_ignore_force_plane`"
+#: mxene.core.mxenes.MXene.split_layer:6 of
+msgid ":func:`mxene.core.functions.coarse_and_spilt_array_ignore_force_plane`"
 msgstr ""
 
-#: mxene.core.mxenes.MXene.split_layer:19 of
+#: mxene.core.mxenes.MXene.split_layer:18 of
+msgid ""
+"(5). If all the parameter are failed, please generate the input array by "
+"hand or tune"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.split_layer:18 of
+msgid "the value in array."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.split_layer:20 of
 msgid "(int), axis to be grouped."
 msgstr ""
 
@@ -2289,5 +2311,23 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Bases: :class:`pymatgen.core.structure.Structure`"
+#~ msgstr ""
+
+#~ msgid "基类：:class:`object`"
+#~ msgstr ""
+
+#~ msgid "参数"
+#~ msgstr ""
+
+#~ msgid "返回"
+#~ msgstr ""
+
+#~ msgid "返回类型"
+#~ msgstr ""
+
+#~ msgid "实际案例"
+#~ msgstr ""
+
+#~ msgid "基类：:class:`pymatgen.core.structure.Structure`"
 #~ msgstr ""
 

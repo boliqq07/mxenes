@@ -2,7 +2,7 @@ Dop and Add
 ============
 
 Dop or add can effectively change the electronic structure of MXenes based materials, which is an effective strategy
-to control the properties of materials themselves. mxene provides this way to create crystal structures:
+to control the properties of materials themselves. ``mxene`` provides this way to create crystal structures:
 
 .. figure:: dop_add.png
     :align: center

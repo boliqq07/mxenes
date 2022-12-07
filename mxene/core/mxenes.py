@@ -208,6 +208,9 @@ class MXene(Structure):
         'ignore_index' means the atoms is not used to calculated.
         'force_finite' and 'force_plane' are two method to settle the un-grouped atoms.
 
+        See Also:
+            :func:`mxene.core.functions.coarse_and_spilt_array_ignore_force_plane`
+
         (1). For easily compartmentalized array, use the default parameters.
 
         (2). Used 'ignore_index' and 'force_finite' to drop the add (absorb) atom to make the left atoms to be grouped,
@@ -217,10 +220,8 @@ class MXene(Structure):
         (4). For absorb + doped system, 'ignore_index', 'force_finite' and 'force_plane' could be used together,
              change the 'tol' to check the result.But, for large structural deformations array.
              This function is not effective always.
-        (5). If all the parameter are failed, please generate the input array by hand or tune the value in array.
-
-        See Also:
-            :doc:`functions.coarse_and_spilt_array_ignore_force_plane`
+        (5). If all the parameter are failed, please generate the input array by hand or tune
+             the value in array.
 
         Args:
             axis: (int), axis to be grouped.

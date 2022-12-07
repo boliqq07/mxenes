@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mxene \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-05 20:19+0800\n"
+"POT-Creation-Date: 2022-12-08 00:42+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,28 +19,31 @@ msgstr ""
 
 #: ../../Guide/dop_add.rst:2
 msgid "Dop and Add"
-msgstr ""
+msgstr "掺杂与吸附"
 
 #: ../../Guide/dop_add.rst:4
 msgid ""
 "Dop or add can effectively change the electronic structure of MXenes "
 "based materials, which is an effective strategy to control the properties"
-" of materials themselves. mxene provides this way to create crystal "
+" of materials themselves. ``mxene`` provides this way to create crystal "
 "structures:"
 msgstr ""
+"Dop或add能有效改变基础MXenes的电子结构"
+"这是控制材料性能的有效策略。 ``mxene`` 提供了"
+"创建这种制造晶体的快捷方法:"
 
 #: ../../Guide/dop_add.rst:10
 msgid "**Method 1:**"
-msgstr ""
+msgstr "**方法 1:**"
 
 #: ../../Guide/dop_add.rst:15
 msgid "**Method 2:**"
-msgstr ""
+msgstr "**方法 2:**"
 
 #: ../../Guide/dop_add.rst:17
 msgid ""
 "In addition to the above method, you can also read the existing POSCAR "
 "and convert it into ``Structure`` through pymatgen, and then successively"
 " dop or add to form a new POSCAR:"
-msgstr ""
+msgstr "除上述方法外, 你也可以调用 POSCAR 并且从 ``Structure``  转化得到然后掺杂与吸附得到一个新的 POSCAR:"
 

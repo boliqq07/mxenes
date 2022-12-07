@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mxene \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-06 20:35+0800\n"
+"POT-Creation-Date: 2022-12-08 01:01+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,7 +31,7 @@ msgstr ""
 
 #: mxene.extract.structure_extractor.SingleTetra:1
 #: mxene.extract.structure_extractor.Tetra:1 of
-msgid "基类：:class:`object`"
+msgid "基类：:py:class:`object`"
 msgstr ""
 
 #: mxene.extract.structure_extractor.SingleTetra:1 of
@@ -461,5 +461,17 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Bases: :class:`object`"
+#~ msgstr ""
+
+#~ msgid "基类：:class:`object`"
+#~ msgstr ""
+
+#~ msgid "参数"
+#~ msgstr ""
+
+#~ msgid "返回"
+#~ msgstr ""
+
+#~ msgid "返回类型"
 #~ msgstr ""
 

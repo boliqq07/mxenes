@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mxene \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-05 20:19+0800\n"
+"POT-Creation-Date: 2022-12-08 00:42+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,7 +33,7 @@ msgid ""
 msgstr ""
 
 #: ../../Guide/background.rst:9
-msgid "Usage:"
+msgid "**Usage**:"
 msgstr ""
 
 #: ../../Guide/background.rst:21
@@ -50,8 +50,21 @@ msgstr ""
 
 #: ../../Guide/background.rst:27
 msgid ""
-"The ``MXene`` from ``mxene`` is one sub-class ``Structure`` . Therefore, "
-"besides the same functions and properties of ``Structure``, the ``MXene``"
-" has more powerful and specialized function for 2D MXenes materials."
+"The class ``MXene`` from ``mxene`` is one sub-class ``Structure`` . "
+"Therefore, besides the same functions and properties of ``Structure``, "
+"the ``MXene`` has more powerful and specialized function for 2D MXenes "
+"materials."
 msgstr ""
+
+#~ msgid "Usage:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The ``MXene`` from ``mxene`` is one "
+#~ "sub-class ``Structure`` . Therefore, "
+#~ "besides the same functions and "
+#~ "properties of ``Structure``, the ``MXene`` "
+#~ "has more powerful and specialized "
+#~ "function for 2D MXenes materials."
+#~ msgstr ""
 

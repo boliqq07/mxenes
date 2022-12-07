@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mxene \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-05 20:19+0800\n"
+"POT-Creation-Date: 2022-12-08 00:42+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,11 +21,15 @@ msgstr ""
 msgid "Contact"
 msgstr ""
 
-#: ../../Contact/index.rst:4
+#: ../../Contact/index.rst:3
+msgid "The package is during test development. Thanks for any bug or advise."
+msgstr ""
+
+#: ../../Contact/index.rst:6
 msgid "1787364072@qq.com Mei Yang"
 msgstr ""
 
-#: ../../Contact/index.rst:7
+#: ../../Contact/index.rst:9
 msgid "986798607@qq.com Changxin Wang"
 msgstr ""
 

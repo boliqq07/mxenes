@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mxene \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-05 20:19+0800\n"
+"POT-Creation-Date: 2022-12-08 00:42+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,73 +25,109 @@ msgstr ""
 msgid "Welcome to mxene's documentation!"
 msgstr ""
 
-#: ../../index.rst:14
+#: ../../index.rst:15
 msgid ""
-"mxene includes some tools for batch generation of mxene structures and "
-"extraction of crystal structure features, which can be used as the input "
-"of VASP for subsequent calculation, and can also analyze and extract some"
-" calculation results to achieve data mining in universities. In addition,"
-" mxene can also be used to check the rationality of vasp calculation "
-"process and results."
+"This software ``mxene`` is one toolkit for **MXene** material generation,"
+" calculation and analysis."
 msgstr ""
 
-#: ../../index.rst:19
+#: ../../index.rst:18
 msgid ""
-"This software is optimized for 'MXene' material generation, calculation "
-"and analysis to achieve efficient data mining."
+"``mxene`` mainly includes some tools for batch generation of **MXene** "
+"structures and crystal structure feature extraction, aiming to achieve "
+"data mining in universities. In addition, ``mxene`` can also be used to "
+"check the rationality of vasp calculation process and results."
 msgstr ""
 
-#: ../../index.rst:22
+#: ../../index.rst:23
 msgid "Using this software, you could:"
 msgstr ""
 
-#: ../../index.rst:24
-msgid "Generate initial various kinds mxene structure and relevant VASP input."
+#: ../../index.rst:25
+msgid ""
+"Generate initial various kinds **MXene** structure and relevant VASP "
+"input."
 msgstr ""
 
-#: ../../index.rst:26
+#: ../../index.rst:27
 msgid "Monitor VASP calculation processing."
 msgstr ""
 
-#: ../../index.rst:28
-msgid "Organize mxene data."
+#: ../../index.rst:29
+msgid "Organize **MXene** data."
 msgstr ""
 
-#: ../../index.rst:30
+#: ../../index.rst:31
 msgid "Extract structure features from crystal structure."
 msgstr ""
 
-#: ../../index.rst:32
-msgid "# Install"
+#: ../../index.rst:33
+msgid "**Install:**"
 msgstr ""
 
-#: ../../index.rst:34
-msgid "```bash pip install mxene ```"
+#: ../../index.rst:35
+msgid "pip install mxene"
 msgstr ""
 
-#: ../../index.rst:38
-msgid "# Initial configuration"
+#: ../../index.rst:37
+msgid "**Install configuration:**"
 msgstr ""
 
-#: ../../index.rst:40
+#: ../../index.rst:39
 msgid ""
 "Before first using, we recommend using the following methods to generate "
 "the configuration file."
 msgstr ""
 
-#: ../../index.rst:47
+#: ../../index.rst:46
 msgid "Indices and tables"
 msgstr ""
 
-#: ../../index.rst:49
+#: ../../index.rst:48
 msgid ":ref:`genindex`"
 msgstr ""
 
-#: ../../index.rst:50
+#: ../../index.rst:49
 msgid ":ref:`modindex`"
 msgstr ""
 
-#: ../../index.rst:51
+#: ../../index.rst:50
 msgid ":ref:`search`"
 msgstr ""
+
+#~ msgid ""
+#~ "mxene includes some tools for batch "
+#~ "generation of mxene structures and "
+#~ "extraction of crystal structure features, "
+#~ "which can be used as the input "
+#~ "of VASP for subsequent calculation, and"
+#~ " can also analyze and extract some"
+#~ " calculation results to achieve data "
+#~ "mining in universities. In addition, "
+#~ "mxene can also be used to check"
+#~ " the rationality of vasp calculation "
+#~ "process and results."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This software is optimized for 'MXene'"
+#~ " material generation, calculation and "
+#~ "analysis to achieve efficient data "
+#~ "mining."
+#~ msgstr ""
+
+#~ msgid "Generate initial various kinds mxene structure and relevant VASP input."
+#~ msgstr ""
+
+#~ msgid "Organize mxene data."
+#~ msgstr ""
+
+#~ msgid "# Install"
+#~ msgstr ""
+
+#~ msgid "```bash pip install mxene ```"
+#~ msgstr ""
+
+#~ msgid "# Initial configuration"
+#~ msgstr ""
 

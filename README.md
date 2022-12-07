@@ -1,4 +1,8 @@
 # mxene
+[![Python Versions](https://img.shields.io/pypi/pyversions/mxene.svg)](https://pypi.org/project/mxene/)
+[![Version](https://img.shields.io/github/tag/boliqq07/mxene.svg)](https://github.com/boliqq07/releases/latest)
+![pypi Versions](https://badge.fury.io/py/mxene.svg)
+[![Documentation Status](https://readthedocs.org/projects/mxene/badge/?version=latest)](https://mxene.readthedocs.io/en/latest/?badge=latest)
 
 mxene is one software to solving parallel problems for VASP calculation.
 
@@ -31,4 +35,6 @@ to generate the configuration file.
 >>> write_batch()
 ```
 
-install 
+Support
+----------------------
+[![Jetbrains](jetbrains.svg)](https://jb.gg/OpenSource)

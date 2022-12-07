@@ -2,6 +2,7 @@ Welcome to mxene's documentation!
 =================================
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :caption: Contents:
 
@@ -11,31 +12,29 @@ Welcome to mxene's documentation!
    Contact/index
    src/modules
 
-mxene includes some tools for batch generation of mxene structures and extraction of crystal structure features, which
-can be used as the input of VASP for subsequent calculation, and can also analyze and extract some calculation results
-to achieve data mining in universities. In addition, mxene can also be used to check the rationality of vasp calculation
-process and results.
+This software ``mxene`` is one toolkit for **MXene** material generation,
+calculation and analysis.
 
-This software is optimized for 'MXene' material generation,
-calculation and analysis to achieve efficient data mining.
+``mxene`` mainly includes some tools for batch generation of **MXene** structures
+and crystal structure feature extraction,
+aiming to achieve data mining in universities.
+In addition, ``mxene`` can also be used to check the rationality of vasp calculation process and results.
 
 Using this software, you could:
 
-1. Generate initial various kinds mxene structure and relevant VASP input.
+1. Generate initial various kinds **MXene** structure and relevant VASP input.
 
 2. Monitor VASP calculation processing.
 
-3. Organize mxene data.
+3. Organize **MXene** data.
 
 4. Extract structure features from crystal structure.
 
-# Install
+**Install:**
 
-```bash
-pip install mxene
-```
+    pip install mxene
 
-# Initial configuration
+**Install configuration:**
 
 Before first using, we recommend using the following methods
 to generate the configuration file.

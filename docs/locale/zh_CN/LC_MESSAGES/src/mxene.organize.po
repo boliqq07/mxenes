@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mxene \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-06 20:35+0800\n"
+"POT-Creation-Date: 2022-12-08 01:02+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -91,7 +91,7 @@ msgid "mxene.organize.mx\\_org module"
 msgstr ""
 
 #: mxene.organize.mx_org:1 of
-msgid "**** This script is used to reorganize the MXenes folder ****"
+msgid "** This script is used to reorganize the MXenes folder **"
 msgstr ""
 
 #: mxene.organize.mx_org:3 of
@@ -142,11 +142,11 @@ msgid ""
 msgstr ""
 
 #: mxene.organize.mx_org:17 of
-msgid "The final unified folder format is:"
+msgid "The final unified folder format."
 msgstr ""
 
 #: mxene.organize.mx_org:19 of
-msgid "**(1) does not adsorb **"
+msgid "** (1) does not adsorb **"
 msgstr ""
 
 #: mxene.organize.mx_org:21 of
@@ -155,9 +155,9 @@ msgid ""
 "Dopant -> pure/pure_static"
 msgstr ""
 
-#: mxene.organize.mx_org:23 mxene.organize.mx_org:33 mxene.organize.mx_org:43
+#: mxene.organize.mx_org:24 mxene.organize.mx_org:34 mxene.organize.mx_org:44
 #: of
-msgid "Examples"
+msgid "实际案例"
 msgstr ""
 
 #: mxene.organize.mx_org:25 of
@@ -169,7 +169,7 @@ msgid "MXenes ->  M2N ->  Ti2NO2 ->  no_add ->  Mo        ->  pure/pure_static"
 msgstr ""
 
 #: mxene.organize.mx_org:29 of
-msgid "adsorption"
+msgid "** (2) adsorption **"
 msgstr ""
 
 #: mxene.organize.mx_org:31 of
@@ -191,7 +191,7 @@ msgid ""
 msgstr ""
 
 #: mxene.organize.mx_org:39 of
-msgid "**(3)NEB**"
+msgid "** (3)NEB **"
 msgstr ""
 
 #: mxene.organize.mx_org:41 of
@@ -301,7 +301,7 @@ msgstr ""
 msgid "(list), message."
 msgstr ""
 
-#: mxene.organize.mx_org.check_pt:4 mxene.organize.mx_org.path_regroup:25 of
+#: mxene.organize.mx_org.check_pt:4 mxene.organize.mx_org.path_regroup:24 of
 msgid "(str, path.Path, os.PathLike,pathlib.Path), path of leaf node."
 msgstr ""
 
@@ -401,61 +401,49 @@ msgid ""
 "3.若输入字符串,则该层直接使用该名称."
 msgstr ""
 
-#: mxene.organize.mx_org.path_regroup:20 of
-msgid "path_regroup(pt=r\"E:/x/MXenes/M2C/M2XO2-TM/Hf/C/Au/2\","
+#: mxene.organize.mx_org.path_regroup:16 of
+msgid "Examples:"
 msgstr ""
 
-#: mxene.organize.mx_org.path_regroup:20 of
-msgid "base_name=1, add=2,doping=3,absorb=4,site=5,label=\"00\")"
-msgstr ""
-
-#: mxene.organize.mx_org.path_regroup:23 of
-msgid "path_regroup(pt=r\"E:/x/MXenes/M2XO2-TM/Hf/C/Au/2\",base_num_class=\"M2C\","
-msgstr ""
-
-#: mxene.organize.mx_org.path_regroup:23 of
-msgid "base_name=0, add=1,doping=2,absorb=3,site=4,label=\"00\")"
-msgstr ""
-
-#: mxene.organize.mx_org.path_regroup:26 of
+#: mxene.organize.mx_org.path_regroup:25 of
 msgid "(tuple,int,None,str), layer of base structure name."
 msgstr ""
 
-#: mxene.organize.mx_org.path_regroup:27 of
+#: mxene.organize.mx_org.path_regroup:26 of
 msgid "(tuple,int,None,str), layer of add atom."
 msgstr ""
 
-#: mxene.organize.mx_org.path_regroup:28 of
+#: mxene.organize.mx_org.path_regroup:27 of
 msgid "(tuple,int,None,str), layer of doping atom."
 msgstr ""
 
-#: mxene.organize.mx_org.path_regroup:29 of
+#: mxene.organize.mx_org.path_regroup:28 of
 msgid "(tuple,int,None,str), layer of absorb atom."
 msgstr ""
 
-#: mxene.organize.mx_org.path_regroup:30 of
+#: mxene.organize.mx_org.path_regroup:29 of
 msgid "(tuple,int,None,str), layer of site name."
 msgstr ""
 
-#: mxene.organize.mx_org.path_regroup:31 of
+#: mxene.organize.mx_org.path_regroup:30 of
 msgid "(tuple,int,None,str), layer of label name."
 msgstr ""
 
-#: mxene.organize.mx_org.path_regroup:32 of
+#: mxene.organize.mx_org.path_regroup:31 of
 msgid "(tuple,int,None,str), label of MXenes system."
 msgstr ""
 
-#: mxene.organize.mx_org.path_regroup:33 of
+#: mxene.organize.mx_org.path_regroup:32 of
 msgid "(str,None), Move to other path."
 msgstr ""
 
-#: mxene.organize.mx_org.path_regroup:34 of
+#: mxene.organize.mx_org.path_regroup:33 of
 msgid ""
 "keywords are formed \"func_*\", such as \"fun_base_name\", and the value "
 "are one function."
 msgstr ""
 
-#: mxene.organize.mx_org.path_regroup:36 of
+#: mxene.organize.mx_org.path_regroup:35 of
 msgid "(path.Path), new path"
 msgstr ""
 

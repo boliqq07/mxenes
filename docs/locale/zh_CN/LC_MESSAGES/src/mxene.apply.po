@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mxene \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-06 20:35+0800\n"
+"POT-Creation-Date: 2022-12-08 00:42+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,122 +27,6 @@ msgstr ""
 
 #: ../../src/mxene.apply.rst:13
 msgid "mxene.apply.infect module"
-msgstr ""
-
-#: mxene.apply.infect.find_energy:1 of
-msgid "寻找势垒"
-msgstr ""
-
-#: mxene.apply.infect.find_energy mxene.apply.infect.infect of
-msgid "参数"
-msgstr ""
-
-#: mxene.apply.infect.find_energy:3 of
-msgid "(np.ndarray), 势能面。"
-msgstr ""
-
-#: mxene.apply.infect.find_energy:4 of
-msgid "(int),起始位置x"
-msgstr ""
-
-#: mxene.apply.infect.find_energy:5 of
-msgid "(int),起始位置y"
-msgstr ""
-
-#: mxene.apply.infect.find_energy:6 of
-msgid "(int),结束位置x"
-msgstr ""
-
-#: mxene.apply.infect.find_energy:7 of
-msgid "(int),结束位置y"
-msgstr ""
-
-#: mxene.apply.infect.find_energy:8 of
-msgid "(bool), 画图"
-msgstr ""
-
-#: mxene.apply.infect.find_energy:9 of
-msgid "(bool), zi划分个数"
-msgstr ""
-
-#: mxene.apply.infect.find_energy:10 of
-msgid "(int), zi 划分个数，若步长step存在，优先使用步长,此参数忽略。"
-msgstr ""
-
-#: mxene.apply.infect.find_energy mxene.apply.infect.infect of
-msgid "返回"
-msgstr ""
-
-#: mxene.apply.infect.find_energy:12 of
-msgid "(np.ndarray) 势能面决策结果矩阵。 zi:(np.ndarray) 能量值。"
-msgstr ""
-
-#: mxene.apply.infect.find_energy mxene.apply.infect.infect of
-msgid "返回类型"
-msgstr ""
-
-#: mxene.apply.infect.from_points_to_matrix:1 of
-msgid "产生网格。"
-msgstr ""
-
-#: mxene.apply.infect.get_2_equ_min_site:1 of
-msgid "获取相邻晶胞的两个等效位。"
-msgstr ""
-
-#: mxene.apply.infect.get_test_data:1 of
-msgid "产生数据"
-msgstr ""
-
-#: mxene.apply.infect.getnebor:1 of
-msgid "获取邻域索引"
-msgstr ""
-
-#: mxene.apply.infect.infect:1 of
-msgid "从一个起始值传播。"
-msgstr ""
-
-#: mxene.apply.infect.infect:3 of
-msgid "(np.ndarray), numpy 整数数组，初始全部0或者1。"
-msgstr ""
-
-#: mxene.apply.infect.infect:4 of
-msgid "(int32)， 起始x值。"
-msgstr ""
-
-#: mxene.apply.infect.infect:5 of
-msgid "(int32), 起始y值。"
-msgstr ""
-
-#: mxene.apply.infect.infect:7 of
-msgid "(np.ndarray), numpy 整数数组，全部0或者1,或者-1。"
-msgstr ""
-
-#: mxene.apply.infect.mx_reflection:1 of
-msgid "反射。"
-msgstr ""
-
-#: mxene.apply.infect.mx_reflection_and_rotate_supercell:1 of
-msgid "反射"
-msgstr ""
-
-#: mxene.apply.infect.mx_rotate3:1 of
-msgid "旋转三次。"
-msgstr ""
-
-#: mxene.apply.infect.mx_supercell:1 of
-msgid "超胞3X3X1"
-msgstr ""
-
-#: mxene.apply.infect.remove_dup:1 of
-msgid "删除重复原子。"
-msgstr ""
-
-#: mxene.apply.infect.show:1 of
-msgid "展示画图。"
-msgstr ""
-
-#: mxene.apply.infect.store_fig:1 of
-msgid "画图"
 msgstr ""
 
 #~ msgid "寻找势垒"
@@ -230,5 +114,14 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "画图"
+#~ msgstr ""
+
+#~ msgid "参数"
+#~ msgstr ""
+
+#~ msgid "返回"
+#~ msgstr ""
+
+#~ msgid "返回类型"
 #~ msgstr ""
 

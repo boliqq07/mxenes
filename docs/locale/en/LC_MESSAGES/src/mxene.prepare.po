@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mxene \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-06 20:35+0800\n"
+"POT-Creation-Date: 2022-12-08 01:01+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -58,7 +58,7 @@ msgid "mxene.prepare.vaspinput module"
 msgstr ""
 
 #: mxene.prepare.vaspinput.MXVaspInput:1 of
-msgid "基类：:class:`pymatgen.io.vasp.inputs.VaspInput`"
+msgid "基类：:py:class:`pymatgen.io.vasp.inputs.VaspInput`"
 msgstr ""
 
 #: mxene.prepare.vaspinput.MXVaspInput:1 of
@@ -153,5 +153,11 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Bases: :class:`pymatgen.io.vasp.inputs.VaspInput`"
+#~ msgstr ""
+
+#~ msgid "基类：:class:`pymatgen.io.vasp.inputs.VaspInput`"
+#~ msgstr ""
+
+#~ msgid "参数"
 #~ msgstr ""
 

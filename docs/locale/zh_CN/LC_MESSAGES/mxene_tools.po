@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mxene \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-05 20:19+0800\n"
+"POT-Creation-Date: 2022-12-08 00:42+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,88 +23,94 @@ msgstr "MXene工具"
 
 #: ../../mxene_tools.rst:4
 msgid ""
-"mxene includes some tools for batch generation of mxene structures and "
-"extraction of crystal structure features, which can be used as the input "
-"of VASP for subsequent calculation, and can also analyze and extract some"
-" calculation results to achieve data mining in universities. In addition,"
-" mxene can also be used to check the rationality of vasp calculation "
-"process and results."
+":class:`mxene.core.mxenes.MXene` are inherited from ``Structure`` from "
+"pymatgen, beside the basic functions of ``Structure``, it customizes some"
+" specialized functions for **MXenes** structure."
 msgstr ""
-"mxene包含了一些用来批量产生mxene结构和提取晶体结构特征的工具，"
-"可作为VASP的输入用于后续的计算，"
-"同时也可对部分计算结果进行分析提取，"
-"实现高校的数据挖掘。"
-"此外，mxene也可用于检查vasp计算过程和结果的合理性。"
+":class:`mxene.core.mxenes.MXene` 继承自pymatgen的 ``Structure`` ，除了 "
+"``Structure`` 基础的功能外, 它特色化设计了针对 **MXenes** 结构的"
+"功能函数。"
 
-#: ../../mxene_tools.rst:10
+#: ../../mxene_tools.rst:9
 msgid "Name"
 msgstr "名称"
 
-#: ../../mxene_tools.rst:10
+#: ../../mxene_tools.rst:9
 msgid "Application"
 msgstr "应用"
 
-#: ../../mxene_tools.rst:12
+#: ../../mxene_tools.rst:11
 msgid ":class:`mxene.core.mxenes.MXene`"
 msgstr ":class:`mxene.core.mxenes.MXene`"
 
-#: ../../mxene_tools.rst:12
+#: ../../mxene_tools.rst:11
 msgid "MXene structure object."
 msgstr "MXene结构对象。"
 
-#: ../../mxene_tools.rst:13
+#: ../../mxene_tools.rst:12
 msgid ":func:`mxene.core.mxenes.MXene.get_similar_layer_atoms`"
 msgstr ":func:`mxene.core.mxenes.MXene.get_similar_layer_atoms`"
 
-#: ../../mxene_tools.rst:13
+#: ../../mxene_tools.rst:12
 msgid "Get all same layer atoms by z0 site."
 msgstr "通过z0位置获取所有相同的层原子。"
 
-#: ../../mxene_tools.rst:14
+#: ../../mxene_tools.rst:13
 msgid ":func:`mxene.core.mxenes.MXene.get_next_layer_sites_xy`"
 msgstr ":func:`mxene.core.mxenes.MXene.get_next_layer_sites_xy`"
 
-#: ../../mxene_tools.rst:14
+#: ../../mxene_tools.rst:13
 msgid "Obtain the atomic position of the next layer."
 msgstr "获取下一层的原子位置。"
 
-#: ../../mxene_tools.rst:15
+#: ../../mxene_tools.rst:14
 msgid ":func:`mxene.core.mxenes.MXene.from_standard`"
 msgstr ":func:`mxene.core.mxenes.MXene.from_standard`"
 
-#: ../../mxene_tools.rst:15
+#: ../../mxene_tools.rst:14
 msgid "Generate ideal single atom doping MXenes."
 msgstr "生成合理的单原子掺杂的MXenes。"
 
-#: ../../mxene_tools.rst:16
+#: ../../mxene_tools.rst:15
 msgid ":func:`mxene.core.mxenes.MXene.get_structure_message`"
 msgstr ":func:`mxene.core.mxenes.MXene.get_structure_message`"
 
-#: ../../mxene_tools.rst:16
+#: ../../mxene_tools.rst:15
 msgid "Obtaining bond and face information"
 msgstr "获取键和面信息"
 
-#: ../../mxene_tools.rst:17
+#: ../../mxene_tools.rst:16
 msgid ":func:`mxene.core.mxenes.MXene.add_absorb`"
 msgstr ":func:`mxene.core.mxenes.MXene.add_absorb`"
 
-#: ../../mxene_tools.rst:17
+#: ../../mxene_tools.rst:16
 msgid "Add adsorbent atoms."
 msgstr "添加吸附原子。"
 
-#: ../../mxene_tools.rst:18
+#: ../../mxene_tools.rst:17
 msgid ":func:`mxene.core.mxenes.MXene.add_face_random`"
 msgstr ":func:`mxene.core.mxenes.MXene.add_face_random`"
 
-#: ../../mxene_tools.rst:18
+#: ../../mxene_tools.rst:17
 msgid "Add atoms at randomly."
 msgstr "随机添加原子。"
 
-#: ../../mxene_tools.rst:19
+#: ../../mxene_tools.rst:18
 msgid ":func:`mxene.core.mxenes.MXene.non_equivalent_site`"
 msgstr ":func:`mxene.core.mxenes.MXene.non_equivalent_site`"
 
-#: ../../mxene_tools.rst:19
+#: ../../mxene_tools.rst:18
 msgid "Obtain 16 equivalent positions."
 msgstr "获取16个等效位置。"
 
+#: ../../mxene_tools.rst:23
+msgid "The background of **MXene**  refers to :doc:`Guide/background`"
+msgstr "**MXene** 的背景参考 :doc:`Guide/background`"
+
+#: ../../mxene_tools.rst:25
+msgid ""
+"The background and data of ``Structure``  refer to "
+":doc:`Guide/mxene_materials`"
+msgstr ""
+"``Structure``  的背景参考 "
+":doc:`Guide/mxene_materials`"

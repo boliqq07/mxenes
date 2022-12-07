@@ -1,5 +1,5 @@
 """
-**** This script is used to reorganize the MXenes folder ****
+** This script is used to reorganize the MXenes folder **
 
 0. This code can be used as a script alone, need to install python3, if you need to obtain the recommended path, need to install pymatgen,ase,mxene and other packages.
 
@@ -15,35 +15,35 @@
 
 6. This script can be distributed freely and can be used freely. The version in the mxene package is the source version. If you need to change the source version of any bug or important content, please Contact me.
 
-The final unified folder format is:
+The final unified folder format.
 
-**(1) does not adsorb **
+** (1) does not adsorb **
 
-MXenes ->  Basal number classification -> Base name -> Load content -> Dopant -> pure/pure_static
+    MXenes ->  Basal number classification -> Base name -> Load content -> Dopant -> pure/pure_static
 
-Examples
+Examples:
 
-MXenes ->  M2C ->  Ti2NO2 ->  no_add ->  no_doping ->  pure/pure_static
+    MXenes ->  M2C ->  Ti2NO2 ->  no_add ->  no_doping ->  pure/pure_static
 
-MXenes ->  M2N ->  Ti2NO2 ->  no_add ->  Mo        ->  pure/pure_static
+    MXenes ->  M2N ->  Ti2NO2 ->  no_add ->  Mo        ->  pure/pure_static
 
-* * * * (2) adsorption
+** (2) adsorption **
 
-MXenes ->  Basal number classification -> Base name -> Load content -> Dopant -> Adsorbate -> The label
+    MXenes ->  Basal number classification -> Base name -> Load content -> Dopant -> Adsorbate -> The label
 
-Examples
+Examples:
 
-MXenes ->  M2N  ->  Ti2NO2      ->  no_add ->  no_dopin ->  H/add_H  ->  top ->  00
+    MXenes ->  M2N  ->  Ti2NO2      ->  no_add ->  no_dopin ->  H/add_H  ->  top ->  00
 
-MXenes ->  M3N2 ->  TiNCrNTi-O2 ->  Hf     ->  C         ->  Li ->  S0  ->  00
+    MXenes ->  M3N2 ->  TiNCrNTi-O2 ->  Hf     ->  C         ->  Li ->  S0  ->  00
 
-**(3)NEB**
+** (3)NEB **
 
-MXenes ->  Basal number classification -> Base name -> Load content -> Dopant -> Adsorbate -> Equivalent site -> Path name
+    MXenes ->  Basal number classification -> Base name -> Load content -> Dopant -> Adsorbate -> Equivalent site -> Path name
 
-Examples
+Examples:
 
-MXenes ->  M2N ->  Ti2NO2 ->  no_add ->  no_doping ->  H ->  S0-S1 ->  00/01/01/03/04/ini/fin/...
+    MXenes ->  M2N ->  Ti2NO2 ->  no_add ->  no_doping ->  H ->  S0-S1 ->  00/01/01/03/04/ini/fin/...
 
 '->' represents the 'next level'.
 '/' means 'or'.
@@ -154,13 +154,12 @@ def path_regroup(pt: Union[str, path.Path, os.PathLike, pathlib.Path],
 
 
     Examples:
-    ----------
 
-    path_regroup(pt=r"E:/x/MXenes/M2C/M2XO2-TM/Hf/C/Au/2",
-                 base_name=1, add=2,doping=3,absorb=4,site=5,label="00")
+    >>> path_regroup(pt=r"E:/x/MXenes/M2C/M2XO2-TM/Hf/C/Au/2",
+    ...             base_name=1, add=2,doping=3,absorb=4,site=5,label="00")
 
-    path_regroup(pt=r"E:/x/MXenes/M2XO2-TM/Hf/C/Au/2",base_num_class="M2C",
-                 base_name=0, add=1,doping=2,absorb=3,site=4,label="00")
+    >>> path_regroup(pt=r"E:/x/MXenes/M2XO2-TM/Hf/C/Au/2",base_num_class="M2C",
+    ...             base_name=0, add=1,doping=2,absorb=3,site=4,label="00")
 
     Args:
         pt: (str, path.Path, os.PathLike,pathlib.Path), path of leaf node.

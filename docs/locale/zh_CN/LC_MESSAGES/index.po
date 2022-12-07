@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mxene \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-05 20:19+0800\n"
+"POT-Creation-Date: 2022-12-08 00:42+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,83 +25,81 @@ msgstr "内容："
 msgid "Welcome to mxene's documentation!"
 msgstr "欢迎来到mxene的文档！"
 
-#: ../../index.rst:14
+#: ../../index.rst:15
 msgid ""
-"mxene includes some tools for batch generation of mxene structures and "
-"extraction of crystal structure features, which can be used as the input "
-"of VASP for subsequent calculation, and can also analyze and extract some"
-" calculation results to achieve data mining in universities. In addition,"
-" mxene can also be used to check the rationality of vasp calculation "
-"process and results."
+"This software ``mxene`` is one toolkit for **MXene** material generation,"
+" calculation and analysis."
 msgstr ""
-"mxene包含了一些用来批量产生mxene结构和提取晶体结构特征的工具，"
-"可作为VASP的输入用于后续的计算，"
-"同时也可对部分计算结果进行分析提取，"
-"实现高校的数据挖掘。"
-"此外，mxene也可用于检查vasp计算过程和结果的合理性。"
+"``mxene`` 软件是 **MXene** 材料批量生成,"
+"计算和分析的工具集合。"
 
-#: ../../index.rst:19
+
+#: ../../index.rst:18
 msgid ""
-"This software is optimized for 'MXene' material generation, calculation "
-"and analysis to achieve efficient data mining."
+"``mxene`` mainly includes some tools for batch generation of **MXene** "
+"structures and crystal structure feature extraction, aiming to achieve "
+"data mining in universities. In addition, ``mxene`` can also be used to "
+"check the rationality of vasp calculation process and results."
 msgstr ""
-"该软件针对'MXene'材料生成和计算进行了优化"
-"和分析，以实现高效的数据挖掘"
+"``mxene`` 主要包括一些用于批量生成 **MXene** "
+"结构和晶体结构特征提取的工具，旨在实现"
+"高效的数据挖掘。此外， ``mxene`` 还可以"
+"用于检查vasp计算过程和结果的合理性。"
 
-#: ../../index.rst:22
+#: ../../index.rst:23
 msgid "Using this software, you could:"
 msgstr "使用这个软件，你可以："
 
-#: ../../index.rst:24
-msgid "Generate initial various kinds mxene structure and relevant VASP input."
-msgstr "生成各种初始的mxene结构和相关VASP输入。"
+#: ../../index.rst:25
+msgid ""
+"Generate initial various kinds **MXene** structure and relevant VASP "
+"input."
+msgstr "生成各种初始的 **MXene** 结构和相关VASP"
+"输入。"
 
-#: ../../index.rst:26
+#: ../../index.rst:27
 msgid "Monitor VASP calculation processing."
 msgstr "监控VASP计算进程。"
 
-#: ../../index.rst:28
-msgid "Organize mxene data."
-msgstr "组织mxenes数据。"
+#: ../../index.rst:29
+msgid "Organize **MXene** data."
+msgstr "组织 **MXene** 数据。"
 
-#: ../../index.rst:30
+#: ../../index.rst:31
 msgid "Extract structure features from crystal structure."
 msgstr "从晶体结构中提取结构特征。"
 
-#: ../../index.rst:32
-msgid "# Install"
-msgstr "安装"
+#: ../../index.rst:33
+msgid "**Install:**"
+msgstr "**安装:**"
 
-#: ../../index.rst:34
-msgid "```bash pip install mxene ```"
-msgstr "```bash pip install mxene ```"
+#: ../../index.rst:35
+msgid "pip install mxene"
+msgstr "pip install mxene"
 
-#: ../../index.rst:38
-msgid "# Initial configuration"
-msgstr "# 初始配置"
+#: ../../index.rst:37
+msgid "**Install configuration:**"
+msgstr "**初始配置:**"
 
-#: ../../index.rst:40
+#: ../../index.rst:39
 msgid ""
 "Before first using, we recommend using the following methods to generate "
 "the configuration file."
-msgstr ""
-"第一次使用之前，我们建议使用下main的方法"
-"去生成配置文件。"
+msgstr "第一次使用之前，我们建议使用下面的方法去生成配置文件。"
 
-
-#: ../../index.rst:47
+#: ../../index.rst:46
 msgid "Indices and tables"
 msgstr "索引和表格"
 
-#: ../../index.rst:49
+#: ../../index.rst:48
 msgid ":ref:`genindex`"
 msgstr ""
 
-#: ../../index.rst:50
+#: ../../index.rst:49
 msgid ":ref:`modindex`"
 msgstr ""
 
-#: ../../index.rst:51
+#: ../../index.rst:50
 msgid ":ref:`search`"
 msgstr ""
 

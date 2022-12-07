@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mxene \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-05 20:19+0800\n"
+"POT-Creation-Date: 2022-12-08 00:42+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,5 +19,13 @@ msgstr ""
 
 #: ../../src/mxene.monitor.rst:2
 msgid "mxene.monitor package"
+msgstr ""
+
+#: ../../src/mxene.monitor.rst:10
+msgid "Submodules"
+msgstr ""
+
+#: ../../src/mxene.monitor.rst:13
+msgid "mxene.monitor.jobmanagement module"
 msgstr ""
 

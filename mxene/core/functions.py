@@ -121,13 +121,14 @@ def coarse_and_spilt_array_ignore_force_plane(array: np.ndarray, ignore_index: U
     (4). For absorb + doped system, 'ignore_index', 'force_finite' and 'force_plane' could be used together,
          change the 'tol' to check the result.But, for large structural deformations array.
          This function is not effective always.
-    (5). If all the parameter are failed, please generate the input array by hand or tune the value in array.
+    (5). If all the parameter are failed, please generate the input array by hand or
+         tune the value in array.
 
     Examples:
-        >>> coarse_and_spilt_array_ignore_force_plane(np.array([0.1,0.11,0.12,0.15,0.16,0.17]),
-        ...                                                 ignore_index= None, tol=0.02,force_plane=True,
-        ...                                                 reverse=True, force_finite=True)
-        array([1, 1, 1, 0, 0, 0])
+    >>> coarse_and_spilt_array_ignore_force_plane(np.array([0.1,0.11,0.12,0.15,0.16,0.17]),
+    ...                                                 ignore_index= None, tol=0.02,force_plane=True,
+    ...                                                 reverse=True, force_finite=True)
+    array([1, 1, 1, 0, 0, 0])
 
     Args:
         array: (np.ndarray), the array to be grouped.
@@ -439,7 +440,7 @@ def get_plane_neighbors_to_center(st: Structure, neighbors_name: Union[List, Tup
 
 def get_center_name(structure: Structure, jump_atom_type: Tuple = ("C", "O", "N", "H", "P"),
                     center_index: int = None, ref_center_index=None,
-                    ignore_index: [int, list, Tuple] = None) -> Tuple:
+                    ignore_index: Union[int, List, Tuple] = None) -> Tuple:
     """
     Judge the center and return the name of center, return name and index.
 
