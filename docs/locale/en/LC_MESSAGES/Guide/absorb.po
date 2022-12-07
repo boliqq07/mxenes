@@ -1,0 +1,52 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022, boliqq07
+# This file is distributed under the same license as the mxene package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: mxene \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-12-05 20:19+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../Guide/absorb.rst:2
+msgid "Absorb"
+msgstr ""
+
+#: ../../Guide/absorb.rst:4
+msgid ""
+"In the fields of catalysis and battery materials, various adsorbents are "
+"often designed, and various adsorption models need to be built. MXene "
+"provides this tool:"
+msgstr ""
+
+#: ../../Guide/absorb.rst:10
+msgid ""
+"There are three common adsorption sites: top, bridge and hollow. You can "
+"use the tools in mxene to define the location and type of adsorption "
+"atoms."
+msgstr ""
+
+#: ../../Guide/absorb.rst:18
+msgid ""
+"mxene also provides a tool for batch generation of randomly adsorbed "
+"atomic crystal structures on material surfaces, which may be conveniently"
+" used in the calculation of isoenergetic surface."
+msgstr ""
+
+#: ../../Guide/absorb.rst:28
+msgid "At the same time, mxene also supports layered adsorption."
+msgstr ""
+
+#: ../../Guide/absorb.rst:33
+msgid "which is often used in the calculation of battery materials."
+msgstr ""
+

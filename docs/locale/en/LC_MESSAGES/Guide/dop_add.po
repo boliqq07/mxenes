@@ -1,0 +1,46 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022, boliqq07
+# This file is distributed under the same license as the mxene package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: mxene \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-12-05 20:19+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../Guide/dop_add.rst:2
+msgid "Dop and Add"
+msgstr ""
+
+#: ../../Guide/dop_add.rst:4
+msgid ""
+"Dop or add can effectively change the electronic structure of MXenes "
+"based materials, which is an effective strategy to control the properties"
+" of materials themselves. mxene provides this way to create crystal "
+"structures:"
+msgstr ""
+
+#: ../../Guide/dop_add.rst:10
+msgid "**Method 1:**"
+msgstr ""
+
+#: ../../Guide/dop_add.rst:15
+msgid "**Method 2:**"
+msgstr ""
+
+#: ../../Guide/dop_add.rst:17
+msgid ""
+"In addition to the above method, you can also read the existing POSCAR "
+"and convert it into ``Structure`` through pymatgen, and then successively"
+" dop or add to form a new POSCAR:"
+msgstr ""
+

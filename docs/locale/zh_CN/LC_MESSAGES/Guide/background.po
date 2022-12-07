@@ -1,0 +1,67 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022, boliqq07
+# This file is distributed under the same license as the mxene package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: mxene \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-12-05 20:19+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../Guide/background.rst:2
+msgid "Sample Data and Background"
+msgstr "样本数据及背景"
+
+#: ../../Guide/background.rst:5
+msgid "Sample data"
+msgstr "样本数据"
+
+#: ../../Guide/background.rst:7
+msgid ""
+"Download data from the following link: `Structure List "
+"<https://github.com/boliqq07/mxene/blob/master/test/mxene_data/structures.pkl_pd>`_"
+" ."
+msgstr ""
+"从以下链接下载： `Structure List "
+"<https://github.com/boliqq07/mxene/blob/master/test/mxene_data/structures.pkl_pd>`_"
+" ."
+
+#: ../../Guide/background.rst:9
+msgid "Usage:"
+msgstr "使用"
+
+#: ../../Guide/background.rst:21
+msgid "Background"
+msgstr "背景"
+
+#: ../../Guide/background.rst:23
+msgid ""
+"The ``Structure`` from ``pymatgen`` is one class to represent the crystal"
+" structure data, which contain all message of atoms and their sites. More"
+" details link: `pymatgen Structure <https://pymatgen.org/usage.html"
+"#reading-and-writing-structures-molecules>`_ ."
+msgstr ""
+"来自``pymatgen``的 ``Structure`` 是代表晶体结构数据的一个类，"
+"其中包含原子及其站点的所有信息。"
+"详细信息链接： `pymatgen Structure <https://pymatgen.org/usage.html"
+"#reading-and-writing-structures-molecules>`_ ."
+
+#: ../../Guide/background.rst:27
+msgid ""
+"The ``MXene`` from ``mxene`` is one sub-class ``Structure`` . Therefore, "
+"besides the same functions and properties of ``Structure``, the ``MXene``"
+" has more powerful and specialized function for 2D MXenes materials."
+msgstr ""
+"来自 ``mxene`` 的 ``MXene`` 是``Structure``的一个子类。"
+"因此，除了 ``Structure``的相同功能和属性之外， ``MXene``"
+"对2D MXenes材料具有更强大和专门的功能。"
+

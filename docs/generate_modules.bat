@@ -3,7 +3,8 @@
 sphinx-quickstart
 
 2.# 产生目录
-sphinx-apidoc -f -M -o ./src ../mxene    (按需要运行) or
+sphinx-apidoc -f -M -o ./src ../mxene    (按需要运行)
+或者
 sphinx-apidoc -f -M -e -o  ./src ../mxene    (按需要运行,每个文件夹自己的页面)
 
 删除 cli.rst 中的所有子模块，只保留总模块。
@@ -23,6 +24,7 @@ make clean
 # 多语言
 
 pip install sphinx-intl
+pip install sphinx_rtd_theme
 
 # 1. conf.py 加入
 locale_dirs = ['locale/']   # path is example but recommended.
@@ -35,17 +37,17 @@ make gettext
 sphinx-intl update -p _build/gettext -l zh_CN -l en
 
 # 4. 生成,选择一种.
-# linux
-make -e SPHINXOPTS="-D language='zh_CN'" html
-
 # windows cmd
 set SPHINXOPTS=-D language=zh_CN
 make html
 
+##
 # windows powershell
 Set-Item env:SPHINXOPTS "-D language=zh_CN"
 make html
+##
+# linux
+make -e SPHINXOPTS="-D language='zh_CN'" html
 
 #重复2,3,4直到满意
 
-shabi

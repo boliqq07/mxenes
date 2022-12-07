@@ -1,0 +1,157 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022, boliqq07
+# This file is distributed under the same license as the mxene package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: mxene \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-12-06 20:35+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../src/mxene.prepare.rst:2
+msgid "mxene.prepare package"
+msgstr ""
+
+#: ../../src/mxene.prepare.rst:10
+msgid "Submodules"
+msgstr ""
+
+#: ../../src/mxene.prepare.rst:13
+msgid "mxene.prepare.conf\\_files module"
+msgstr ""
+
+#: mxene.prepare.conf_files:1 of
+msgid ""
+"This file is used to generated vasp input file (INCAR, run script) Custom"
+" modifications are recommended."
+msgstr ""
+
+#: ../../src/mxene.prepare.rst:21
+msgid "mxene.prepare.pre\\_kpoints module"
+msgstr ""
+
+#: ../../src/mxene.prepare.rst:29
+msgid "mxene.prepare.pre\\_potcar module"
+msgstr ""
+
+#: mxene.prepare.pre_potcar.check_potcar:1 of
+msgid ""
+"Check and get the potcar file. The potcar file name should start from "
+"element such as 'Ag-POSCAR','Ag','Ag_sl'."
+msgstr ""
+
+#: mxene.prepare.pre_potcar.get_potcar:1 of
+msgid "Read from sym_potcar_map according poscar message."
+msgstr ""
+
+#: ../../src/mxene.prepare.rst:37
+msgid "mxene.prepare.vaspinput module"
+msgstr ""
+
+#: mxene.prepare.vaspinput.MXVaspInput:1 of
+msgid "基类：:class:`pymatgen.io.vasp.inputs.VaspInput`"
+msgstr ""
+
+#: mxene.prepare.vaspinput.MXVaspInput:1 of
+msgid "Class to contain a set of vasp input objects corresponding to a run."
+msgstr ""
+
+#: mxene.prepare.vaspinput.MXVaspInput
+#: mxene.prepare.vaspinput.MXVaspInput.write_input of
+msgid "参数"
+msgstr ""
+
+#: mxene.prepare.vaspinput.MXVaspInput:3 of
+msgid "Incar object."
+msgstr ""
+
+#: mxene.prepare.vaspinput.MXVaspInput:4 of
+msgid "Kpoints object."
+msgstr ""
+
+#: mxene.prepare.vaspinput.MXVaspInput:5 of
+msgid "Poscar object."
+msgstr ""
+
+#: mxene.prepare.vaspinput.MXVaspInput:6 of
+msgid "Potcar object."
+msgstr ""
+
+#: mxene.prepare.vaspinput.MXVaspInput:7 of
+msgid ""
+"Other input files supplied as a dict of { filename: object}. The object "
+"should follow standard pymatgen conventions in implementing as_dict() and"
+" from_dict method."
+msgstr ""
+
+#: mxene.prepare.vaspinput.MXVaspInput.write_input:1 of
+msgid "Write VASP inputs to a directory."
+msgstr ""
+
+#: mxene.prepare.vaspinput.MXVaspInput.write_input:3 of
+msgid "Directory to write to. Defaults to current directory (\".\")."
+msgstr ""
+
+#: mxene.prepare.vaspinput.MXVaspInput.write_input:6 of
+msgid "Create the directory if not present. Defaults to True."
+msgstr ""
+
+#~ msgid ""
+#~ "Check and get the potcar file. The"
+#~ " potcar file name should start from"
+#~ " element such as 'Ag-POSCAR','Ag','Ag_sl'."
+#~ msgstr ""
+
+#~ msgid "Read from sym_potcar_map according poscar message."
+#~ msgstr ""
+
+#~ msgid "Bases: :py:class:`pymatgen.io.vasp.inputs.VaspInput`"
+#~ msgstr ""
+
+#~ msgid "Class to contain a set of vasp input objects corresponding to a run."
+#~ msgstr ""
+
+#~ msgid "Parameters"
+#~ msgstr ""
+
+#~ msgid "Incar object."
+#~ msgstr ""
+
+#~ msgid "Kpoints object."
+#~ msgstr ""
+
+#~ msgid "Poscar object."
+#~ msgstr ""
+
+#~ msgid "Potcar object."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Other input files supplied as a "
+#~ "dict of { filename: object}. The "
+#~ "object should follow standard pymatgen "
+#~ "conventions in implementing as_dict() and "
+#~ "from_dict method."
+#~ msgstr ""
+
+#~ msgid "Write VASP inputs to a directory."
+#~ msgstr ""
+
+#~ msgid "Directory to write to. Defaults to current directory (\".\")."
+#~ msgstr ""
+
+#~ msgid "Create the directory if not present. Defaults to True."
+#~ msgstr ""
+
+#~ msgid "Bases: :class:`pymatgen.io.vasp.inputs.VaspInput`"
+#~ msgstr ""
+

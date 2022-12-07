@@ -1,0 +1,234 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022, boliqq07
+# This file is distributed under the same license as the mxene package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: mxene \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-12-06 20:35+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../src/mxene.apply.rst:2
+msgid "mxene.apply package"
+msgstr ""
+
+#: ../../src/mxene.apply.rst:10
+msgid "Submodules"
+msgstr ""
+
+#: ../../src/mxene.apply.rst:13
+msgid "mxene.apply.infect module"
+msgstr ""
+
+#: mxene.apply.infect.find_energy:1 of
+msgid "寻找势垒"
+msgstr ""
+
+#: mxene.apply.infect.find_energy mxene.apply.infect.infect of
+msgid "参数"
+msgstr ""
+
+#: mxene.apply.infect.find_energy:3 of
+msgid "(np.ndarray), 势能面。"
+msgstr ""
+
+#: mxene.apply.infect.find_energy:4 of
+msgid "(int),起始位置x"
+msgstr ""
+
+#: mxene.apply.infect.find_energy:5 of
+msgid "(int),起始位置y"
+msgstr ""
+
+#: mxene.apply.infect.find_energy:6 of
+msgid "(int),结束位置x"
+msgstr ""
+
+#: mxene.apply.infect.find_energy:7 of
+msgid "(int),结束位置y"
+msgstr ""
+
+#: mxene.apply.infect.find_energy:8 of
+msgid "(bool), 画图"
+msgstr ""
+
+#: mxene.apply.infect.find_energy:9 of
+msgid "(bool), zi划分个数"
+msgstr ""
+
+#: mxene.apply.infect.find_energy:10 of
+msgid "(int), zi 划分个数，若步长step存在，优先使用步长,此参数忽略。"
+msgstr ""
+
+#: mxene.apply.infect.find_energy mxene.apply.infect.infect of
+msgid "返回"
+msgstr ""
+
+#: mxene.apply.infect.find_energy:12 of
+msgid "(np.ndarray) 势能面决策结果矩阵。 zi:(np.ndarray) 能量值。"
+msgstr ""
+
+#: mxene.apply.infect.find_energy mxene.apply.infect.infect of
+msgid "返回类型"
+msgstr ""
+
+#: mxene.apply.infect.from_points_to_matrix:1 of
+msgid "产生网格。"
+msgstr ""
+
+#: mxene.apply.infect.get_2_equ_min_site:1 of
+msgid "获取相邻晶胞的两个等效位。"
+msgstr ""
+
+#: mxene.apply.infect.get_test_data:1 of
+msgid "产生数据"
+msgstr ""
+
+#: mxene.apply.infect.getnebor:1 of
+msgid "获取邻域索引"
+msgstr ""
+
+#: mxene.apply.infect.infect:1 of
+msgid "从一个起始值传播。"
+msgstr ""
+
+#: mxene.apply.infect.infect:3 of
+msgid "(np.ndarray), numpy 整数数组，初始全部0或者1。"
+msgstr ""
+
+#: mxene.apply.infect.infect:4 of
+msgid "(int32)， 起始x值。"
+msgstr ""
+
+#: mxene.apply.infect.infect:5 of
+msgid "(int32), 起始y值。"
+msgstr ""
+
+#: mxene.apply.infect.infect:7 of
+msgid "(np.ndarray), numpy 整数数组，全部0或者1,或者-1。"
+msgstr ""
+
+#: mxene.apply.infect.mx_reflection:1 of
+msgid "反射。"
+msgstr ""
+
+#: mxene.apply.infect.mx_reflection_and_rotate_supercell:1 of
+msgid "反射"
+msgstr ""
+
+#: mxene.apply.infect.mx_rotate3:1 of
+msgid "旋转三次。"
+msgstr ""
+
+#: mxene.apply.infect.mx_supercell:1 of
+msgid "超胞3X3X1"
+msgstr ""
+
+#: mxene.apply.infect.remove_dup:1 of
+msgid "删除重复原子。"
+msgstr ""
+
+#: mxene.apply.infect.show:1 of
+msgid "展示画图。"
+msgstr ""
+
+#: mxene.apply.infect.store_fig:1 of
+msgid "画图"
+msgstr ""
+
+#~ msgid "寻找势垒"
+#~ msgstr ""
+
+#~ msgid "Parameters"
+#~ msgstr ""
+
+#~ msgid "(np.ndarray), 势能面。"
+#~ msgstr ""
+
+#~ msgid "(int),起始位置x"
+#~ msgstr ""
+
+#~ msgid "(int),起始位置y"
+#~ msgstr ""
+
+#~ msgid "(int),结束位置x"
+#~ msgstr ""
+
+#~ msgid "(int),结束位置y"
+#~ msgstr ""
+
+#~ msgid "(bool), 画图"
+#~ msgstr ""
+
+#~ msgid "(bool), zi划分个数"
+#~ msgstr ""
+
+#~ msgid "(int), zi 划分个数，若步长step存在，优先使用步长,此参数忽略。"
+#~ msgstr ""
+
+#~ msgid "Returns"
+#~ msgstr ""
+
+#~ msgid "(np.ndarray) 势能面决策结果矩阵。 zi:(np.ndarray) 能量值。"
+#~ msgstr ""
+
+#~ msgid "Return type"
+#~ msgstr ""
+
+#~ msgid "产生网格。"
+#~ msgstr ""
+
+#~ msgid "获取相邻晶胞的两个等效位。"
+#~ msgstr ""
+
+#~ msgid "产生数据"
+#~ msgstr ""
+
+#~ msgid "获取邻域索引"
+#~ msgstr ""
+
+#~ msgid "从一个起始值传播。"
+#~ msgstr ""
+
+#~ msgid "(np.ndarray), numpy 整数数组，初始全部0或者1。"
+#~ msgstr ""
+
+#~ msgid "(int32)， 起始x值。"
+#~ msgstr ""
+
+#~ msgid "(int32), 起始y值。"
+#~ msgstr ""
+
+#~ msgid "(np.ndarray), numpy 整数数组，全部0或者1,或者-1。"
+#~ msgstr ""
+
+#~ msgid "反射。"
+#~ msgstr ""
+
+#~ msgid "反射"
+#~ msgstr ""
+
+#~ msgid "旋转三次。"
+#~ msgstr ""
+
+#~ msgid "超胞3X3X1"
+#~ msgstr ""
+
+#~ msgid "删除重复原子。"
+#~ msgstr ""
+
+#~ msgid "展示画图。"
+#~ msgstr ""
+
+#~ msgid "画图"
+#~ msgstr ""
+

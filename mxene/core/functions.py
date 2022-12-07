@@ -439,7 +439,7 @@ def get_plane_neighbors_to_center(st: Structure, neighbors_name: Union[List, Tup
 
 def get_center_name(structure: Structure, jump_atom_type: Tuple = ("C", "O", "N", "H", "P"),
                     center_index: int = None, ref_center_index=None,
-                    ignore_index: [int, List, Tuple] = None) -> Tuple:
+                    ignore_index: [int, list, Tuple] = None) -> Tuple:
     """
     Judge the center and return the name of center, return name and index.
 

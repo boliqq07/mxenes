@@ -1,0 +1,2293 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022, boliqq07
+# This file is distributed under the same license as the mxene package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: mxene \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-12-06 20:35+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../src/mxene.core.rst:2
+msgid "mxene.core package"
+msgstr ""
+
+#: ../../src/mxene.core.rst:10
+msgid "Submodules"
+msgstr ""
+
+#: ../../src/mxene.core.rst:13
+msgid "mxene.core.functions module"
+msgstr ""
+
+#: mxene.core.functions:1 of
+msgid "This is some base support function for mxene.py."
+msgstr ""
+
+#: mxene.core.functions.Interp2dNearest:1 of
+msgid "基类：:class:`object`"
+msgstr ""
+
+#: mxene.core.functions.Interp2dNearest:1 of
+msgid ""
+"An interp2d method to get grid interpolation by neighbor points. interp2d"
+" means the approximate method is just in x, y axes and assess the value "
+"of z. Return the 'new_z' sites of the input grid (new_x,new_y)."
+msgstr ""
+
+#: mxene.core.functions.Interp2dNearest:5 of
+msgid ""
+"Examples # Get >>> x, y = np.meshgrid(np.arange(20), np.arange(10)) >>> z"
+" = np.random.random((20,10)) >>> iterp = Interp2dNearest(x, y, z) # Use "
+">>> x = np.arange(-12, 23, 0.2) >>> y = np.arange(0, 21, 0.2) >>> z = "
+"iterp(x,y) # Show >>> import matplotlib.pyplot as plt >>> plt.imshow(z.T)"
+" >>> plt.show()"
+msgstr ""
+
+#: mxene.core.functions.Interp2dNearest mxene.core.functions.check_random_state
+#: mxene.core.functions.coarse_and_spilt_array
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane
+#: mxene.core.functions.fixed_poscar mxene.core.functions.get_center_name
+#: mxene.core.functions.get_common_name
+#: mxene.core.functions.get_nearest_plane_atom_index
+#: mxene.core.functions.get_plane_neighbors_to_center
+#: mxene.core.functions.get_plane_neighbors_to_center_raw
+#: mxene.core.mxenes.MXene mxene.core.mxenes.MXene.add_absorb
+#: mxene.core.mxenes.MXene.add_face_random
+#: mxene.core.mxenes.MXene.add_face_random_z
+#: mxene.core.mxenes.MXene.add_face_random_z_16_site
+#: mxene.core.mxenes.MXene.add_next_layer_atoms
+#: mxene.core.mxenes.MXene.adjust_lattice
+#: mxene.core.mxenes.MXene.apply_operation_no_lattice
+#: mxene.core.mxenes.MXene.check_terminal_sites_by_3_layer
+#: mxene.core.mxenes.MXene.extrusion mxene.core.mxenes.MXene.from_standard
+#: mxene.core.mxenes.MXene.get_next_layer_sites
+#: mxene.core.mxenes.MXene.get_next_layer_sites_xy
+#: mxene.core.mxenes.MXene.get_similar_layer_atoms
+#: mxene.core.mxenes.MXene.non_equivalent_site
+#: mxene.core.mxenes.MXene.relax_base mxene.core.mxenes.MXene.split_layer of
+msgid "参数"
+msgstr ""
+
+#: mxene.core.functions.Interp2dNearest:19 of
+msgid "1D array, initial x data."
+msgstr ""
+
+#: mxene.core.functions.Interp2dNearest:20 of
+msgid "1D array, initial y data."
+msgstr ""
+
+#: mxene.core.functions.Interp2dNearest:21 of
+msgid "1D array, initial z data."
+msgstr ""
+
+#: mxene.core.functions.Interp2dNearest:22 of
+msgid "float, smoothness factor."
+msgstr ""
+
+#: mxene.core.functions.check_random_state:1 of
+msgid "Check the random state the same as sklearn."
+msgstr ""
+
+#: mxene.core.functions.check_random_state:3 of
+msgid ""
+"None, int or instance of RandomState If seed is None, return the "
+"RandomState singleton used by np.random. If seed is an int, return a new "
+"RandomState instance seeded with seed. If seed is already a RandomState "
+"instance, return it. Otherwise, raise ValueError."
+msgstr ""
+
+#: mxene.core.functions.check_random_state
+#: mxene.core.functions.coarse_and_spilt_array
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane
+#: mxene.core.functions.fixed_poscar mxene.core.functions.get_center_name
+#: mxene.core.functions.get_common_name
+#: mxene.core.functions.get_nearest_plane_atom_index
+#: mxene.core.functions.get_plane_neighbors_to_center
+#: mxene.core.functions.get_plane_neighbors_to_center_raw
+#: mxene.core.mxenes.MXene.add_face_random
+#: mxene.core.mxenes.MXene.add_face_random_z
+#: mxene.core.mxenes.MXene.add_face_random_z_16_site
+#: mxene.core.mxenes.MXene.check_terminal_sites_by_3_layer
+#: mxene.core.mxenes.MXene.from_standard
+#: mxene.core.mxenes.MXene.get_next_layer_sites
+#: mxene.core.mxenes.MXene.get_next_layer_sites_xy
+#: mxene.core.mxenes.MXene.get_similar_layer_atoms
+#: mxene.core.mxenes.MXene.non_equivalent_site
+#: mxene.core.mxenes.MXene.relax_base mxene.core.mxenes.MXene.split_layer of
+msgid "返回"
+msgstr ""
+
+#: mxene.core.functions.check_random_state:9 of
+msgid "RandomState"
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array:1 of
+msgid "Split 1D ndarray by distance or group."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array:3 of
+msgid ""
+"Examples: >>> ay= np.array([1,2,3,4,5,6,7,10,11,20]) >>> labels = "
+"coarse_and_spilt_array(ay, tol = 1.5) >>> print(labels) [0 0 0 0 0 0 0 1 "
+"1 2]"
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array:9
+#: mxene.core.functions.coarse_and_spilt_array:15
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:33
+#: mxene.core.mxenes.MXene.split_layer:26 of
+msgid "(np.ndarray) with shape (n,)."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array:10
+#: mxene.core.functions.get_nearest_plane_atom_index:7 of
+msgid "(float) tolerance distance for spilt."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array:11
+#: mxene.core.functions.get_nearest_plane_atom_index:8 of
+msgid ""
+"(str) default None. others: \"agg\", \"k_means\", \"cluster\", "
+"\"k_means_user\"."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array:12
+#: mxene.core.functions.get_nearest_plane_atom_index:9 of
+msgid "(int) number of cluster."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array:13
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:29
+#: mxene.core.mxenes.MXene.split_layer:24 of
+msgid "(bool), reverse the label."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane
+#: mxene.core.functions.get_center_name mxene.core.functions.get_common_name
+#: mxene.core.functions.get_nearest_plane_atom_index
+#: mxene.core.functions.get_plane_neighbors_to_center
+#: mxene.core.mxenes.MXene.add_face_random
+#: mxene.core.mxenes.MXene.add_face_random_z
+#: mxene.core.mxenes.MXene.add_face_random_z_16_site
+#: mxene.core.mxenes.MXene.check_terminal_sites_by_3_layer
+#: mxene.core.mxenes.MXene.from_standard
+#: mxene.core.mxenes.MXene.get_next_layer_sites
+#: mxene.core.mxenes.MXene.get_next_layer_sites_xy
+#: mxene.core.mxenes.MXene.get_similar_layer_atoms
+#: mxene.core.mxenes.MXene.non_equivalent_site
+#: mxene.core.mxenes.MXene.relax_base mxene.core.mxenes.MXene.split_layer of
+msgid "返回类型"
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:1 of
+msgid "Split 1D by distance or group."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:3
+#: mxene.core.mxenes.MXene.split_layer:3 of
+msgid ""
+"'ignore_index' means the atoms is not used to calculated. 'force_finite' "
+"and 'force_plane' are two method to settle the un-grouped atoms."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:6
+#: mxene.core.mxenes.MXene.split_layer:6 of
+msgid "(1). For easily compartmentalized array, use the default parameters."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:8
+#: mxene.core.mxenes.MXene.split_layer:8 of
+msgid ""
+"(2). Used 'ignore_index' and 'force_finite' to drop the add (absorb) atom"
+" to make the left atoms to be grouped,"
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:9
+#: mxene.core.mxenes.MXene.split_layer:9 of
+msgid "change the 'tol' to check the result."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:10
+#: mxene.core.mxenes.MXene.split_layer:10 of
+msgid ""
+"(3). Used 'ignore_index'=None and 'force_plane' to make the 'out-of-"
+"station' doped atom to be grouped."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:11
+#: mxene.core.mxenes.MXene.split_layer:11 of
+msgid "the 'tol' could be appropriate smaller (less than interlayer spacing)."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:13
+#: mxene.core.mxenes.MXene.split_layer:13 of
+msgid ""
+"(4). For absorb + doped system, 'ignore_index', 'force_finite' and "
+"'force_plane' could be used together,"
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:13
+#: mxene.core.mxenes.MXene.split_layer:13 of
+msgid ""
+"change the 'tol' to check the result.But, for large structural "
+"deformations array. This function is not effective always."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:15
+#: mxene.core.mxenes.MXene.split_layer:15 of
+msgid ""
+"(5). If all the parameter are failed, please generate the input array by "
+"hand or tune the value in array."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:18
+#: mxene.core.mxenes.MXene.from_standard:4 of
+msgid "实际案例"
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:24 of
+msgid "(np.ndarray), the array to be grouped."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:25
+#: mxene.core.mxenes.MXene.split_layer:20 of
+msgid "(float), tolerance distance for spilt.(less than interlayer spacing)"
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:26
+#: mxene.core.mxenes.MXene.split_layer:21 of
+msgid "(int, np.ndarray), jump 'out-of-station' atoms."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:27
+#: mxene.core.mxenes.MXene.add_next_layer_atoms:16
+#: mxene.core.mxenes.MXene.get_next_layer_sites:17
+#: mxene.core.mxenes.MXene.split_layer:22 of
+msgid "(bool), change the single atom to the nearest group."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:28
+#: mxene.core.mxenes.MXene.add_next_layer_atoms:17
+#: mxene.core.mxenes.MXene.get_next_layer_sites:18
+#: mxene.core.mxenes.MXene.split_layer:23 of
+msgid "(bool), force to change the index finite."
+msgstr ""
+
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:30
+#: mxene.core.functions.coarse_and_spilt_array_ignore_force_plane:31 of
+msgid "deprecated."
+msgstr ""
+
+#: mxene.core.functions.fixed_poscar:1 of
+msgid "Fix the atom in poscar with selective_dynamics."
+msgstr ""
+
+#: mxene.core.functions.fixed_poscar:3 of
+msgid "str, file name."
+msgstr ""
+
+#: mxene.core.functions.fixed_poscar:4 of
+msgid ""
+"str,float,None. (1) if is float, the atoms in z axis larger than the "
+"float would be fixed. (2) if is \"base\", the last atoms would be fixed. "
+"(2) if is None, no fixed."
+msgstr ""
+
+#: mxene.core.functions.fixed_poscar:8 of
+msgid ""
+"np.ndarray, array of bool. if fixed array, use this array to fixed "
+"directly."
+msgstr ""
+
+#: mxene.core.functions.fixed_poscar:9 of
+msgid "bool, The coords is cartesian or not, for fixed_type."
+msgstr ""
+
+#: mxene.core.functions.fixed_poscar:10 of
+msgid "bool, generate one new file or cover the old."
+msgstr ""
+
+#: mxene.core.functions.fixed_poscar:12 of
+msgid "None. The result is stored in file."
+msgstr ""
+
+#: mxene.core.functions.get_center_name:1 of
+msgid "Judge the center and return the name of center, return name and index."
+msgstr ""
+
+#: mxene.core.functions.get_center_name:3
+#: mxene.core.functions.get_nearest_plane_atom_index:3
+#: mxene.core.functions.get_plane_neighbors_to_center:4 of
+msgid "(Structure), pymatgen structure."
+msgstr ""
+
+#: mxene.core.functions.get_center_name:4 of
+msgid "(tuple,), jump atom type."
+msgstr ""
+
+#: mxene.core.functions.get_center_name:5 of
+msgid "(int), use the center_index directly."
+msgstr ""
+
+#: mxene.core.functions.get_center_name:6
+#: mxene.core.functions.get_plane_neighbors_to_center:6
+#: mxene.core.functions.get_plane_neighbors_to_center_raw:6 of
+msgid "(int,list),  ignore_index. refer to all structure atom list."
+msgstr ""
+
+#: mxene.core.functions.get_center_name:7 of
+msgid "(int), if cant find center, use this ref_center_index."
+msgstr ""
+
+#: mxene.core.functions.get_center_name:9 of
+msgid "(str), center name. index:(int), center index."
+msgstr ""
+
+#: mxene.core.functions.get_common_name:1 of
+msgid "Get the base name and indexes, such as for find base metal."
+msgstr ""
+
+#: mxene.core.functions.get_common_name:3
+#: mxene.core.functions.get_plane_neighbors_to_center_raw:3 of
+msgid "(Structure),"
+msgstr ""
+
+#: mxene.core.functions.get_common_name:4 of
+msgid "(tuple), jump atom type."
+msgstr ""
+
+#: mxene.core.functions.get_common_name:6 of
+msgid "(str), base name. index: (tuple), all base indexes."
+msgstr ""
+
+#: mxene.core.functions.get_nearest_plane_atom_index:1 of
+msgid "Get the nearest atom indexes (one plane of special atoms) to center."
+msgstr ""
+
+#: mxene.core.functions.get_nearest_plane_atom_index:4 of
+msgid "(float), base reference atom."
+msgstr ""
+
+#: mxene.core.functions.get_nearest_plane_atom_index:5 of
+msgid "(str,List,Tuple), special atom names."
+msgstr ""
+
+#: mxene.core.functions.get_nearest_plane_atom_index:6 of
+msgid "(int), along with axis."
+msgstr ""
+
+#: mxene.core.functions.get_nearest_plane_atom_index:11 of
+msgid ""
+"(np.ndarray), array of atoms index (Relative to the whole structure's "
+"atom list)."
+msgstr ""
+
+#: mxene.core.functions.get_plane_neighbors_to_center:1 of
+msgid "Get neighbor to center atom."
+msgstr ""
+
+#: mxene.core.functions.get_plane_neighbors_to_center:3 of
+msgid "center index.  center_name or center_index should be offered."
+msgstr ""
+
+#: mxene.core.functions.get_plane_neighbors_to_center:5
+#: mxene.core.functions.get_plane_neighbors_to_center_raw:5 of
+msgid "(str, tuple of str) neighbors_name or names tuple."
+msgstr ""
+
+#: mxene.core.functions.get_plane_neighbors_to_center:7
+#: mxene.core.functions.get_plane_neighbors_to_center_raw:7 of
+msgid "(float), cut radius."
+msgstr ""
+
+#: mxene.core.functions.get_plane_neighbors_to_center:8 of
+msgid "(int), return top group."
+msgstr ""
+
+#: mxene.core.functions.get_plane_neighbors_to_center:9 of
+msgid "(float), tolerance for group."
+msgstr ""
+
+#: mxene.core.functions.get_plane_neighbors_to_center:10
+#: mxene.core.functions.get_plane_neighbors_to_center_raw:8 of
+msgid "just for nearest plane."
+msgstr ""
+
+#: mxene.core.functions.get_plane_neighbors_to_center:11 of
+msgid "number of plane"
+msgstr ""
+
+#: mxene.core.functions.get_plane_neighbors_to_center:13 of
+msgid "(dict), points and distance."
+msgstr ""
+
+#: mxene.core.functions.get_plane_neighbors_to_center_raw:1 of
+msgid "Get neighbor to center atom for next process."
+msgstr ""
+
+#: mxene.core.functions.get_plane_neighbors_to_center_raw:4 of
+msgid "(str), name of center."
+msgstr ""
+
+#: mxene.core.functions.get_plane_neighbors_to_center_raw:9 of
+msgid "n for plane."
+msgstr ""
+
+#: mxene.core.functions.get_plane_neighbors_to_center_raw:11 of
+msgid "np.ndarray, np.ndarray, np.ndarray"
+msgstr ""
+
+#: mxene.core.functions.middle:1 of
+msgid "Calculate the core layer - middle layer."
+msgstr ""
+
+#: ../../src/mxene.core.rst:21
+msgid "mxene.core.functions2 module"
+msgstr ""
+
+#: ../../src/mxene.core.rst:29
+msgid "mxene.core.mxenes module"
+msgstr ""
+
+#: mxene.core.mxenes.MXene:1 of
+msgid "基类：:class:`pymatgen.core.structure.Structure`"
+msgstr ""
+
+#: mxene.core.mxenes.MXene:1 of
+msgid "MXene object."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:3 of
+msgid "### Bellowing is the common function ###"
+msgstr ""
+
+#: mxene.core.mxenes.MXene:8 of
+msgid "Create:"
+msgstr ""
+
+#: mxene.core.mxenes.MXene:6 of
+msgid "from_standard: Create a virtual structure from the category."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:8 of
+msgid "from_file: Read POSCAR and other files."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:37 of
+msgid "Change:"
+msgstr ""
+
+#: mxene.core.mxenes.MXene:11 of
+msgid "insert: Insert atoms."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:13 of
+msgid "append: Add atoms."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:15 of
+msgid "substitute:  Replace with a single atom."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:17 of
+msgid "replace:  replace with the functional group."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:19 of
+msgid "remove_species:  Removes all atoms of a species."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:21 of
+msgid "remove_sites:  Delete a site."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:23 of
+msgid "sort:  Resort."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:25 of
+msgid "rotate_sites:  Rotation."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:27 of
+msgid "perturb:  Random disturbance."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:29 of
+msgid "make_supercell:  supercell."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:31 of
+msgid "add_absorb: Adds an adsorbed atom."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:33 of
+msgid "add_face_random_*****: Add atoms in random batch."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:35 of
+msgid "extrusion: add move affect by center atom."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:37 of
+msgid "tuning_layer_space: ture the layer sapce."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:40 of
+msgid "Read structural information:"
+msgstr ""
+
+#: mxene.core.mxenes.MXene:40 of
+msgid "get_structure_message : get bond, face message."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:42 of
+msgid "Examples:"
+msgstr ""
+
+#: mxene.core.mxenes.MXene:48 of
+msgid "Full Formula (Ti18 C9 O18)"
+msgstr ""
+
+#: mxene.core.mxenes.MXene:50 of
+msgid "Reduced Formula: Ti2CO2"
+msgstr ""
+
+#: mxene.core.mxenes.MXene:52 of
+msgid "abc   :   9.000000   9.000000  25.000000"
+msgstr ""
+
+#: mxene.core.mxenes.MXene:54 of
+msgid "angles:  90.000000  90.000000 120.000000"
+msgstr ""
+
+#: mxene.core.mxenes.MXene:56 of
+msgid "pbc   :       True       True       True"
+msgstr ""
+
+#: mxene.core.mxenes.MXene:58 of
+msgid "Sites (45)"
+msgstr ""
+
+#: mxene.core.mxenes.MXene:60 of
+msgid "#  SP           a         b     c"
+msgstr ""
+
+#: mxene.core.mxenes.MXene:62 of
+msgid "---  ----  --------  --------  ----"
+msgstr ""
+
+#: mxene.core.mxenes.MXene:64 of
+msgid "0  C     0         0         0.5"
+msgstr ""
+
+#: mxene.core.mxenes.MXene:66 of
+msgid "..."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:72 of
+msgid "Create a periodic structure."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:74 of
+msgid ""
+"The lattice, either as a pymatgen.core.lattice.Lattice or simply as any "
+"2D array. Each row should correspond to a lattice vector. E.g., "
+"[[10,0,0], [20,10,0], [0,0,30]] specifies a lattice with lattice vectors "
+"[10,0,0], [20,10,0] and [0,0,30]."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:78 of
+msgid ""
+"List of species on each site. Can take in flexible input, including:  i."
+"  A sequence of element / species specified either as string     symbols,"
+" e.g. [\"Li\", \"Fe2+\", \"P\", ...] or atomic numbers,     e.g., (3, 56,"
+" ...) or actual Element or Species objects.  ii. List of dict of "
+"elements/species and occupancies, e.g.,     [{\"Fe\" : 0.5, \"Mn\":0.5}, "
+"...]. This allows the setup of     disordered structures."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:78 of
+msgid "List of species on each site. Can take in flexible input, including:"
+msgstr ""
+
+#: mxene.core.mxenes.MXene:81 of
+msgid ""
+"A sequence of element / species specified either as string symbols, e.g. "
+"[\"Li\", \"Fe2+\", \"P\", ...] or atomic numbers, e.g., (3, 56, ...) or "
+"actual Element or Species objects."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:85 of
+msgid ""
+"List of dict of elements/species and occupancies, e.g., [{\"Fe\" : 0.5, "
+"\"Mn\":0.5}, ...]. This allows the setup of disordered structures."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:88 of
+msgid "list of fractional/cartesian coordinates of each species."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:91 of
+msgid ""
+"overall charge of the structure. Defaults to behavior in SiteCollection "
+"where total charge is the sum of the oxidation states."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:95 of
+msgid ""
+"Whether to check if there are sites that are less than 0.01 Ang apart. "
+"Defaults to False."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:98 of
+msgid ""
+"Whether to map all sites into the unit cell, i.e., fractional coords "
+"between 0 and 1. Defaults to False."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:101 of
+msgid ""
+"Set to True if you are providing coordinates in cartesian coordinates. "
+"Defaults to False."
+msgstr ""
+
+#: mxene.core.mxenes.MXene:104 of
+msgid ""
+"Properties associated with the sites as a dict of sequences, e.g., "
+"{\"magmom\":[5,5,5,5]}. The sequences have to be the same length as the "
+"atomic species and fractional_coords. Defaults to None for no properties."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_absorb:1 of
+msgid "Add adsorbent atoms. Change the original data!!!"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_absorb:3 of
+msgid "random_state seed."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_absorb:4 of
+msgid "group layer tolerance."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_absorb:5 of
+msgid "(float), factor for random size."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_absorb:6 of
+msgid "(str), up or down."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_absorb:7 of
+msgid "np.ndarray, use this array for spilt directly. (1D)"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_absorb:8
+#: mxene.core.mxenes.MXene.from_standard:13 of
+msgid "absorb_site are cartesian or not."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_absorb:9 of
+msgid "(int,None), center index."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_absorb:10 of
+msgid ""
+"(str), terminal atom type: [\"fcc\",\"bcc\",\"hcp\",\"center\"]. such as "
+"'top' for H and 'fcc' for metals."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_absorb:11 of
+msgid "(list,str) name or list of name of absorb atoms."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_absorb:12 of
+msgid ""
+"(None, np.ndarray), np.ndarray with (Nx3) or np.ndarray s in list with "
+"(3,) size ."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_absorb:13 of
+msgid "(bool), add noise to site."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_absorb:14 of
+msgid "(str), equivalent site name"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_absorb:15 of
+msgid "(str), class name of equivalent site"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_absorb:16 of
+msgid "(list) index of ignore index."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_absorb:17 of
+msgid "(float), offset z cartesian, manually, not affected by up_down."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_absorb:18 of
+msgid "(bool),  base structures without doping."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_absorb:20 of
+msgid "Returns:"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random:1 of
+msgid "Add atoms at randomly."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random:3
+#: mxene.core.mxenes.MXene.add_face_random_z:6 of
+msgid "(str), samples."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random:4
+#: mxene.core.mxenes.MXene.add_face_random_z:7 of
+msgid "(int), randomstate."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random:5 of
+msgid "(bool),Whether x and y are random."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random:6
+#: mxene.core.mxenes.MXene.add_face_random_z:8 of
+msgid "(str), Add atom name"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random:7
+#: mxene.core.mxenes.MXene.add_face_random_z:9
+#: mxene.core.mxenes.MXene.add_face_random_z_16_site:10 of
+msgid ""
+"(bool), Debug. If debugged, all added atoms are displayed in one "
+"structure."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random:8
+#: mxene.core.mxenes.MXene.add_face_random_z:10
+#: mxene.core.mxenes.MXene.add_face_random_z_16_site:11 of
+msgid "(str), up and down"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random:9
+#: mxene.core.mxenes.MXene.add_face_random_z:11 of
+msgid "(str),Perturbed the initial structure."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random:10
+#: mxene.core.mxenes.MXene.add_face_random_z:12 of
+msgid "(str),  height along Z"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random:11
+#: mxene.core.mxenes.MXene.add_face_random_z:13 of
+msgid "(str), Shift coefficient in of surface."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random:13
+#: mxene.core.mxenes.MXene.add_face_random_z:15 of
+msgid "(MXenes,list of MXenes)"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random_z:1
+#: mxene.core.mxenes.MXene.add_face_random_z_16_site:1 of
+msgid "Add z atoms randomly, x, y using the input values."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random_z:3
+#: mxene.core.mxenes.MXene.add_face_random_z:4 of
+msgid "np.ndarray, x values of point."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random_z:5 of
+msgid "(str), method to add."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random_z_16_site:3
+#: mxene.core.mxenes.MXene.non_equivalent_site:3 of
+msgid "(int), Center of gravity atomic position."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random_z_16_site:4
+#: mxene.core.mxenes.MXene.non_equivalent_site:4 of
+msgid "(list),Skip the interfering atoms."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random_z_16_site:5
+#: mxene.core.mxenes.MXene.non_equivalent_site:5 of
+msgid "(str), Name of the base atom."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random_z_16_site:6
+#: mxene.core.mxenes.MXene.non_equivalent_site:6 of
+msgid "(str), Terminal atom name."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random_z_16_site:7 of
+msgid "(int), How many z samples are there for each pair of x and y."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random_z_16_site:8 of
+msgid "(int), random state."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random_z_16_site:9 of
+msgid "(str), Add atom name."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random_z_16_site:12 of
+msgid "(str), Perturbed the initial structure."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random_z_16_site:13 of
+msgid "(str), height along Z"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random_z_16_site:14 of
+msgid "(str), Shift the Z-wave coefficient."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_face_random_z_16_site:16 of
+msgid "(MXenes, list of MNXenes)"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_next_layer_atoms:1 of
+msgid "Add next layer atoms."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_next_layer_atoms:4
+#: mxene.core.mxenes.MXene.get_next_layer_sites:5 of
+msgid "For single-atom doping system."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_next_layer_atoms:4
+#: mxene.core.mxenes.MXene.get_next_layer_sites:5 of
+msgid ""
+"It is recommended that the `tol` be set to smaller and force_plane. "
+"Example: tol=0.1, force_plane=False, force_finite=True."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_next_layer_atoms:7
+#: mxene.core.mxenes.MXene.get_next_layer_sites:8 of
+msgid "For complex systems."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_next_layer_atoms:7
+#: mxene.core.mxenes.MXene.get_next_layer_sites:8 of
+msgid ""
+"It is recommended to redesign the reformed_array so that it can be "
+"properly separated."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_next_layer_atoms:9
+#: mxene.core.mxenes.MXene.get_next_layer_sites:10 of
+msgid "(float) Add site of z axis."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_next_layer_atoms:10
+#: mxene.core.mxenes.MXene.get_next_layer_sites:11 of
+msgid "(float), tolerance."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_next_layer_atoms:11
+#: mxene.core.mxenes.MXene.get_next_layer_sites:12 of
+msgid "(np.ndarray), use this array for spilt directly. (1D)."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_next_layer_atoms:12
+#: mxene.core.mxenes.MXene.get_next_layer_sites:13 of
+msgid "(list of int), ignore index to split layer."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_next_layer_atoms:13
+#: mxene.core.mxenes.MXene.get_next_layer_sites:14 of
+msgid "(str), name of next layer atoms."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_next_layer_atoms:14
+#: mxene.core.mxenes.MXene.get_next_layer_sites:15 of
+msgid "(str), fcc, hcp, top."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_next_layer_atoms:15
+#: mxene.core.mxenes.MXene.get_next_layer_sites:16 of
+msgid "(str),  up and down."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.add_noise:1 of
+msgid "The same with self.perturb but change in new object."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.adjust_lattice:1 of
+msgid "Apply a strain to the lattice."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.adjust_lattice:3 of
+msgid ""
+"Amount of strain to apply. Can be a float, or a sequence of 3 numbers. "
+"E.g., 0.01 means all lattice vectors are increased by 1%. This is "
+"equivalent to calling modify_lattice with a lattice with lattice "
+"parameters that are 1% larger."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.append_noise:1 of
+msgid "The same with self.perturb."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.apply_operation_no_lattice:1 of
+msgid "Apply a symmetry operation to the structure and return the new structure."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.apply_operation_no_lattice:4 of
+msgid "The lattice is operated by the rotation matrix only!!!"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.apply_operation_no_lattice:6 of
+msgid "Coords are operated in full and then transformed to the new lattice."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.apply_operation_no_lattice:8 of
+msgid "Symmetry operation to apply."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.apply_operation_no_lattice:10 of
+msgid ""
+"Whether the symmetry operation is applied in fractional space. Defaults "
+"to False, i.e., symmetry operation is applied in cartesian coordinates."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.check_terminal_sites_by_3_layer:1 of
+msgid "Check the type of stacking type of the surface three layers."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.check_terminal_sites_by_3_layer:3 of
+msgid "The up and down are different in some instance."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.check_terminal_sites_by_3_layer:5 of
+msgid "(np.ndarray), coords of 3 layer atoms."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.check_terminal_sites_by_3_layer:6 of
+msgid "(str), up,down"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.check_terminal_sites_by_3_layer:7 of
+msgid "(float), tol to split."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.check_terminal_sites_by_3_layer:9 of
+msgid "(str)"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.doped:1 of
+msgid "Check it is doped or not."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.extend:1 of
+msgid "Extend, see more MXenes.append."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.extrusion:2 of
+msgid "Get structure defects for doping system."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.extrusion:2 of
+msgid ""
+"Just for the one axis is vertical with the 2 other axis.(cubic, square, "
+"orthogonality)."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.extrusion:4 of
+msgid "(int), center index."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.extrusion:5 of
+msgid "(float), move factor for nearst, second nearst, ... atoms  ."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.extrusion:6 of
+msgid "(float), radius."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.extrusion:7 of
+msgid "(float), center atoms move in z axis or 3 axis."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.extrusion:8 of
+msgid "(bool), center move is fractional or not."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.extrusion:9 of
+msgid "(int), axis, the same size as center_move."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.from_standard:1 of
+msgid "Generate ideal single atom doping MXenes."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.from_standard:8 of
+msgid "float, random factor."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.from_standard:9 of
+msgid "(random.RandomState, int),"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.from_standard:10 of
+msgid "float, z axis for terminal."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.from_standard:11 of
+msgid "float, space of layer."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.from_standard:12 of
+msgid "(tuple of float,Lattice),  6 float or Lattice"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.from_standard:14 of
+msgid "bool, add noise or not."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.from_standard:15 of
+msgid "None, str, doping atoms."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.from_standard:16 of
+msgid "str, terminal atom type: [\"fcc\",\"bcc\",\"hcp\"]."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.from_standard:17 of
+msgid "None, str, terminal atoms."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.from_standard:18 of
+msgid "str,tuple,list. base atoms."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.from_standard:19 of
+msgid "srt, \"N\" or \"C\" type."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.from_standard:20 of
+msgid "int, number of base atoms layer."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.from_standard:21 of
+msgid "tuple with size 3."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.from_standard:22 of
+msgid "str,list add atoms."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.from_standard:23 of
+msgid "str:"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.from_standard:26 of
+msgid "pymatgen.core.Structure"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.from_structure:1 of
+msgid "From structure to mxenes object."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_disk:1 of
+msgid ""
+"Just for single doping, single absorb, single type terminal. for some "
+"name, the code could judge the parameter automatically, and for others, "
+"you should offer it. such as site_name=\"S0\", equ_name=\"ini_opt\", "
+"nm_tm=\"TM\","
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_disk:5 of
+msgid "**(1)不吸附**"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_disk:7 of
+msgid "MXenes -> 基底层数 -> 基底名称 -> 负载物 -> 搀杂物 -> pure/pure_static"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_disk:9 mxene.core.mxenes.MXene.get_disk:28 of
+msgid "例子"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_disk:11 of
+msgid "MXenes -> M2C -> Ti2NO2 -> no_add -> no_doping -> pure/pure_static"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_disk:13 of
+msgid "MXenes -> M2N -> Ti2NO2 -> no_add -> Mo        -> pure/pure_static"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_disk:15 of
+msgid "**(2)吸附**"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_disk:17 of
+msgid "MXenes -> 基底层数  -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物  -> 标签"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_disk:19 of
+msgid ""
+"例子 MXenes -> M2N  -> Ti2NO2      -> no_add -> no_dopin -> H/add_H  -> top"
+" -> 00"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_disk:22 of
+msgid "MXenes -> M3N2 -> TiNCrNTi-O2 -> Hf     -> C         -> Li -> S0  -> 00"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_disk:24 of
+msgid "**(3)NEB**"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_disk:26 of
+msgid "MXenes -> 基底层数  -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物 -> 等效位点 -> 路径名称"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_disk:30 of
+msgid ""
+"MXenes -> M2N -> Ti2NO2 -> no_add -> no_doping -> H -> S0-S1 -> "
+"00/01/01/03/04/ini/fin/..."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_interp2d:1 of
+msgid "Not for 'top' terminals."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_next_layer_sites:1 of
+msgid ""
+"According to the atomic layer in the structure and the stacking method, "
+"the position of the next layer of atoms is obtained."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_next_layer_sites:20 of
+msgid "(np.ndarray),"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_next_layer_sites_xy:1 of
+msgid ""
+"According to the current atomic layer site, and stacking method, to "
+"obtain the atomic position (x, y) of the next layer."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_next_layer_sites_xy:4 of
+msgid "(np.array), with shape (Nx2), site of all atoms"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_next_layer_sites_xy:5 of
+msgid "(str), fcc, hcp, top"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_next_layer_sites_xy:6 of
+msgid "(str),  up and down"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_next_layer_sites_xy:8 of
+msgid "(np.array),array."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_similar_layer_atoms:1 of
+msgid "Get all same layer atoms by z0 site."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_similar_layer_atoms:3 of
+msgid "float, site."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_similar_layer_atoms:4 of
+msgid "float, tolerance factor."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_similar_layer_atoms:5 of
+msgid "int, default the z axis."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_similar_layer_atoms:6 of
+msgid "bool, whether it is fractional/Cartesian coordinates."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_similar_layer_atoms:7 of
+msgid "np.ndarray, use this coordinates directly."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_similar_layer_atoms:9 of
+msgid "np.ndarray, atom index."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.get_structure_message:1 of
+msgid "Obtaining bond, face Information"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.non_equivalent_site:1 of
+msgid ""
+"Just for MXene with terminals. Obtain 16 equivalent positions (fcc, hcp "
+"applicable.)"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.non_equivalent_site:8 of
+msgid "(np.array)"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.reform_structure:1 of
+msgid "The atomic coordinates of the structure are unified to the initial cell."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.relax_base:1 of
+msgid "Change the structure."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.relax_base:3 of
+msgid "randomstate."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.relax_base:4 of
+msgid "bool, learning rate."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.relax_base:5 of
+msgid "bool, extrusion."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.relax_base:6 of
+msgid "bool, strain."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.relax_base:7 of
+msgid "bool, tune the layer spacing."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.relax_base:8 of
+msgid "bool, add noise."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.relax_base:9 mxene.core.mxenes.MXene.relax_base:10
+#: of
+msgid "dict, the extrusion parameter."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.relax_base:12 of
+msgid "MXene, Changed structure."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.show:1 of
+msgid "Plot by ase."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.split_layer:1 of
+msgid "Split layer."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.split_layer:17 of
+msgid ":doc:`functions.coarse_and_spilt_array_ignore_force_plane`"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.split_layer:19 of
+msgid "(int), axis to be grouped."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.surface_pure_center:1 of
+msgid "Get the surface center index for no-doped mxene."
+msgstr ""
+
+#: mxene.core.mxenes.MXene.tuning_layer_space:1 of
+msgid "For the structure is centered in z axis !!!"
+msgstr ""
+
+#: mxene.core.mxenes.MXene.view:1 of
+msgid "The same as show. plot by ase."
+msgstr ""
+
+#~ msgid "This is some base support function for mxene.py."
+#~ msgstr ""
+
+#~ msgid "Bases: :py:class:`object`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "An interp2d method to get grid "
+#~ "interpolation by neighbor points. interp2d "
+#~ "means the approximate method is just "
+#~ "in x, y axes and assess the "
+#~ "value of z. Return the 'new_z' "
+#~ "sites of the input grid (new_x,new_y)."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Examples # Get >>> x, y = "
+#~ "np.meshgrid(np.arange(20), np.arange(10)) >>> z "
+#~ "= np.random.random((20,10)) >>> iterp = "
+#~ "Interp2dNearest(x, y, z) # Use >>> "
+#~ "x = np.arange(-12, 23, 0.2) >>> y"
+#~ " = np.arange(0, 21, 0.2) >>> z "
+#~ "= iterp(x,y) # Show >>> import "
+#~ "matplotlib.pyplot as plt >>> plt.imshow(z.T)"
+#~ " >>> plt.show()"
+#~ msgstr ""
+
+#~ msgid "Parameters"
+#~ msgstr ""
+
+#~ msgid "1D array, initial x data."
+#~ msgstr ""
+
+#~ msgid "1D array, initial y data."
+#~ msgstr ""
+
+#~ msgid "1D array, initial z data."
+#~ msgstr ""
+
+#~ msgid "float, smoothness factor."
+#~ msgstr ""
+
+#~ msgid "Check the random state the same as sklearn."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "None, int or instance of RandomState "
+#~ "If seed is None, return the "
+#~ "RandomState singleton used by np.random. "
+#~ "If seed is an int, return a "
+#~ "new RandomState instance seeded with "
+#~ "seed. If seed is already a "
+#~ "RandomState instance, return it. Otherwise,"
+#~ " raise ValueError."
+#~ msgstr ""
+
+#~ msgid "Returns"
+#~ msgstr ""
+
+#~ msgid "RandomState"
+#~ msgstr ""
+
+#~ msgid "Split 1D ndarray by distance or group."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Examples: >>> ay= np.array([1,2,3,4,5,6,7,10,11,20])"
+#~ " >>> labels = coarse_and_spilt_array(ay, "
+#~ "tol = 1.5) >>> print(labels) [0 0"
+#~ " 0 0 0 0 0 1 1 2]"
+#~ msgstr ""
+
+#~ msgid "(np.ndarray) with shape (n,)."
+#~ msgstr ""
+
+#~ msgid "(float) tolerance distance for spilt."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "(str) default None. others: \"agg\", "
+#~ "\"k_means\", \"cluster\", \"k_means_user\"."
+#~ msgstr ""
+
+#~ msgid "(int) number of cluster."
+#~ msgstr ""
+
+#~ msgid "(bool), reverse the label."
+#~ msgstr ""
+
+#~ msgid "Return type"
+#~ msgstr ""
+
+#~ msgid "Split 1D by distance or group."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "'ignore_index' means the atoms is not"
+#~ " used to calculated. 'force_finite' and "
+#~ "'force_plane' are two method to settle"
+#~ " the un-grouped atoms."
+#~ msgstr ""
+
+#~ msgid "(1). For easily compartmentalized array, use the default parameters."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "(2). Used 'ignore_index' and 'force_finite'"
+#~ " to drop the add (absorb) atom "
+#~ "to make the left atoms to be "
+#~ "grouped,"
+#~ msgstr ""
+
+#~ msgid "change the 'tol' to check the result."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "(3). Used 'ignore_index'=None and "
+#~ "'force_plane' to make the 'out-of-"
+#~ "station' doped atom to be grouped."
+#~ msgstr ""
+
+#~ msgid "the 'tol' could be appropriate smaller (less than interlayer spacing)."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "(4). For absorb + doped system, "
+#~ "'ignore_index', 'force_finite' and 'force_plane' "
+#~ "could be used together,"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "change the 'tol' to check the "
+#~ "result.But, for large structural deformations"
+#~ " array. This function is not "
+#~ "effective always."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "(5). If all the parameter are "
+#~ "failed, please generate the input array"
+#~ " by hand or tune the value in"
+#~ " array."
+#~ msgstr ""
+
+#~ msgid "Examples"
+#~ msgstr ""
+
+#~ msgid "(np.ndarray), the array to be grouped."
+#~ msgstr ""
+
+#~ msgid "(float), tolerance distance for spilt.(less than interlayer spacing)"
+#~ msgstr ""
+
+#~ msgid "(int, np.ndarray), jump 'out-of-station' atoms."
+#~ msgstr ""
+
+#~ msgid "(bool), change the single atom to the nearest group."
+#~ msgstr ""
+
+#~ msgid "(bool), force to change the index finite."
+#~ msgstr ""
+
+#~ msgid "deprecated."
+#~ msgstr ""
+
+#~ msgid "Fix the atom in poscar with selective_dynamics."
+#~ msgstr ""
+
+#~ msgid "str, file name."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "str,float,None. (1) if is float, the "
+#~ "atoms in z axis larger than the"
+#~ " float would be fixed. (2) if "
+#~ "is \"base\", the last atoms would "
+#~ "be fixed. (2) if is None, no "
+#~ "fixed."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "np.ndarray, array of bool. if fixed "
+#~ "array, use this array to fixed "
+#~ "directly."
+#~ msgstr ""
+
+#~ msgid "bool, The coords is cartesian or not, for fixed_type."
+#~ msgstr ""
+
+#~ msgid "bool, generate one new file or cover the old."
+#~ msgstr ""
+
+#~ msgid "None. The result is stored in file."
+#~ msgstr ""
+
+#~ msgid "Judge the center and return the name of center, return name and index."
+#~ msgstr ""
+
+#~ msgid "(Structure), pymatgen structure."
+#~ msgstr ""
+
+#~ msgid "(tuple,), jump atom type."
+#~ msgstr ""
+
+#~ msgid "(int), use the center_index directly."
+#~ msgstr ""
+
+#~ msgid "(int,list),  ignore_index. refer to all structure atom list."
+#~ msgstr ""
+
+#~ msgid "(int), if cant find center, use this ref_center_index."
+#~ msgstr ""
+
+#~ msgid "(str), center name. index:(int), center index."
+#~ msgstr ""
+
+#~ msgid "Get the base name and indexes, such as for find base metal."
+#~ msgstr ""
+
+#~ msgid "(Structure),"
+#~ msgstr ""
+
+#~ msgid "(tuple), jump atom type."
+#~ msgstr ""
+
+#~ msgid "(str), base name. index: (tuple), all base indexes."
+#~ msgstr ""
+
+#~ msgid "Get the nearest atom indexes (one plane of special atoms) to center."
+#~ msgstr ""
+
+#~ msgid "(float), base reference atom."
+#~ msgstr ""
+
+#~ msgid "(str,List,Tuple), special atom names."
+#~ msgstr ""
+
+#~ msgid "(int), along with axis."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "(np.ndarray), array of atoms index "
+#~ "(Relative to the whole structure's atom"
+#~ " list)."
+#~ msgstr ""
+
+#~ msgid "Get neighbor to center atom."
+#~ msgstr ""
+
+#~ msgid "center index.  center_name or center_index should be offered."
+#~ msgstr ""
+
+#~ msgid "(str, tuple of str) neighbors_name or names tuple."
+#~ msgstr ""
+
+#~ msgid "(float), cut radius."
+#~ msgstr ""
+
+#~ msgid "(int), return top group."
+#~ msgstr ""
+
+#~ msgid "(float), tolerance for group."
+#~ msgstr ""
+
+#~ msgid "just for nearest plane."
+#~ msgstr ""
+
+#~ msgid "number of plane"
+#~ msgstr ""
+
+#~ msgid "(dict), points and distance."
+#~ msgstr ""
+
+#~ msgid "Get neighbor to center atom for next process."
+#~ msgstr ""
+
+#~ msgid "(str), name of center."
+#~ msgstr ""
+
+#~ msgid "n for plane."
+#~ msgstr ""
+
+#~ msgid "np.ndarray, np.ndarray, np.ndarray"
+#~ msgstr ""
+
+#~ msgid "Calculate the core layer - middle layer."
+#~ msgstr ""
+
+#~ msgid "Bases: :py:class:`pymatgen.core.structure.Structure`"
+#~ msgstr ""
+
+#~ msgid "MXene object."
+#~ msgstr ""
+
+#~ msgid "### Bellowing is the common function ###"
+#~ msgstr ""
+
+#~ msgid "Create:"
+#~ msgstr ""
+
+#~ msgid "from_standard: Create a virtual structure from the category."
+#~ msgstr ""
+
+#~ msgid "from_file: Read POSCAR and other files."
+#~ msgstr ""
+
+#~ msgid "Change:"
+#~ msgstr ""
+
+#~ msgid "insert: Insert atoms."
+#~ msgstr ""
+
+#~ msgid "append: Add atoms."
+#~ msgstr ""
+
+#~ msgid "substitute:  Replace with a single atom."
+#~ msgstr ""
+
+#~ msgid "replace:  replace with the functional group."
+#~ msgstr ""
+
+#~ msgid "remove_species:  Removes all atoms of a species."
+#~ msgstr ""
+
+#~ msgid "remove_sites:  Delete a site."
+#~ msgstr ""
+
+#~ msgid "sort:  Resort."
+#~ msgstr ""
+
+#~ msgid "rotate_sites:  Rotation."
+#~ msgstr ""
+
+#~ msgid "perturb:  Random disturbance."
+#~ msgstr ""
+
+#~ msgid "make_supercell:  supercell."
+#~ msgstr ""
+
+#~ msgid "add_absorb: Adds an adsorbed atom."
+#~ msgstr ""
+
+#~ msgid "add_face_random_*****: Add atoms in random batch."
+#~ msgstr ""
+
+#~ msgid "extrusion: add move affect by center atom."
+#~ msgstr ""
+
+#~ msgid "tuning_layer_space: ture the layer sapce."
+#~ msgstr ""
+
+#~ msgid "Read structural information:"
+#~ msgstr ""
+
+#~ msgid "get_structure_message : get bond, face message."
+#~ msgstr ""
+
+#~ msgid "Examples:"
+#~ msgstr ""
+
+#~ msgid "Full Formula (Ti18 C9 O18)"
+#~ msgstr ""
+
+#~ msgid "Reduced Formula: Ti2CO2"
+#~ msgstr ""
+
+#~ msgid "abc   :   9.000000   9.000000  25.000000"
+#~ msgstr ""
+
+#~ msgid "angles:  90.000000  90.000000 120.000000"
+#~ msgstr ""
+
+#~ msgid "pbc   :       True       True       True"
+#~ msgstr ""
+
+#~ msgid "Sites (45)"
+#~ msgstr ""
+
+#~ msgid "#  SP           a         b     c"
+#~ msgstr ""
+
+#~ msgid "---  ----  --------  --------  ----"
+#~ msgstr ""
+
+#~ msgid "0  C     0         0         0.5"
+#~ msgstr ""
+
+#~ msgid "..."
+#~ msgstr ""
+
+#~ msgid "Create a periodic structure."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The lattice, either as a "
+#~ "pymatgen.core.lattice.Lattice or simply as any"
+#~ " 2D array. Each row should correspond"
+#~ " to a lattice vector. E.g., "
+#~ "[[10,0,0], [20,10,0], [0,0,30]] specifies a"
+#~ " lattice with lattice vectors [10,0,0], "
+#~ "[20,10,0] and [0,0,30]."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "List of species on each site. Can"
+#~ " take in flexible input, including:  "
+#~ "i.  A sequence of element / "
+#~ "species specified either as string     "
+#~ "symbols, e.g. [\"Li\", \"Fe2+\", \"P\", "
+#~ "...] or atomic numbers,     e.g., (3,"
+#~ " 56, ...) or actual Element or "
+#~ "Species objects.  ii. List of dict "
+#~ "of elements/species and occupancies, e.g.,"
+#~ "     [{\"Fe\" : 0.5, \"Mn\":0.5}, ...]. "
+#~ "This allows the setup of     disordered"
+#~ " structures."
+#~ msgstr ""
+
+#~ msgid "List of species on each site. Can take in flexible input, including:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "A sequence of element / species "
+#~ "specified either as string symbols, e.g."
+#~ " [\"Li\", \"Fe2+\", \"P\", ...] or "
+#~ "atomic numbers, e.g., (3, 56, ...) "
+#~ "or actual Element or Species objects."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "List of dict of elements/species and "
+#~ "occupancies, e.g., [{\"Fe\" : 0.5, "
+#~ "\"Mn\":0.5}, ...]. This allows the setup"
+#~ " of disordered structures."
+#~ msgstr ""
+
+#~ msgid "list of fractional/cartesian coordinates of each species."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "overall charge of the structure. "
+#~ "Defaults to behavior in SiteCollection "
+#~ "where total charge is the sum of"
+#~ " the oxidation states."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Whether to check if there are "
+#~ "sites that are less than 0.01 Ang"
+#~ " apart. Defaults to False."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Whether to map all sites into the"
+#~ " unit cell, i.e., fractional coords "
+#~ "between 0 and 1. Defaults to "
+#~ "False."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Set to True if you are providing"
+#~ " coordinates in cartesian coordinates. "
+#~ "Defaults to False."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Properties associated with the sites as"
+#~ " a dict of sequences, e.g., "
+#~ "{\"magmom\":[5,5,5,5]}. The sequences have to"
+#~ " be the same length as the "
+#~ "atomic species and fractional_coords. Defaults"
+#~ " to None for no properties."
+#~ msgstr ""
+
+#~ msgid "Add adsorbent atoms. Change the original data!!!"
+#~ msgstr ""
+
+#~ msgid "random_state seed."
+#~ msgstr ""
+
+#~ msgid "group layer tolerance."
+#~ msgstr ""
+
+#~ msgid "(float), factor for random size."
+#~ msgstr ""
+
+#~ msgid "(str), up or down."
+#~ msgstr ""
+
+#~ msgid "np.ndarray, use this array for spilt directly. (1D)"
+#~ msgstr ""
+
+#~ msgid "absorb_site are cartesian or not."
+#~ msgstr ""
+
+#~ msgid "(int,None), center index."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "(str), terminal atom type: "
+#~ "[\"fcc\",\"bcc\",\"hcp\",\"center\"]. such as 'top'"
+#~ " for H and 'fcc' for metals."
+#~ msgstr ""
+
+#~ msgid "(list,str) name or list of name of absorb atoms."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "(None, np.ndarray), np.ndarray with (Nx3) "
+#~ "or np.ndarray s in list with (3,)"
+#~ " size ."
+#~ msgstr ""
+
+#~ msgid "(bool), add noise to site."
+#~ msgstr ""
+
+#~ msgid "(str), equivalent site name"
+#~ msgstr ""
+
+#~ msgid "(str), class name of equivalent site"
+#~ msgstr ""
+
+#~ msgid "(list) index of ignore index."
+#~ msgstr ""
+
+#~ msgid "(float), offset z cartesian, manually, not affected by up_down."
+#~ msgstr ""
+
+#~ msgid "(bool),  base structures without doping."
+#~ msgstr ""
+
+#~ msgid "Returns:"
+#~ msgstr ""
+
+#~ msgid "Add atoms at randomly."
+#~ msgstr ""
+
+#~ msgid "(str), samples."
+#~ msgstr ""
+
+#~ msgid "(int), randomstate."
+#~ msgstr ""
+
+#~ msgid "(bool),Whether x and y are random."
+#~ msgstr ""
+
+#~ msgid "(str), Add atom name"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "(bool), Debug. If debugged, all added"
+#~ " atoms are displayed in one "
+#~ "structure."
+#~ msgstr ""
+
+#~ msgid "(str), up and down"
+#~ msgstr ""
+
+#~ msgid "(str),Perturbed the initial structure."
+#~ msgstr ""
+
+#~ msgid "(str),  height along Z"
+#~ msgstr ""
+
+#~ msgid "(str), Shift coefficient in of surface."
+#~ msgstr ""
+
+#~ msgid "(MXenes,list of MXenes)"
+#~ msgstr ""
+
+#~ msgid "Add z atoms randomly, x, y using the input values."
+#~ msgstr ""
+
+#~ msgid "np.ndarray, x values of point."
+#~ msgstr ""
+
+#~ msgid "(str), method to add."
+#~ msgstr ""
+
+#~ msgid "(int), Center of gravity atomic position."
+#~ msgstr ""
+
+#~ msgid "(list),Skip the interfering atoms."
+#~ msgstr ""
+
+#~ msgid "(str), Name of the base atom."
+#~ msgstr ""
+
+#~ msgid "(str), Terminal atom name."
+#~ msgstr ""
+
+#~ msgid "(int), How many z samples are there for each pair of x and y."
+#~ msgstr ""
+
+#~ msgid "(int), random state."
+#~ msgstr ""
+
+#~ msgid "(str), Add atom name."
+#~ msgstr ""
+
+#~ msgid "(str), Perturbed the initial structure."
+#~ msgstr ""
+
+#~ msgid "(str), height along Z"
+#~ msgstr ""
+
+#~ msgid "(str), Shift the Z-wave coefficient."
+#~ msgstr ""
+
+#~ msgid "(MXenes, list of MNXenes)"
+#~ msgstr ""
+
+#~ msgid "Add next layer atoms."
+#~ msgstr ""
+
+#~ msgid "For single-atom doping system."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "It is recommended that the `tol` "
+#~ "be set to smaller and force_plane. "
+#~ "Example: tol=0.1, force_plane=False, "
+#~ "force_finite=True."
+#~ msgstr ""
+
+#~ msgid "For complex systems."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "It is recommended to redesign the "
+#~ "reformed_array so that it can be "
+#~ "properly separated."
+#~ msgstr ""
+
+#~ msgid "(float) Add site of z axis."
+#~ msgstr ""
+
+#~ msgid "(float), tolerance."
+#~ msgstr ""
+
+#~ msgid "(np.ndarray), use this array for spilt directly. (1D)."
+#~ msgstr ""
+
+#~ msgid "(list of int), ignore index to split layer."
+#~ msgstr ""
+
+#~ msgid "(str), name of next layer atoms."
+#~ msgstr ""
+
+#~ msgid "(str), fcc, hcp, top."
+#~ msgstr ""
+
+#~ msgid "(str),  up and down."
+#~ msgstr ""
+
+#~ msgid "The same with self.perturb but change in new object."
+#~ msgstr ""
+
+#~ msgid "Apply a strain to the lattice."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Amount of strain to apply. Can be"
+#~ " a float, or a sequence of 3"
+#~ " numbers. E.g., 0.01 means all "
+#~ "lattice vectors are increased by 1%. "
+#~ "This is equivalent to calling "
+#~ "modify_lattice with a lattice with "
+#~ "lattice parameters that are 1% larger."
+#~ msgstr ""
+
+#~ msgid "The same with self.perturb."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Apply a symmetry operation to the "
+#~ "structure and return the new structure."
+#~ msgstr ""
+
+#~ msgid "The lattice is operated by the rotation matrix only!!!"
+#~ msgstr ""
+
+#~ msgid "Coords are operated in full and then transformed to the new lattice."
+#~ msgstr ""
+
+#~ msgid "Symmetry operation to apply."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Whether the symmetry operation is "
+#~ "applied in fractional space. Defaults to"
+#~ " False, i.e., symmetry operation is "
+#~ "applied in cartesian coordinates."
+#~ msgstr ""
+
+#~ msgid "Check the type of stacking type of the surface three layers."
+#~ msgstr ""
+
+#~ msgid "The up and down are different in some instance."
+#~ msgstr ""
+
+#~ msgid "(np.ndarray), coords of 3 layer atoms."
+#~ msgstr ""
+
+#~ msgid "(str), up,down"
+#~ msgstr ""
+
+#~ msgid "(float), tol to split."
+#~ msgstr ""
+
+#~ msgid "(str)"
+#~ msgstr ""
+
+#~ msgid "Check it is doped or not."
+#~ msgstr ""
+
+#~ msgid "Extend, see more MXenes.append."
+#~ msgstr ""
+
+#~ msgid "Get structure defects for doping system."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Just for the one axis is vertical"
+#~ " with the 2 other axis.(cubic, "
+#~ "square, orthogonality)."
+#~ msgstr ""
+
+#~ msgid "(int), center index."
+#~ msgstr ""
+
+#~ msgid "(float), move factor for nearst, second nearst, ... atoms  ."
+#~ msgstr ""
+
+#~ msgid "(float), radius."
+#~ msgstr ""
+
+#~ msgid "(float), center atoms move in z axis or 3 axis."
+#~ msgstr ""
+
+#~ msgid "(bool), center move is fractional or not."
+#~ msgstr ""
+
+#~ msgid "(int), axis, the same size as center_move."
+#~ msgstr ""
+
+#~ msgid "Generate ideal single atom doping MXenes."
+#~ msgstr ""
+
+#~ msgid "float, random factor."
+#~ msgstr ""
+
+#~ msgid "(random.RandomState, int),"
+#~ msgstr ""
+
+#~ msgid "float, z axis for terminal."
+#~ msgstr ""
+
+#~ msgid "float, space of layer."
+#~ msgstr ""
+
+#~ msgid "(tuple of float,Lattice),  6 float or Lattice"
+#~ msgstr ""
+
+#~ msgid "bool, add noise or not."
+#~ msgstr ""
+
+#~ msgid "None, str, doping atoms."
+#~ msgstr ""
+
+#~ msgid "str, terminal atom type: [\"fcc\",\"bcc\",\"hcp\"]."
+#~ msgstr ""
+
+#~ msgid "None, str, terminal atoms."
+#~ msgstr ""
+
+#~ msgid "str,tuple,list. base atoms."
+#~ msgstr ""
+
+#~ msgid "srt, \"N\" or \"C\" type."
+#~ msgstr ""
+
+#~ msgid "int, number of base atoms layer."
+#~ msgstr ""
+
+#~ msgid "tuple with size 3."
+#~ msgstr ""
+
+#~ msgid "str,list add atoms."
+#~ msgstr ""
+
+#~ msgid "str:"
+#~ msgstr ""
+
+#~ msgid "pymatgen.core.Structure"
+#~ msgstr ""
+
+#~ msgid "From structure to mxenes object."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Just for single doping, single absorb,"
+#~ " single type terminal. for some name,"
+#~ " the code could judge the parameter"
+#~ " automatically, and for others, you "
+#~ "should offer it. such as "
+#~ "site_name=\"S0\", equ_name=\"ini_opt\", nm_tm=\"TM\","
+#~ msgstr ""
+
+#~ msgid "**(1)不吸附**"
+#~ msgstr ""
+
+#~ msgid "MXenes -> 基底层数 -> 基底名称 -> 负载物 -> 搀杂物 -> pure/pure_static"
+#~ msgstr ""
+
+#~ msgid "例子"
+#~ msgstr ""
+
+#~ msgid "MXenes -> M2C -> Ti2NO2 -> no_add -> no_doping -> pure/pure_static"
+#~ msgstr ""
+
+#~ msgid "MXenes -> M2N -> Ti2NO2 -> no_add -> Mo        -> pure/pure_static"
+#~ msgstr ""
+
+#~ msgid "**(2)吸附**"
+#~ msgstr ""
+
+#~ msgid "MXenes -> 基底层数  -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物  -> 标签"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "例子 MXenes -> M2N  -> Ti2NO2      "
+#~ "-> no_add -> no_dopin -> H/add_H  "
+#~ "-> top -> 00"
+#~ msgstr ""
+
+#~ msgid "MXenes -> M3N2 -> TiNCrNTi-O2 -> Hf     -> C         -> Li -> S0  -> 00"
+#~ msgstr ""
+
+#~ msgid "**(3)NEB**"
+#~ msgstr ""
+
+#~ msgid "MXenes -> 基底层数  -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物 -> 等效位点 -> 路径名称"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "MXenes -> M2N -> Ti2NO2 -> no_add"
+#~ " -> no_doping -> H -> S0-S1 ->"
+#~ " 00/01/01/03/04/ini/fin/..."
+#~ msgstr ""
+
+#~ msgid "Not for 'top' terminals."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "According to the atomic layer in "
+#~ "the structure and the stacking method,"
+#~ " the position of the next layer "
+#~ "of atoms is obtained."
+#~ msgstr ""
+
+#~ msgid "(np.ndarray),"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "According to the current atomic layer"
+#~ " site, and stacking method, to obtain"
+#~ " the atomic position (x, y) of "
+#~ "the next layer."
+#~ msgstr ""
+
+#~ msgid "(np.array), with shape (Nx2), site of all atoms"
+#~ msgstr ""
+
+#~ msgid "(str), fcc, hcp, top"
+#~ msgstr ""
+
+#~ msgid "(str),  up and down"
+#~ msgstr ""
+
+#~ msgid "(np.array),array."
+#~ msgstr ""
+
+#~ msgid "Get all same layer atoms by z0 site."
+#~ msgstr ""
+
+#~ msgid "float, site."
+#~ msgstr ""
+
+#~ msgid "float, tolerance factor."
+#~ msgstr ""
+
+#~ msgid "int, default the z axis."
+#~ msgstr ""
+
+#~ msgid "bool, whether it is fractional/Cartesian coordinates."
+#~ msgstr ""
+
+#~ msgid "np.ndarray, use this coordinates directly."
+#~ msgstr ""
+
+#~ msgid "np.ndarray, atom index."
+#~ msgstr ""
+
+#~ msgid "Obtaining bond, face Information"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Just for MXene with terminals. Obtain"
+#~ " 16 equivalent positions (fcc, hcp "
+#~ "applicable.)"
+#~ msgstr ""
+
+#~ msgid "(np.array)"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The atomic coordinates of the structure"
+#~ " are unified to the initial cell."
+#~ msgstr ""
+
+#~ msgid "Change the structure."
+#~ msgstr ""
+
+#~ msgid "randomstate."
+#~ msgstr ""
+
+#~ msgid "bool, learning rate."
+#~ msgstr ""
+
+#~ msgid "bool, extrusion."
+#~ msgstr ""
+
+#~ msgid "bool, strain."
+#~ msgstr ""
+
+#~ msgid "bool, tune the layer spacing."
+#~ msgstr ""
+
+#~ msgid "bool, add noise."
+#~ msgstr ""
+
+#~ msgid "dict, the extrusion parameter."
+#~ msgstr ""
+
+#~ msgid "MXene, Changed structure."
+#~ msgstr ""
+
+#~ msgid "Plot by ase."
+#~ msgstr ""
+
+#~ msgid "Split layer."
+#~ msgstr ""
+
+#~ msgid ":doc:`functions.coarse_and_spilt_array_ignore_force_plane`"
+#~ msgstr ""
+
+#~ msgid "(int), axis to be grouped."
+#~ msgstr ""
+
+#~ msgid "Get the surface center index for no-doped mxene."
+#~ msgstr ""
+
+#~ msgid "For the structure is centered in z axis !!!"
+#~ msgstr ""
+
+#~ msgid "The same as show. plot by ase."
+#~ msgstr ""
+
+#~ msgid "Bases: :class:`object`"
+#~ msgstr ""
+
+#~ msgid "Bases: :class:`pymatgen.core.structure.Structure`"
+#~ msgstr ""
+

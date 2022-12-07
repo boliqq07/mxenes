@@ -1,0 +1,809 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022, boliqq07
+# This file is distributed under the same license as the mxene package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: mxene \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-12-06 20:35+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../src/mxene.organize.rst:2
+msgid "mxene.organize package"
+msgstr ""
+
+#: ../../src/mxene.organize.rst:10
+msgid "Submodules"
+msgstr ""
+
+#: ../../src/mxene.organize.rst:13
+msgid "mxene.organize.disk module"
+msgstr ""
+
+#: mxene.organize.disk.make_disk:1 of
+msgid "Organize the name to one path."
+msgstr ""
+
+#: ../../src/mxene.organize.rst:21
+msgid "mxene.organize.grid module"
+msgstr ""
+
+#: mxene.organize.grid.add_absorb_H_batch:1
+#: mxene.organize.grid.exhaustion_add_absorb_H_batch:1 of
+msgid "Testing!!!  Add H the number is changed."
+msgstr ""
+
+#: mxene.organize.grid.exhaustion_augment_base_mxene:1 of
+msgid ""
+"仅用于测试！！！ 添加结构变化，批量产生随机数据。用于穷举测试。 For testing only!! Add structural "
+"changes to generate random data in batches. Used for exhaustive testing."
+msgstr ""
+
+#: mxene.organize.grid.exhaustion_augment_base_mxene:4
+#: mxene.organize.grid.random_augment_base_mxene:4 of
+msgid "晶胞整体尺寸 adjust_lattice"
+msgstr ""
+
+#: mxene.organize.grid.exhaustion_augment_base_mxene:5
+#: mxene.organize.grid.random_augment_base_mxene:5 of
+msgid "层间距  tun_layer"
+msgstr ""
+
+#: mxene.organize.grid.exhaustion_augment_base_mxene:6
+#: mxene.organize.grid.random_augment_base_mxene:6 of
+msgid "掺杂原子位置局部变形 extrusion"
+msgstr ""
+
+#: mxene.organize.grid.exhaustion_augment_base_mxene:7
+#: mxene.organize.grid.random_augment_base_mxene:7 of
+msgid "随机位移 add_noise"
+msgstr ""
+
+#: mxene.organize.grid.group_space:1 of
+msgid "Group structure by formula."
+msgstr ""
+
+#: mxene.organize.grid.random_add_absorb_H_batch:1 of
+msgid "Add H the number is changed."
+msgstr ""
+
+#: mxene.organize.grid.random_add_absorb_atom_batch:1 of
+msgid "Add metal the number is changed."
+msgstr ""
+
+#: mxene.organize.grid.random_augment_base_mxene:1 of
+msgid ""
+"添加结构变化，批量产生随机数据。用于随机优化。 Add structural changes to generate random data in"
+" batches. Used for stochastic optimization."
+msgstr ""
+
+#: ../../src/mxene.organize.rst:29
+msgid "mxene.organize.mx\\_org module"
+msgstr ""
+
+#: mxene.organize.mx_org:1 of
+msgid "**** This script is used to reorganize the MXenes folder ****"
+msgstr ""
+
+#: mxene.organize.mx_org:3 of
+msgid ""
+"This code can be used as a script alone, need to install python3, if you "
+"need to obtain the recommended path, need to install pymatgen,ase,mxene "
+"and other packages."
+msgstr ""
+
+#: mxene.organize.mx_org:5 of
+msgid ""
+"This code does not change the file content, but only adjusts the "
+"directory (pay attention to the data backup first, ensure that everything"
+" is correct, and then delete the original folder)."
+msgstr ""
+
+#: mxene.organize.mx_org:7 of
+msgid ""
+"If the code fails to pass after analysis, add the un_mark.txt file to the"
+" path to output the necessary information."
+msgstr ""
+
+#: mxene.organize.mx_org:9 of
+msgid ""
+"If both the optimization structure folder and the static computing folder"
+" exist, only the static computing (not added, under development) is saved"
+" by default."
+msgstr ""
+
+#: mxene.organize.mx_org:11 of
+msgid ""
+"After sorting out the data, the data cannot appear in the same folder, "
+"that is, the calculation file and the sub-folder, (except for auxiliary "
+"files)."
+msgstr ""
+
+#: mxene.organize.mx_org:13 of
+msgid ""
+"All un-calculated or un_mark data is not recommended to be uploaded to "
+"the database."
+msgstr ""
+
+#: mxene.organize.mx_org:15 of
+msgid ""
+"This script can be distributed freely and can be used freely. The version"
+" in the mxene package is the source version. If you need to change the "
+"source version of any bug or important content, please Contact me."
+msgstr ""
+
+#: mxene.organize.mx_org:17 of
+msgid "The final unified folder format is:"
+msgstr ""
+
+#: mxene.organize.mx_org:19 of
+msgid "**(1) does not adsorb **"
+msgstr ""
+
+#: mxene.organize.mx_org:21 of
+msgid ""
+"MXenes ->  Basal number classification -> Base name -> Load content -> "
+"Dopant -> pure/pure_static"
+msgstr ""
+
+#: mxene.organize.mx_org:23 mxene.organize.mx_org:33 mxene.organize.mx_org:43
+#: of
+msgid "Examples"
+msgstr ""
+
+#: mxene.organize.mx_org:25 of
+msgid "MXenes ->  M2C ->  Ti2NO2 ->  no_add ->  no_doping ->  pure/pure_static"
+msgstr ""
+
+#: mxene.organize.mx_org:27 of
+msgid "MXenes ->  M2N ->  Ti2NO2 ->  no_add ->  Mo        ->  pure/pure_static"
+msgstr ""
+
+#: mxene.organize.mx_org:29 of
+msgid "adsorption"
+msgstr ""
+
+#: mxene.organize.mx_org:31 of
+msgid ""
+"MXenes ->  Basal number classification -> Base name -> Load content -> "
+"Dopant -> Adsorbate -> The label"
+msgstr ""
+
+#: mxene.organize.mx_org:35 of
+msgid ""
+"MXenes ->  M2N  ->  Ti2NO2      ->  no_add ->  no_dopin ->  H/add_H  ->  "
+"top ->  00"
+msgstr ""
+
+#: mxene.organize.mx_org:37 of
+msgid ""
+"MXenes ->  M3N2 ->  TiNCrNTi-O2 ->  Hf     ->  C         ->  Li ->  S0  "
+"->  00"
+msgstr ""
+
+#: mxene.organize.mx_org:39 of
+msgid "**(3)NEB**"
+msgstr ""
+
+#: mxene.organize.mx_org:41 of
+msgid ""
+"MXenes ->  Basal number classification -> Base name -> Load content -> "
+"Dopant -> Adsorbate -> Equivalent site -> Path name"
+msgstr ""
+
+#: mxene.organize.mx_org:45 of
+msgid ""
+"MXenes ->  M2N ->  Ti2NO2 ->  no_add ->  no_doping ->  H ->  S0-S1 ->  "
+"00/01/01/03/04/ini/fin/..."
+msgstr ""
+
+#: mxene.organize.mx_org:47 of
+msgid "'->' represents the 'next level'. '/' means 'or'."
+msgstr ""
+
+#: mxene.organize.mx_org.check_convergence:1 of
+msgid "Check final energy. Check the structure for convergence."
+msgstr ""
+
+#: mxene.organize.mx_org.check_convergence mxene.organize.mx_org.check_mx_data
+#: mxene.organize.mx_org.check_pt mxene.organize.mx_org.check_structure_contcar
+#: mxene.organize.mx_org.check_vasprun mxene.organize.mx_org.copy_disk
+#: mxene.organize.mx_org.find_leaf_path
+#: mxene.organize.mx_org.get_recommend_path mxene.organize.mx_org.path_regroup
+#: of
+msgid "参数"
+msgstr ""
+
+#: mxene.organize.mx_org.check_convergence:3
+#: mxene.organize.mx_org.check_structure_contcar:3
+#: mxene.organize.mx_org.check_vasprun:3
+#: mxene.organize.mx_org.get_recommend_path:9 of
+msgid "(str, path.Path, os.PathLike,pathlib.Path), path"
+msgstr ""
+
+#: mxene.organize.mx_org.check_convergence:4
+#: mxene.organize.mx_org.check_structure_contcar:4
+#: mxene.organize.mx_org.check_vasprun:4
+#: mxene.organize.mx_org.get_recommend_path:10 of
+msgid "(list of str), message."
+msgstr ""
+
+#: mxene.organize.mx_org.check_convergence mxene.organize.mx_org.check_pt
+#: mxene.organize.mx_org.check_structure_contcar
+#: mxene.organize.mx_org.check_vasprun mxene.organize.mx_org.find_leaf_path
+#: mxene.organize.mx_org.get_recommend_path mxene.organize.mx_org.path_regroup
+#: of
+msgid "返回"
+msgstr ""
+
+#: mxene.organize.mx_org.check_convergence:6
+#: mxene.organize.mx_org.check_structure_contcar:6
+#: mxene.organize.mx_org.check_vasprun:6
+#: mxene.organize.mx_org.get_recommend_path:12 of
+msgid "(tuple), bool and msg list"
+msgstr ""
+
+#: mxene.organize.mx_org.check_convergence mxene.organize.mx_org.check_pt
+#: mxene.organize.mx_org.check_structure_contcar
+#: mxene.organize.mx_org.check_vasprun mxene.organize.mx_org.find_leaf_path
+#: mxene.organize.mx_org.get_recommend_path mxene.organize.mx_org.path_regroup
+#: of
+msgid "返回类型"
+msgstr ""
+
+#: mxene.organize.mx_org.check_mx_data:1 of
+msgid "Check MXene data in total."
+msgstr ""
+
+#: mxene.organize.mx_org.check_mx_data:3 mxene.organize.mx_org.find_leaf_path:3
+#: of
+msgid "pt: (str, path.Path, os.PathLike,pathlib.Path), path."
+msgstr ""
+
+#: mxene.organize.mx_org.check_mx_data:4 of
+msgid "(bool), check path."
+msgstr ""
+
+#: mxene.organize.mx_org.check_mx_data:5 of
+msgid "(bool),check convergence."
+msgstr ""
+
+#: mxene.organize.mx_org.check_mx_data:6 of
+msgid "(bool), check structure."
+msgstr ""
+
+#: mxene.organize.mx_org.check_mx_data:7 of
+msgid "(bool), check recommend path."
+msgstr ""
+
+#: mxene.organize.mx_org.check_mx_data:8 of
+msgid "(str), out file name."
+msgstr ""
+
+#: mxene.organize.mx_org.check_mx_data:9 of
+msgid "(bool), vasprun.xml."
+msgstr ""
+
+#: mxene.organize.mx_org.check_pt:1 of
+msgid "Check the path is in standard."
+msgstr ""
+
+#: mxene.organize.mx_org.check_pt:3 of
+msgid "(list), message."
+msgstr ""
+
+#: mxene.organize.mx_org.check_pt:4 mxene.organize.mx_org.path_regroup:25 of
+msgid "(str, path.Path, os.PathLike,pathlib.Path), path of leaf node."
+msgstr ""
+
+#: mxene.organize.mx_org.check_pt:6 of
+msgid "(tuple), bool and msg list."
+msgstr ""
+
+#: mxene.organize.mx_org.check_structure_contcar:1 of
+msgid "Check that the POSCAR, CONTCAR constructs correspond."
+msgstr ""
+
+#: mxene.organize.mx_org.check_vasprun:1 of
+msgid "Check final energy with vasprun.xml."
+msgstr ""
+
+#: mxene.organize.mx_org.comparison:1 of
+msgid "print if path is not standard."
+msgstr ""
+
+#: mxene.organize.mx_org.copy_disk:1 of
+msgid ""
+"Copy files,disks of old path to new path. Copy the subfiles in the old "
+"path and the sub-folders in the new path."
+msgstr ""
+
+#: mxene.organize.mx_org.copy_disk:4 of
+msgid "(str, path.Path, os.PathLike,pathlib.Path), old path"
+msgstr ""
+
+#: mxene.organize.mx_org.copy_disk:5 of
+msgid "(str, path.Path, os.PathLike,pathlib.Path), new path"
+msgstr ""
+
+#: mxene.organize.mx_org.copy_disk:6 of
+msgid "(bool), copy file."
+msgstr ""
+
+#: mxene.organize.mx_org.copy_disk:7 of
+msgid "(bool), copy sub-disk."
+msgstr ""
+
+#: mxene.organize.mx_org.copy_disk:8 of
+msgid "(bool), cover the exist data."
+msgstr ""
+
+#: mxene.organize.mx_org.copy_disk:9 of
+msgid "(bool), remove the old path."
+msgstr ""
+
+#: mxene.organize.mx_org.find_leaf_path:1 of
+msgid "Find the leaf path."
+msgstr ""
+
+#: mxene.organize.mx_org.find_leaf_path:5 of
+msgid "(list), list of sub leaf path."
+msgstr ""
+
+#: mxene.organize.mx_org.get_recommend_path:1 of
+msgid "Get recommend path."
+msgstr ""
+
+#: mxene.organize.mx_org.get_recommend_path:3 of
+msgid ""
+"Based on the structure, get the recommended path (not necessarily "
+"correct, need to check)."
+msgstr ""
+
+#: mxene.organize.mx_org.get_recommend_path:5 of
+msgid "The mxene package is required:"
+msgstr ""
+
+#: mxene.organize.mx_org.get_recommend_path:7 of
+msgid "pip install mxene"
+msgstr ""
+
+#: mxene.organize.mx_org.path_regroup:1 of
+msgid "Re-group the disk."
+msgstr ""
+
+#: mxene.organize.mx_org.path_regroup:3 of
+msgid "重新组织文件夹,使用序号标记文件层，使得最终为:"
+msgstr ""
+
+#: mxene.organize.mx_org.path_regroup:5 of
+msgid ""
+"MXenes -> 0            -> 1         -> 2    -> 3      -> 4      -> 5    "
+"-> 6 MXenes -> 基底层数分类   -> 基底名称   -> 负载物 -> 搀杂物 -> 吸附物/pure_* -> 等效位点/路径 "
+"-> 标签 例如： MXenes -> base_num_class  -> base_name -> add  -> doping -> "
+"absorb -> site -> label MXenes -> base_num_class  -> base_name -> add  ->"
+" doping -> pure"
+msgstr ""
+
+#: mxene.organize.mx_org.path_regroup:11 of
+msgid ""
+"1.若输入序号n,则代表使用旧文件夹的第n层作为名称. "
+"2.若输入None,则代表跳过,将使用（掺杂no_doping，负载no_add，吸附no_absorb）. "
+"3.若输入字符串,则该层直接使用该名称."
+msgstr ""
+
+#: mxene.organize.mx_org.path_regroup:20 of
+msgid "path_regroup(pt=r\"E:/x/MXenes/M2C/M2XO2-TM/Hf/C/Au/2\","
+msgstr ""
+
+#: mxene.organize.mx_org.path_regroup:20 of
+msgid "base_name=1, add=2,doping=3,absorb=4,site=5,label=\"00\")"
+msgstr ""
+
+#: mxene.organize.mx_org.path_regroup:23 of
+msgid "path_regroup(pt=r\"E:/x/MXenes/M2XO2-TM/Hf/C/Au/2\",base_num_class=\"M2C\","
+msgstr ""
+
+#: mxene.organize.mx_org.path_regroup:23 of
+msgid "base_name=0, add=1,doping=2,absorb=3,site=4,label=\"00\")"
+msgstr ""
+
+#: mxene.organize.mx_org.path_regroup:26 of
+msgid "(tuple,int,None,str), layer of base structure name."
+msgstr ""
+
+#: mxene.organize.mx_org.path_regroup:27 of
+msgid "(tuple,int,None,str), layer of add atom."
+msgstr ""
+
+#: mxene.organize.mx_org.path_regroup:28 of
+msgid "(tuple,int,None,str), layer of doping atom."
+msgstr ""
+
+#: mxene.organize.mx_org.path_regroup:29 of
+msgid "(tuple,int,None,str), layer of absorb atom."
+msgstr ""
+
+#: mxene.organize.mx_org.path_regroup:30 of
+msgid "(tuple,int,None,str), layer of site name."
+msgstr ""
+
+#: mxene.organize.mx_org.path_regroup:31 of
+msgid "(tuple,int,None,str), layer of label name."
+msgstr ""
+
+#: mxene.organize.mx_org.path_regroup:32 of
+msgid "(tuple,int,None,str), label of MXenes system."
+msgstr ""
+
+#: mxene.organize.mx_org.path_regroup:33 of
+msgid "(str,None), Move to other path."
+msgstr ""
+
+#: mxene.organize.mx_org.path_regroup:34 of
+msgid ""
+"keywords are formed \"func_*\", such as \"fun_base_name\", and the value "
+"are one function."
+msgstr ""
+
+#: mxene.organize.mx_org.path_regroup:36 of
+msgid "(path.Path), new path"
+msgstr ""
+
+#~ msgid "Testing!!!  Add H the number is changed."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "仅用于测试！！！ 添加结构变化，批量产生随机数据。用于穷举测试。 For testing "
+#~ "only!! Add structural changes to "
+#~ "generate random data in batches. Used"
+#~ " for exhaustive testing."
+#~ msgstr ""
+
+#~ msgid "晶胞整体尺寸 adjust_lattice"
+#~ msgstr ""
+
+#~ msgid "层间距  tun_layer"
+#~ msgstr ""
+
+#~ msgid "掺杂原子位置局部变形 extrusion"
+#~ msgstr ""
+
+#~ msgid "随机位移 add_noise"
+#~ msgstr ""
+
+#~ msgid "Group structure by formula."
+#~ msgstr ""
+
+#~ msgid "Add H the number is changed."
+#~ msgstr ""
+
+#~ msgid "Add metal the number is changed."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "添加结构变化，批量产生随机数据。用于随机优化。 Add structural changes "
+#~ "to generate random data in batches. "
+#~ "Used for stochastic optimization."
+#~ msgstr ""
+
+#~ msgid "**** This script is used to reorganize the MXenes folder ****"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This code can be used as a "
+#~ "script alone, need to install python3,"
+#~ " if you need to obtain the "
+#~ "recommended path, need to install "
+#~ "pymatgen,ase,mxene and other packages."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This code does not change the file"
+#~ " content, but only adjusts the "
+#~ "directory (pay attention to the data "
+#~ "backup first, ensure that everything is"
+#~ " correct, and then delete the "
+#~ "original folder)."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "If the code fails to pass after"
+#~ " analysis, add the un_mark.txt file "
+#~ "to the path to output the "
+#~ "necessary information."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "If both the optimization structure "
+#~ "folder and the static computing folder"
+#~ " exist, only the static computing "
+#~ "(not added, under development) is saved"
+#~ " by default."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "After sorting out the data, the "
+#~ "data cannot appear in the same "
+#~ "folder, that is, the calculation file"
+#~ " and the sub-folder, (except for "
+#~ "auxiliary files)."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "All un-calculated or un_mark data "
+#~ "is not recommended to be uploaded "
+#~ "to the database."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This script can be distributed freely"
+#~ " and can be used freely. The "
+#~ "version in the mxene package is "
+#~ "the source version. If you need to"
+#~ " change the source version of any "
+#~ "bug or important content, please Contact"
+#~ " me."
+#~ msgstr ""
+
+#~ msgid "The final unified folder format is:"
+#~ msgstr ""
+
+#~ msgid "**(1) does not adsorb **"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "MXenes ->  Basal number classification "
+#~ "-> Base name -> Load content ->"
+#~ " Dopant -> pure/pure_static"
+#~ msgstr ""
+
+#~ msgid "Examples"
+#~ msgstr ""
+
+#~ msgid "MXenes ->  M2C ->  Ti2NO2 ->  no_add ->  no_doping ->  pure/pure_static"
+#~ msgstr ""
+
+#~ msgid "MXenes ->  M2N ->  Ti2NO2 ->  no_add ->  Mo        ->  pure/pure_static"
+#~ msgstr ""
+
+#~ msgid "adsorption"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "MXenes ->  Basal number classification "
+#~ "-> Base name -> Load content ->"
+#~ " Dopant -> Adsorbate -> The label"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "MXenes ->  M2N  ->  Ti2NO2      ->  "
+#~ "no_add ->  no_dopin ->  H/add_H  ->  "
+#~ "top ->  00"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "MXenes ->  M3N2 ->  TiNCrNTi-O2 ->  "
+#~ "Hf     ->  C         ->  Li ->  S0"
+#~ "  ->  00"
+#~ msgstr ""
+
+#~ msgid "**(3)NEB**"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "MXenes ->  Basal number classification "
+#~ "-> Base name -> Load content ->"
+#~ " Dopant -> Adsorbate -> Equivalent "
+#~ "site -> Path name"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "MXenes ->  M2N ->  Ti2NO2 ->  "
+#~ "no_add ->  no_doping ->  H ->  "
+#~ "S0-S1 ->  00/01/01/03/04/ini/fin/..."
+#~ msgstr ""
+
+#~ msgid "'->' represents the 'next level'. '/' means 'or'."
+#~ msgstr ""
+
+#~ msgid "Check final energy. Check the structure for convergence."
+#~ msgstr ""
+
+#~ msgid "Parameters"
+#~ msgstr ""
+
+#~ msgid "(str, path.Path, os.PathLike,pathlib.Path), path"
+#~ msgstr ""
+
+#~ msgid "(list of str), message."
+#~ msgstr ""
+
+#~ msgid "Returns"
+#~ msgstr ""
+
+#~ msgid "(tuple), bool and msg list"
+#~ msgstr ""
+
+#~ msgid "Return type"
+#~ msgstr ""
+
+#~ msgid "Check MXene data in total."
+#~ msgstr ""
+
+#~ msgid "pt: (str, path.Path, os.PathLike,pathlib.Path), path."
+#~ msgstr ""
+
+#~ msgid "(bool), check path."
+#~ msgstr ""
+
+#~ msgid "(bool),check convergence."
+#~ msgstr ""
+
+#~ msgid "(bool), check structure."
+#~ msgstr ""
+
+#~ msgid "(bool), check recommend path."
+#~ msgstr ""
+
+#~ msgid "(str), out file name."
+#~ msgstr ""
+
+#~ msgid "(bool), vasprun.xml."
+#~ msgstr ""
+
+#~ msgid "Check the path is in standard."
+#~ msgstr ""
+
+#~ msgid "(list), message."
+#~ msgstr ""
+
+#~ msgid "(str, path.Path, os.PathLike,pathlib.Path), path of leaf node."
+#~ msgstr ""
+
+#~ msgid "(tuple), bool and msg list."
+#~ msgstr ""
+
+#~ msgid "Check that the POSCAR, CONTCAR constructs correspond."
+#~ msgstr ""
+
+#~ msgid "Check final energy with vasprun.xml."
+#~ msgstr ""
+
+#~ msgid "print if path is not standard."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Copy files,disks of old path to "
+#~ "new path. Copy the subfiles in the"
+#~ " old path and the sub-folders "
+#~ "in the new path."
+#~ msgstr ""
+
+#~ msgid "(str, path.Path, os.PathLike,pathlib.Path), old path"
+#~ msgstr ""
+
+#~ msgid "(str, path.Path, os.PathLike,pathlib.Path), new path"
+#~ msgstr ""
+
+#~ msgid "(bool), copy file."
+#~ msgstr ""
+
+#~ msgid "(bool), copy sub-disk."
+#~ msgstr ""
+
+#~ msgid "(bool), cover the exist data."
+#~ msgstr ""
+
+#~ msgid "(bool), remove the old path."
+#~ msgstr ""
+
+#~ msgid "Find the leaf path."
+#~ msgstr ""
+
+#~ msgid "(list), list of sub leaf path."
+#~ msgstr ""
+
+#~ msgid "Get recommend path."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Based on the structure, get the "
+#~ "recommended path (not necessarily correct, "
+#~ "need to check)."
+#~ msgstr ""
+
+#~ msgid "The mxene package is required:"
+#~ msgstr ""
+
+#~ msgid "pip install mxene"
+#~ msgstr ""
+
+#~ msgid "Re-group the disk."
+#~ msgstr ""
+
+#~ msgid "重新组织文件夹,使用序号标记文件层，使得最终为:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "MXenes -> 0            -> 1         ->"
+#~ " 2    -> 3      -> 4      -> 5"
+#~ "    -> 6 MXenes -> 基底层数分类   -> "
+#~ "基底名称   -> 负载物 -> 搀杂物 -> 吸附物/pure_*"
+#~ " -> 等效位点/路径 -> 标签 例如： MXenes ->"
+#~ " base_num_class  -> base_name -> add  "
+#~ "-> doping -> absorb -> site -> "
+#~ "label MXenes -> base_num_class  -> "
+#~ "base_name -> add  -> doping -> "
+#~ "pure"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "1.若输入序号n,则代表使用旧文件夹的第n层作为名称. "
+#~ "2.若输入None,则代表跳过,将使用（掺杂no_doping，负载no_add，吸附no_absorb）. "
+#~ "3.若输入字符串,则该层直接使用该名称."
+#~ msgstr ""
+
+#~ msgid "path_regroup(pt=r\"E:/x/MXenes/M2C/M2XO2-TM/Hf/C/Au/2\","
+#~ msgstr ""
+
+#~ msgid "base_name=1, add=2,doping=3,absorb=4,site=5,label=\"00\")"
+#~ msgstr ""
+
+#~ msgid "path_regroup(pt=r\"E:/x/MXenes/M2XO2-TM/Hf/C/Au/2\",base_num_class=\"M2C\","
+#~ msgstr ""
+
+#~ msgid "base_name=0, add=1,doping=2,absorb=3,site=4,label=\"00\")"
+#~ msgstr ""
+
+#~ msgid "(tuple,int,None,str), layer of base structure name."
+#~ msgstr ""
+
+#~ msgid "(tuple,int,None,str), layer of add atom."
+#~ msgstr ""
+
+#~ msgid "(tuple,int,None,str), layer of doping atom."
+#~ msgstr ""
+
+#~ msgid "(tuple,int,None,str), layer of absorb atom."
+#~ msgstr ""
+
+#~ msgid "(tuple,int,None,str), layer of site name."
+#~ msgstr ""
+
+#~ msgid "(tuple,int,None,str), layer of label name."
+#~ msgstr ""
+
+#~ msgid "(tuple,int,None,str), label of MXenes system."
+#~ msgstr ""
+
+#~ msgid "(str,None), Move to other path."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "keywords are formed \"func_*\", such as"
+#~ " \"fun_base_name\", and the value are "
+#~ "one function."
+#~ msgstr ""
+
+#~ msgid "(path.Path), new path"
+#~ msgstr ""
+
+#~ msgid "参数"
+#~ msgstr ""
+
+#~ msgid "返回"
+#~ msgstr ""
+
+#~ msgid "返回类型"
+#~ msgstr ""
+
