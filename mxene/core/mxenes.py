@@ -236,9 +236,11 @@ class MXene(Structure):
 
         """
         array = self.cart_coords[:, axis]
+
         layer_label = coarse_and_spilt_array_ignore_force_plane(array, ignore_index=ignore_index,
-                                                                tol=tol, force_plane=force_plane,
-                                                                reverse=reverse, force_finite=force_finite)
+                                                                    tol=tol, force_plane=force_plane,
+                                                                    reverse=reverse, force_finite=force_finite)
+
         return layer_label
 
     @staticmethod

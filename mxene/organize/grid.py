@@ -237,7 +237,10 @@ def random_add_absorb_H_batch(structures: List[MXene], random_state=None,
         kwarg_absorb_list = [{}]
 
     res = []
-    for mxi in structures:
+
+    val =[]
+
+    for i, mxi in enumerate(structures):
 
         mxi0 = mxi.copy()
 
@@ -255,13 +258,25 @@ def random_add_absorb_H_batch(structures: List[MXene], random_state=None,
             kwarg_absorb['pure'] = True
             kwarg_absorb['center'] = None
 
-        mxi0 = mxi0.add_absorb(add_noise=False, up_down="up",
-                               equivalent="fin_opt", absorb="H",
-                               ignore_index=-1, tol=0.2, **kwarg_absorb)
+        try:
 
-        mxi0.mark_label = mxi.mark_label
+            mxi0 = mxi0.add_absorb(add_noise=False, up_down="up",
+                                   equivalent="fin_opt", absorb="H",
+                                   ignore_index=-1, tol=0.3, **kwarg_absorb)
 
-        res.append(mxi0)
+            mxi0.mark_label = mxi.mark_label
+
+            res.append(mxi0)
+            val.append(i)
+        except:
+            pass
+    if len(res) == len(structures):
+        pass
+    else:
+        err_n = len(structures)-len(res)
+        st2 = [structures[i] for i in val[:err_n]]
+        res2 = random_add_absorb_H_batch(st2, random_state = rdm, kwarg_absorb_list = kwarg_absorb_list)
+        res.extend(res2)
 
     return res
 
