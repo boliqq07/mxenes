@@ -158,7 +158,7 @@ def find_energy(newz, site0x, site0y, site1x, site1y, step=None, number=100, plo
 
     if plot_or_not:  # 存储gif
         try:
-            frames[0].save("find.gif", save_all=True, append_images=frames[1:], duration=100, loop=0)
+            frames[0]._save("find.gif", save_all=True, append_images=frames[1:], duration=100, loop=0)
         except BaseException:
             pass
     return zb, zi

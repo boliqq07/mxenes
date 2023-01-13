@@ -11,14 +11,14 @@ import numpy as np
 from pymatgen.core import Structure
 from sklearn.utils import check_random_state
 
-from mgetool.tool import group_spilt_array
+from mgetool.tool import coarse_and_spilt_array
 from mxene.core.mxenes import MXene
 
 
 def group_space(structures: List[Structure]) -> Tuple[List[Structure], List[np.ndarray]]:
     """Group structure by formula."""
     array = np.array([si.composition.reduced_formula for si in structures])
-    group_list = group_spilt_array(array)
+    group_list = coarse_and_spilt_array(array)
     sts = np.array(structures, dtype=object)
     structures_group_list = [sts[i] for i in group_list]
     return structures_group_list, group_list
@@ -181,6 +181,7 @@ def augment_base_mxene(structure: MXene, lr=1.0, extrusion=True, strain=True, tu
         mxi0.mark_label = mxi.mark_label
         resi.append(mxi0)
     return resi
+
 def exhaustion_augment_base_mxene(structures: List[MXene], lr=1.0,
                                   extrusion=True, strain=True, tun_layer=True, add_noise=False,
                                   kwarg_strain_list=None, kwarg_extrusion_list=None):
@@ -287,6 +288,8 @@ def random_add_absorb_H_batch(structures: List[MXene], random_state=None,
 # pg3 = ParameterGrid(absorb_space)
 #
 # kwarg_absorb_list = [i for i in pg3]
+
+
 def random_add_absorb_atom_batch(structures: List[MXene], random_state=None,
                                  kwarg_absorb_list=None):
     """Add metal the number is changed."""
@@ -364,3 +367,5 @@ def exhaustion_add_absorb_H_batch(structures: List[MXene],
         resi = add_absorb_H_batch(mxi, kwarg_absorb_list=kwarg_absorb_list)
         res.append(resi)
     return res
+
+

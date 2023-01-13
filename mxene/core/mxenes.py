@@ -14,6 +14,7 @@ from itertools import chain
 from typing import Union, Sequence, List
 
 import numpy as np
+from numpy.linalg import eigh
 from pymatgen.core import Structure, Lattice, SymmOp, PeriodicSite
 
 from mxene.utility.typing import CompositionLike, ArrayLike, ListTuple
@@ -1095,6 +1096,9 @@ class MXene(Structure):
             mxi = mxi.add_noise(random_state=rdm, random_factor=0.005, )
 
         return mxi
+
+    def relax_by_predictor(self,predictor):
+
 
     def adjust_lattice(self, strain: ArrayLike = None):
         """
