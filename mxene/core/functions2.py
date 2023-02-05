@@ -40,11 +40,11 @@ def fixed_atoms(atoms: Atoms, fixed_type: Union[str, float, None] = "base", dopi
 
     if doping_fixed_type == "line":
         FixedLine(len(atoms) - 1,
-                         direction=doping_direction, )
+                  direction=doping_direction, )
 
     elif doping_fixed_type == "plane":
         FixedPlane(len(atoms) - 1,
-                          direction=doping_direction, )
+                   direction=doping_direction, )
     else:
         raise TypeError
     atoms.set_constraint()

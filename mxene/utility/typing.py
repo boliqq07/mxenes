@@ -6,6 +6,7 @@
 # @License: MIT License
 
 from typing import List, Union, Tuple, Sequence
+
 import numpy as np
 from pymatgen.core.composition import Composition
 from pymatgen.core.periodic_table import DummySpecies, Element, Species

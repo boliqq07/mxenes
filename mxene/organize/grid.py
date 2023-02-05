@@ -5,10 +5,9 @@
 # @Software: PyCharm
 # @License: MIT License
 import itertools
-from typing import List, Tuple, Union, Any
+from typing import List, Union, Any
 
 import numpy as np
-from Cython.Includes.numpy import ndarray
 from numpy import ndarray
 from pymatgen.core import Structure
 from sklearn.utils import check_random_state
@@ -162,6 +161,7 @@ def random_augment_base_mxene(structures: List[MXene], numbers=512, random_state
 
     return res
 
+
 def augment_base_mxene(structure: MXene, lr=1.0, extrusion=True, strain=True, tun_layer=True,
                        add_noise=False, kwarg_strain_list=None, kwarg_extrusion_list=None):
     if extrusion:  # drop this , but use one auto get.
@@ -184,6 +184,7 @@ def augment_base_mxene(structure: MXene, lr=1.0, extrusion=True, strain=True, tu
         resi.append(mxi0)
     return resi
 
+
 def exhaustion_augment_base_mxene(structures: List[MXene], lr=1.0,
                                   extrusion=True, strain=True, tun_layer=True, add_noise=False,
                                   kwarg_strain_list=None, kwarg_extrusion_list=None):
@@ -199,9 +200,9 @@ def exhaustion_augment_base_mxene(structures: List[MXene], lr=1.0,
     res = []
 
     for label, mxi in enumerate(structures):
-        resi = augment_base_mxene(mxi, lr =lr, extrusion = extrusion, strain = strain, tun_layer = tun_layer,
-                           add_noise = add_noise,kwarg_strain_list = kwarg_strain_list,
-                           kwarg_extrusion_list = kwarg_extrusion_list)
+        resi = augment_base_mxene(mxi, lr=lr, extrusion=extrusion, strain=strain, tun_layer=tun_layer,
+                                  add_noise=add_noise, kwarg_strain_list=kwarg_strain_list,
+                                  kwarg_extrusion_list=kwarg_extrusion_list)
 
         res.extend(resi)
 
@@ -241,7 +242,7 @@ def random_add_absorb_H_batch(structures: List[MXene], random_state=None,
 
     res = []
 
-    val =[]
+    val = []
 
     for i, mxi in enumerate(structures):
 
@@ -276,12 +277,13 @@ def random_add_absorb_H_batch(structures: List[MXene], random_state=None,
     if len(res) == len(structures):
         pass
     else:
-        err_n = len(structures)-len(res)
+        err_n = len(structures) - len(res)
         st2 = [structures[i] for i in val[:err_n]]
-        res2 = random_add_absorb_H_batch(st2, random_state = rdm, kwarg_absorb_list = kwarg_absorb_list)
+        res2 = random_add_absorb_H_batch(st2, random_state=rdm, kwarg_absorb_list=kwarg_absorb_list)
         res.extend(res2)
 
     return res
+
 
 # absorb_space = {'site_name': ['S0', 'S1', 'S2'],
 #                    'site_type': ["top", "center"],
@@ -320,10 +322,10 @@ def random_add_absorb_atom_batch(structures: List[MXene], random_state=None,
             kwarg_absorb['center'] = None
 
         mxi0s = mxi0.add_face_random_z_16_site(add_noise=False, up_down="up",
-                               equivalent="fin_opt", absorb="H",
-                               ignore_index=-1, tol=0.2, **kwarg_absorb)
-        for n,i in enumerate(mxi0s):
-            i.mark_label =mxi.mark_label+"#%s"%n
+                                               equivalent="fin_opt", absorb="H",
+                                               ignore_index=-1, tol=0.2, **kwarg_absorb)
+        for n, i in enumerate(mxi0s):
+            i.mark_label = mxi.mark_label + "#%s" % n
 
         res.append(mxi0)
 
@@ -361,6 +363,7 @@ def add_absorb_H_batch(structure: MXene, kwarg_absorb_list=None):
 
     return resi
 
+
 def exhaustion_add_absorb_H_batch(structures: List[MXene],
                                   kwarg_absorb_list=None):
     """Testing!!!  Add H the number is changed."""
@@ -369,5 +372,3 @@ def exhaustion_add_absorb_H_batch(structures: List[MXene],
         resi = add_absorb_H_batch(mxi, kwarg_absorb_list=kwarg_absorb_list)
         res.append(resi)
     return res
-
-

@@ -12,7 +12,6 @@ import numbers
 import pathlib
 import warnings
 from collections import Counter
-from copy import deepcopy
 from typing import List, Union, Dict, Tuple
 
 import numpy as np
@@ -39,7 +38,7 @@ def middle(st: Structure, ignore_index=None, tol=0.01):
 
 def coarse_and_spilt_array_ignore_force_plane(array: np.ndarray, ignore_index: Union[int, np.ndarray] = None,
                                               tol=0.5, force_plane: bool = True, reverse: bool = True,
-                                              force_finite: bool = True,method=None, n_cluster: int = 3) -> np.ndarray:
+                                              force_finite: bool = True, method=None, n_cluster: int = 3) -> np.ndarray:
     """
     Split 1D by distance or group.
 

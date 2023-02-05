@@ -1,14 +1,12 @@
-
 import itertools
 from typing import Literal, Sequence
-from pymatgen.core.composition import SpeciesLike
 
 from pymatgen.analysis.structure_matcher import StructureMatcher, ElementComparator, AbstractComparator
+from pymatgen.core.composition import SpeciesLike
 from tqdm import tqdm
 
 
 class StructureMatcherExtend(StructureMatcher):
-
     """
     Class to match structures by similarity.
 
@@ -54,17 +52,17 @@ class StructureMatcherExtend(StructureMatcher):
     """
 
     def __init__(
-        self,
-        ltol: float = 0.2,
-        stol: float = 0.3,
-        angle_tol: float = 5,
-        primitive_cell: bool = True,
-        scale: bool = True,
-        attempt_supercell: bool = False,
-        allow_subset: bool = False,
-        comparator: AbstractComparator = None,
-        supercell_size: Literal["num_sites", "num_atoms", "volume"] = "num_sites",
-        ignored_species: Sequence[SpeciesLike] = (),
+            self,
+            ltol: float = 0.2,
+            stol: float = 0.3,
+            angle_tol: float = 5,
+            primitive_cell: bool = True,
+            scale: bool = True,
+            attempt_supercell: bool = False,
+            allow_subset: bool = False,
+            comparator: AbstractComparator = None,
+            supercell_size: Literal["num_sites", "num_atoms", "volume"] = "num_sites",
+            ignored_species: Sequence[SpeciesLike] = (),
     ):
         """
         Args:
@@ -111,14 +109,14 @@ class StructureMatcherExtend(StructureMatcher):
         if comparator is None:
             comparator = ElementComparator()
         super(StructureMatcherExtend, self).__init__(ltol=ltol,
-        stol=stol,scale=scale,
-        angle_tol=angle_tol,
-        primitive_cell=primitive_cell,
-        attempt_supercell=attempt_supercell,
-        allow_subset=allow_subset,
-        comparator=comparator,
-        supercell_size=supercell_size,
-        ignored_species=ignored_species)
+                                                     stol=stol, scale=scale,
+                                                     angle_tol=angle_tol,
+                                                     primitive_cell=primitive_cell,
+                                                     attempt_supercell=attempt_supercell,
+                                                     allow_subset=allow_subset,
+                                                     comparator=comparator,
+                                                     supercell_size=supercell_size,
+                                                     ignored_species=ignored_species)
 
     def group_structures_and_index(self, s_list, anonymous=False):
 

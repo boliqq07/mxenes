@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import functools
+
 # @Time  : 2022/11/4 16:52
 # @Author : boliqq07
 # @Software: PyCharm
@@ -26,6 +26,7 @@ potcar = get_potcar_lru(tuple(poscar.site_symbols))
 import itertools
 import os
 from typing import Union
+
 from pymatgen.core import Structure
 from pymatgen.io.vasp import Potcar, Poscar
 
@@ -48,6 +49,7 @@ def check_potcar(potpath):
     except BaseException:
         sym_potcar_map = None
     return sym_potcar_map
+
 
 # potpath = r"POT-database"  # POT-database should be offered
 # sym_potcar_map = check_potcar(potpath=r"POT-database")

@@ -14,13 +14,11 @@ from itertools import chain
 from typing import Union, Sequence, List
 
 import numpy as np
-from numpy.linalg import eigh
 from pymatgen.core import Structure, Lattice, SymmOp, PeriodicSite
-
-from mxene.utility.typing import CompositionLike, ArrayLike, ListTuple
 
 from mxene.core.functions import coarse_and_spilt_array_ignore_force_plane, \
     get_plane_neighbors_to_center, Interp2dNearest, coarse_and_spilt_array, check_random_state
+from mxene.utility.typing import CompositionLike, ArrayLike, ListTuple
 
 
 class MXene(Structure):
@@ -239,8 +237,8 @@ class MXene(Structure):
         array = self.cart_coords[:, axis]
 
         layer_label = coarse_and_spilt_array_ignore_force_plane(array, ignore_index=ignore_index,
-                                                                    tol=tol, force_plane=force_plane,
-                                                                    reverse=reverse, force_finite=force_finite)
+                                                                tol=tol, force_plane=force_plane,
+                                                                reverse=reverse, force_finite=force_finite)
 
         return layer_label
 
@@ -334,7 +332,7 @@ class MXene(Structure):
 
     def get_next_layer_sites(self, site_type: Union[None, str] = "fcc", ignore_index=None,
                              force_plane=False, force_finite=True, terminal_z_axis=1.2,
-                             up_down="up", site_atom="O", reformed_array=None, tol=0.5)->np.ndarray:
+                             up_down="up", site_atom="O", reformed_array=None, tol=0.5) -> np.ndarray:
         """
         According to the atomic layer in the structure and the stacking method,
         the position of the next layer of atoms is obtained.
@@ -410,11 +408,11 @@ class MXene(Structure):
 
         return coords_add
 
-    def add_next_layer_atoms(self,site_atom:Union[str, List[str]] = "Ag",
-                             site_type: Union[None, str] = "fcc", ignore_index = None,
-                             force_plane=False, force_finite = True, terminal_z_axis=1.2,
+    def add_next_layer_atoms(self, site_atom: Union[str, List[str]] = "Ag",
+                             site_type: Union[None, str] = "fcc", ignore_index=None,
+                             force_plane=False, force_finite=True, terminal_z_axis=1.2,
                              up_down="up_and_down",
-                             reformed_array = None, tol = 0.5):
+                             reformed_array=None, tol=0.5):
         """
         Add next layer atoms.
 
@@ -438,23 +436,27 @@ class MXene(Structure):
         arr = []
 
         if "up" in up_down:
-            coords_add1 = self.get_next_layer_sites(site_type=site_type, ignore_index = ignore_index,
-                                 force_plane=force_plane, force_finite = force_finite,terminal_z_axis=terminal_z_axis,
-                                 up_down="up", site_atom = site_atom, reformed_array = reformed_array, tol = tol)
+            coords_add1 = self.get_next_layer_sites(site_type=site_type, ignore_index=ignore_index,
+                                                    force_plane=force_plane, force_finite=force_finite,
+                                                    terminal_z_axis=terminal_z_axis,
+                                                    up_down="up", site_atom=site_atom, reformed_array=reformed_array,
+                                                    tol=tol)
             arr.append(coords_add1)
         if "down" in up_down:
-            coords_add2 = self.get_next_layer_sites(site_type=site_type, ignore_index = ignore_index,
-                                 force_plane=force_plane, force_finite = force_finite,terminal_z_axis=terminal_z_axis,
-                                 up_down="down", site_atom=site_atom, reformed_array = reformed_array, tol=tol)
+            coords_add2 = self.get_next_layer_sites(site_type=site_type, ignore_index=ignore_index,
+                                                    force_plane=force_plane, force_finite=force_finite,
+                                                    terminal_z_axis=terminal_z_axis,
+                                                    up_down="down", site_atom=site_atom, reformed_array=reformed_array,
+                                                    tol=tol)
             arr.append(coords_add2)
 
-        if len(arr)==2:
-            arr = np.concatenate(arr,axis=0)
+        if len(arr) == 2:
+            arr = np.concatenate(arr, axis=0)
         else:
             arr = arr[0]
 
         if isinstance(site_atom, str):
-            site_atom = [site_atom]*(arr.shape[0])
+            site_atom = [site_atom] * (arr.shape[0])
 
         if isinstance(site_atom, (list, tuple)):
             for n, s in zip(site_atom, arr):
@@ -716,7 +718,7 @@ class MXene(Structure):
         st_frac_coords = self.frac_coords
         axis_factor = np.array(list(axis_factor)).reshape(1, -1)
         st_frac_coords = np.array(st_frac_coords) + (
-                    rdm.random(st_frac_coords.shape) - 0.5) * random_factor * axis_factor
+                rdm.random(st_frac_coords.shape) - 0.5) * random_factor * axis_factor
         st = self.__class__(lattice=self.lattice, species=self.species, coords=st_frac_coords)
         return st
 
@@ -803,10 +805,11 @@ class MXene(Structure):
 
     def add_absorb(self, center: Union[int, None] = -1, site_type: Union[None, str] = "top", offset_z: float = 0,
                    add_noise: bool = True, up_down: str = "up", site_name: str = "S0", equivalent: str = "ini_opt",
-                   absorb: str = "H", absorb_site: Union[np.ndarray, ListTuple] = None, reformed_array: np.ndarray = None,
+                   absorb: str = "H", absorb_site: Union[np.ndarray, ListTuple] = None,
+                   reformed_array: np.ndarray = None,
                    ignore_index: Union[np.ndarray, tuple, int, List] = None,
                    coords_are_cartesian: bool = True, tol: float = 0.3, random_state=None,
-                   random_factor: float = 0.001,  pure: bool = False) -> "MXene":
+                   random_factor: float = 0.001, pure: bool = False) -> "MXene":
         """
         Add adsorbent atoms. Change the original data!!!
 
@@ -912,7 +915,7 @@ class MXene(Structure):
         return self
 
     def get_disk(self, disk='.', site_name="S0", equ_name="ini_opt", nm_tm="TM",
-                 ignore_index=None,add_atoms=None, tol=0.4,
+                 ignore_index=None, add_atoms=None, tol=0.4,
                  absorb=None, doping=None, terminal=None, carbide_nitride=None,
                  ) -> pathlib.Path:
         """Just for single doping, single absorb, single type terminal.
@@ -1098,7 +1101,6 @@ class MXene(Structure):
         return mxi
 
     # def relax_by_predictor(self,predictor):
-
 
     def adjust_lattice(self, strain: ArrayLike = None):
         """

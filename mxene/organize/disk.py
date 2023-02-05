@@ -102,4 +102,3 @@ def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, absorb=None
         disk = disk / equ_name
 
     return disk
-

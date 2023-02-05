@@ -340,4 +340,3 @@ def write_batch():
              f"mgetool makebatch -cmd 'cd .. \nnebmake.pl ini_static/CONTCAR fin_static/CONTCAR 3 \ncp ini_static/OUTCAR 00/OUTCAR \ncp fin_static/OUTCAR 04/OUTCAR \ncp ini_static/KPOINTS KPOINTS "
              f"\ncp ini_static/POTCAR POTCAR \ncp {path}/neb_cpu.run neb_cpu.run' -o nebbatch.sh"
              ])
-
