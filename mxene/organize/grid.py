@@ -5,17 +5,19 @@
 # @Software: PyCharm
 # @License: MIT License
 import itertools
-from typing import List, Tuple
+from typing import List, Tuple, Union, Any
 
 import numpy as np
+from Cython.Includes.numpy import ndarray
+from numpy import ndarray
 from pymatgen.core import Structure
 from sklearn.utils import check_random_state
 
-from mgetool.tool import coarse_and_spilt_array
+from mgetool.cluster import coarse_and_spilt_array
 from mxene.core.mxenes import MXene
 
 
-def group_space(structures: List[Structure]) -> Tuple[List[Structure], List[np.ndarray]]:
+def group_space(structures: List[Structure]) -> tuple[list[Any], Union[ndarray, ndarray]]:
     """Group structure by formula."""
     array = np.array([si.composition.reduced_formula for si in structures])
     group_list = coarse_and_spilt_array(array)

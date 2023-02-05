@@ -20,6 +20,8 @@ from numpy import atleast_1d
 from pymatgen.core import Structure
 from pymatgen.io.vasp import Poscar
 
+from mgetool.cluster import coarse_and_spilt_array
+
 
 def middle(st: Structure, ignore_index=None, tol=0.01):
     """Calculate the core layer - middle layer."""
@@ -35,77 +37,9 @@ def middle(st: Structure, ignore_index=None, tol=0.01):
     return middle_atoms
 
 
-def coarse_and_spilt_array(array: np.ndarray, tol: float = 0.5, method: str = None, n_cluster: int = 3,
-                           reverse: bool = False) -> np.ndarray:
-    """
-    Split 1D ndarray by distance or group.
-
-    Examples:
-    >>> ay= np.array([1,2,3,4,5,6,7,10,11,20])
-    >>> labels = coarse_and_spilt_array(ay, tol = 1.5)
-    >>> print(labels)
-    [0 0 0 0 0 0 0 1 1 2]
-
-    Args:
-        array: (np.ndarray) with shape (n,).
-        tol: (float) tolerance distance for spilt.
-        method:(str) default None. others: "agg", "k_means", "cluster", "k_means_user".
-        n_cluster: (int) number of cluster.
-        reverse:(bool), reverse the label.
-
-    Returns:
-        labels: (np.ndarray) with shape (n,).
-
-    """
-    if method in ["agg", "k_means"]:
-        if method == "agg":
-            from sklearn.cluster import AgglomerativeClustering
-            ac = AgglomerativeClustering(n_clusters=None, distance_threshold=tol, compute_distances=True)
-        else:
-            from sklearn.cluster import KMeans
-            ac = KMeans(n_clusters=n_cluster)
-
-        ac.fit(array.reshape(-1, 1))
-        labels_ = ac.labels_
-        labels_max = np.max(labels_)
-        labels = deepcopy(labels_)
-        dis = np.array([np.mean(array[labels_ == i]) for i in range(labels_max + 1)])
-        dis_index = np.argsort(dis)
-        for i in range(labels_max + 1):
-            labels[labels_ == i] = dis_index[i]
-        if reverse:
-            labels = max(labels) - labels
-        return labels
-    else:
-        # use tol directly
-        array = array.ravel()
-        array_sindex = np.argsort(array)
-        array_sort = array[array_sindex]
-        i = 0
-        label = 0
-        labels = []
-        while i < len(array_sort):
-            if i == 0:
-                labels.append(label)
-            else:
-                if array_sort[i] - array_sort[i - 1] < tol:
-                    labels.append(label)
-                else:
-                    label += 1
-                    labels.append(label)
-            i += 1
-        dis_index = np.argsort(array_sindex)
-        labels = np.array(labels)[dis_index]
-
-        if reverse:
-            labels = max(labels) - labels
-
-        return labels
-
-
 def coarse_and_spilt_array_ignore_force_plane(array: np.ndarray, ignore_index: Union[int, np.ndarray] = None,
                                               tol=0.5, force_plane: bool = True, reverse: bool = True,
-                                              force_finite: bool = True,method=None,n_cluster: int = 3) -> np.ndarray:
+                                              force_finite: bool = True,method=None, n_cluster: int = 3) -> np.ndarray:
     """
     Split 1D by distance or group.
 

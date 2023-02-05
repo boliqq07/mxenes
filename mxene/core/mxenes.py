@@ -1097,7 +1097,7 @@ class MXene(Structure):
 
         return mxi
 
-    def relax_by_predictor(self,predictor):
+    # def relax_by_predictor(self,predictor):
 
 
     def adjust_lattice(self, strain: ArrayLike = None):
