@@ -18,7 +18,7 @@ import pandas as pd
 from pymatgen.core import Structure, Element
 
 from mxene.core.functions import get_common_name, get_center_name, get_plane_neighbors_to_center, \
-    get_nearest_plane_atom_index, coarse_and_spilt_array
+    get_nearest_plane_atom_index, coarse_cluster_array
 
 
 class SingleTetra:
@@ -345,7 +345,7 @@ class SingleTetra:
         distance = p4i[4:8]
 
         # print("Re-arrange the rank of 4 points. set the special neighbor point to index 1 (the 2ed site)")
-        labels_ = coarse_and_spilt_array(distance, n_cluster=3, method="k_means_user")
+        labels_ = coarse_cluster_array(distance, n_cluster=3, method="k_means_user")
         labels = deepcopy(labels_)
         _ = "shrink" if np.sum(labels) == 5 else "extend"
         if np.sum(labels) == 4:
@@ -548,7 +548,7 @@ class Tetra:
         distance = [i[4:8] for i in point4]
         for i, di in enumerate(distance):
             # print("Re-arrange the rank of 4 points. set the special neighbor point to index 1 (the 2ed site)")
-            labels_ = coarse_and_spilt_array(di, tol=0.01, method="k_means_user")
+            labels_ = coarse_cluster_array(di, tol=0.01, method="k_means_user")
             labels = deepcopy(labels_)
             _ = "shrink" if np.sum(labels) == 5 else "extend"
             if np.sum(labels) == 4:

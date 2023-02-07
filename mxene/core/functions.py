@@ -19,7 +19,7 @@ from numpy import atleast_1d
 from pymatgen.core import Structure
 from pymatgen.io.vasp import Poscar
 
-from mgetool.cluster import coarse_and_spilt_array
+from mgetool.cluster import coarse_cluster_array
 
 
 def middle(st: Structure, ignore_index=None, tol=0.01):
@@ -64,7 +64,7 @@ def coarse_and_spilt_array_ignore_force_plane(array: np.ndarray, ignore_index: U
     array([1, 1, 1, 0, 0, 0])
 
     Args:
-        array: (np.ndarray), the array to be grouped.
+        array: (np.ndarray), the array to be grouped. 1D array
         tol: (float), tolerance distance for spilt.(less than interlayer spacing)
         ignore_index: (int, np.ndarray), jump 'out-of-station' atoms.
         force_plane: (bool), change the single atom to the nearest group.
@@ -77,6 +77,8 @@ def coarse_and_spilt_array_ignore_force_plane(array: np.ndarray, ignore_index: U
         labels: (np.ndarray) with shape (n,).
 
     """
+    array = array.ravel()
+
     if isinstance(ignore_index, int):
         ignore_index = [ignore_index, ]
 
@@ -87,7 +89,7 @@ def coarse_and_spilt_array_ignore_force_plane(array: np.ndarray, ignore_index: U
         array = array[mark]
     sel = np.where(array)[0]
 
-    label = coarse_and_spilt_array(array, tol=tol, reverse=reverse, method=method, n_cluster=n_cluster)
+    label = coarse_cluster_array(array, tol=tol, reverse=reverse, method=method, n_cluster=n_cluster)
 
     label_dict = Counter(label)
     common_num = Counter(list(label_dict.values())).most_common(1)[0][0]
@@ -115,10 +117,11 @@ def coarse_and_spilt_array_ignore_force_plane(array: np.ndarray, ignore_index: U
             if label_dict[k] <= 2:
                 err.append(k)
         if len(err) > 1:
+
             warnings.warn("Just for single doping, if absorbed, please use ignore_index to jump the absorb atoms",
                           UserWarning)
-            ds = np.array([array[:, -1][label == i] for i in err])
-            err_index = np.argsort(np.mean(array[:, -1]) - ds)
+            ds = np.array([array[:][label == i] for i in err])
+            err_index = np.argsort(np.mean(array[:]) - ds)
             k = np.array(err)[err_index][0]
             k_index = np.where(label == k)[0]
             k_array = np.mean(array[k_index])
@@ -203,8 +206,8 @@ def _get_same_level(names: Tuple, zs: Tuple, center: int, neighbors_name: Union[
     center_m0_z_coords = zs[center]
     o_z_coords = zs[o_index]
 
-    temp_index = coarse_and_spilt_array(np.abs(o_z_coords - center_m0_z_coords), tol=tol, n_cluster=n_cluster,
-                                        method=method)
+    temp_index = coarse_cluster_array(np.abs(o_z_coords - center_m0_z_coords), tol=tol, n_cluster=n_cluster,
+                                      method=method)
 
     samez_o_index = np.array(o_index)[temp_index == 0]
     return samez_o_index
@@ -347,7 +350,7 @@ def get_plane_neighbors_to_center(st: Structure, neighbors_name: Union[List, Tup
                                                     temp_index2], offset_vectors[temp_index2], distances[temp_index2]
 
     # get top 3 neighbors
-    labels = coarse_and_spilt_array(distances, tol=tol, method=None)
+    labels = coarse_cluster_array(distances, tol=tol, method=None)
     points_and_distance_to_m0 = {}
 
     if top == 1:

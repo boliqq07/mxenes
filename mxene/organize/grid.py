@@ -12,14 +12,14 @@ from numpy import ndarray
 from pymatgen.core import Structure
 from sklearn.utils import check_random_state
 
-from mgetool.cluster import coarse_and_spilt_array
+from mgetool.cluster import cluster_split
 from mxene.core.mxenes import MXene
 
 
-def group_space(structures: List[Structure]) -> tuple[list[Any], Union[ndarray, ndarray]]:
+def group_space(structures: List[Structure]) -> tuple[list[Any], list[Union[ndarray, ndarray]]]:
     """Group structure by formula."""
     array = np.array([si.composition.reduced_formula for si in structures])
-    group_list = coarse_and_spilt_array(array)
+    group_list = cluster_split(array)
     sts = np.array(structures, dtype=object)
     structures_group_list = [sts[i] for i in group_list]
     return structures_group_list, group_list

@@ -17,7 +17,7 @@ import numpy as np
 from pymatgen.core import Structure, Lattice, SymmOp, PeriodicSite
 
 from mxene.core.functions import coarse_and_spilt_array_ignore_force_plane, \
-    get_plane_neighbors_to_center, Interp2dNearest, coarse_and_spilt_array, check_random_state
+    get_plane_neighbors_to_center, Interp2dNearest, coarse_cluster_array, check_random_state
 from mxene.utility.typing import CompositionLike, ArrayLike, ListTuple
 
 
@@ -592,6 +592,7 @@ class MXene(Structure):
             st = st.add_noise(random_state=random_state, random_factor=random_factor)
 
         if doping:
+
             nm_tm = "NM" if doping in cls._predefined_nm_list else "TM"
 
             if terminal_site is None:
@@ -620,6 +621,29 @@ class MXene(Structure):
                 st.append(add_atoms, coords=add_atoms_site, coords_are_cartesian=coords_are_cartesian)
 
         return cls.from_sites(sites=list(st.sites))
+
+    def pure_add_doping(self, doping):
+        """From pure to center face doping"""
+        nm_tm = "NM" if doping in self._predefined_nm_list else "TM"
+
+        label = self.split_layer(ignore_index=None, tol=0.5, axis=2,
+                    force_plane=True, reverse=True, force_finite=False)
+
+        if nm_tm =="NM":
+            index = np.argmax(label)[0]
+        else:
+            index = np.where(label==np.max(label)-1)[0]
+        z0 = self.frac_coords[index][-1]
+        sam_atoms = self.get_similar_layer_atoms(z0=z0, frac=True)
+        xys = self.frac_coords[sam_atoms][:, :2]
+        xy = np.mean(xys, axis=0)
+        xyd = np.sum(abs(xys - xy), axis=1)  # find the center location.
+        index = int(np.argmin(xyd))
+        site = self.frac_coords[sam_atoms[index]]
+        self.remove_sites([sam_atoms[index], ])
+        self.append(doping, site, coords_are_cartesian=False)
+        self.num_doping = len(self) - 1
+
 
     def get_structure_message(self):
         """Obtaining bond, face Information"""
@@ -662,7 +686,7 @@ class MXene(Structure):
         index = np.sum(np.abs(offset_vectors), axis=1) == 0
         points_indices = points_indices[index]
         distances = distances[index]
-        label = coarse_and_spilt_array(distances, tol=0.02)
+        label = coarse_cluster_array(distances, tol=0.02)
 
         zer = np.where(label == 0)
         if distances[zer[0]] < 0.001:
@@ -694,7 +718,7 @@ class MXene(Structure):
     @property
     def doped(self):
         """Check it is doped or not."""
-        label = coarse_and_spilt_array(self.cart_coords[:, 2], tol=0.1)
+        label = coarse_cluster_array(self.cart_coords[:, 2], tol=0.1)
         label[label == 0] = max(label) + 1
 
         typess = set(self.atomic_numbers)
@@ -788,7 +812,7 @@ class MXene(Structure):
 
         index = np.array([True if i.specie.name == atom_type else False for i in self.sites])
 
-        labels = coarse_and_spilt_array(frac_coords_z, tol=0.02).astype(float)
+        labels = coarse_cluster_array(frac_coords_z, tol=0.02).astype(float)
         labels[~index] = np.nan
 
         s = max(labels) if up_down == "up" else min(labels)
@@ -916,7 +940,7 @@ class MXene(Structure):
 
     def get_disk(self, disk='.', site_name="S0", equ_name="ini_opt", nm_tm="TM",
                  ignore_index=None, add_atoms=None, tol=0.4,
-                 absorb=None, doping=None, terminal=None, carbide_nitride=None,
+                 absorb=None, doping=None, terminal=None, carbide_nitride=None, force_plane=True,
                  ) -> pathlib.Path:
         """Just for single doping, single absorb, single type terminal.
         for some name, the code could judge the parameter automatically, and for others, you should offer it.
@@ -963,7 +987,7 @@ class MXene(Structure):
             names = [site.specie.name for site in mx]
         else:
             mx = self
-        labels = mx.split_layer(ignore_index=ignore_index, tol=tol)
+        labels = mx.split_layer(ignore_index=ignore_index, tol=tol, force_plane=force_plane)
         end = int(max(labels) + 1)
         start = int(max(min(labels), 0))
         layer_name = []

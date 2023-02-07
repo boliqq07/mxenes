@@ -1,11 +1,15 @@
-#!/bin/sh
-#SBATCH -N 1
-#SBATCH -n 36
-#SBATCH --ntasks-per-node=36
-#SBATCH --output=%j.out
-#SBATCH --error=%j.err
-. /data/home/qian1/intel/bin/compilervars.sh intel64
-. /data/home/qian1/intel/mkl/bin/mklvars.sh intel64
-export PATH=$PATH:/data/home/qian1/app/vasp/vasp.5.4.4/bin
-scontrol show hostname $SLURM_JOB_NODELIST > host
-mpirun -np 36 vasp_std
+#PBS -S /bin/bash
+#PBS -N vasp
+#PBS -l nodes=1:ppn=12
+#PBS -l walltime=120:00:00
+#PBS -q master
+
+source /opt/intel/oneapi/mkl/latest/env/vars.sh intel64
+source /opt/intel/oneapi/compiler/latest/env/vars.sh intel64
+export PATH=/opt/intel/oneapi/mpi/2021.4.0/bin/:$PATH
+export PATH=/opt/software/vasp.5.4.4/bin:$PATH
+
+cd ${PBS_O_WORKDIR}
+
+mpirun -np 12 vasp_std
+
