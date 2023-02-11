@@ -178,7 +178,7 @@ class MXene(Structure):
         else:
             coords = coords
         coords = coords[:, axis]
-        z0_atoms = np.array([i for i, z in enumerate(coords) if abs(z - z0) < tol])
+        z0_atoms = np.where(np.abs(coords - z0) < tol)[0]
         return z0_atoms
 
     def __add__(self, other: Structure) -> "MXene":
@@ -627,12 +627,13 @@ class MXene(Structure):
         nm_tm = "NM" if doping in self._predefined_nm_list else "TM"
 
         label = self.split_layer(ignore_index=None, tol=0.5, axis=2,
-                    force_plane=True, reverse=True, force_finite=False)
+                    force_plane=True, reverse=False, force_finite=True)
 
         if nm_tm =="NM":
-            index = np.argmax(label)[0]
+            index = np.argmax(label)
         else:
-            index = np.where(label==np.max(label)-1)[0]
+            index = np.where(label == np.max(label)-1)[0][0]
+        assert isinstance(index, np.int64)
         z0 = self.frac_coords[index][-1]
         sam_atoms = self.get_similar_layer_atoms(z0=z0, frac=True)
         xys = self.frac_coords[sam_atoms][:, :2]

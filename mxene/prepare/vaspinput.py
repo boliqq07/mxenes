@@ -68,7 +68,11 @@ class MXVaspInput(VaspInput):
         ]:
             try:
                 fullzpath = zpath(os.path.join(input_dir, fname))
-                sub_d[fname.lower()] = ftype.from_file(fullzpath)
+                if fname in ["POSCAR", "CONTCAR"]:
+                    sub_d[fname.lower()] = Poscar.from_file(fullzpath, check_for_POTCAR=False,
+                                                            read_velocities=False)
+                else:
+                    sub_d[fname.lower()] = ftype.from_file(fullzpath)
             except FileNotFoundError:  # handle the case where there is no KPOINTS file
                 sub_d[fname.lower()] = None
 
@@ -76,4 +80,7 @@ class MXVaspInput(VaspInput):
         if optional_files is not None:
             for fname, ftype in optional_files.items():
                 sub_d["optional_files"][fname] = ftype.from_file(os.path.join(input_dir, fname))
+        sub_d["POSCAR".lower()] = sub_d[structure_file.lower()]
+        if "CONTCAR".lower() in sub_d:
+            del sub_d["CONTCAR".lower()]
         return VaspInput(**sub_d)

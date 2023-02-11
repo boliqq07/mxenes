@@ -674,27 +674,35 @@ def check_pt(pt: Union[str, path.Path, os.PathLike, pathlib.Path], msg=None):
     return res
 
 
-def find_leaf_path(root_pt: Union[str, path.Path, os.PathLike, pathlib.Path]) -> List[path.Path]:
+def _find_leaf_path(root_pt: Union[str, path.Path, os.PathLike, pathlib.Path], abspath=False) -> List[path.Path]:
     """
     Find the leaf path.
 
     Args:
+        abspath: bool, return abspath or not.
         root_pt: pt: (str, path.Path, os.PathLike,pathlib.Path), path.
 
     Returns:
         paths: (list), list of sub leaf path.
 
     """
-
     if not isinstance(root_pt, path.Path):
         root_pt = path.Path(root_pt)
 
     sub_disk = list(root_pt.walkdirs())
 
-    par_disk = [i.parent for i in sub_disk]
-    par_disk = list(set(par_disk))
+    if abspath:
+        sub_disk = [i.abspath() for i in sub_disk]
 
-    res = [i for i in sub_disk if i not in par_disk]
+    par_disk = [i.parent for i in sub_disk]
+
+    par_disk = set(par_disk)
+
+    res = set(sub_disk) - par_disk
+
+    res = list(res)
+    res.sort()
+
     return res
 
 
@@ -760,7 +768,7 @@ def check_mx_data(pt, ck_pt=True, ck_conver=True, ck_st=True, get_rcmd_pt=True, 
 
 def comparison(pt):
     """print if path is not standard."""
-    paths = find_leaf_path(pt)
+    paths = _find_leaf_path(pt)
 
     for pi in paths:
         try:

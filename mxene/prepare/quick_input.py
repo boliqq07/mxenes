@@ -29,7 +29,7 @@ Notes:
 
 import multiprocessing
 import pathlib
-from typing import List, Dict
+from typing import List, Dict, Iterable
 
 import numpy as np
 import pandas as pd
@@ -85,9 +85,9 @@ def mx_input(pg: Dict, potpath="POT-database", incar=opt_incar, terminal="O", di
     return disk
 
 
-def mx_input_batch(pgs: List[Dict], potpath=r"POT-database", start=0,
+def mx_input_batch(pgs: Iterable[Dict], potpath=r"POT-database", start=0,
                    relax=True, log_file="path.csv", **kwargs):
-    pgs = pgs.tolist() if isinstance(pgs, np.ndarray) else pgs
+    pgs = pgs.tolist() if isinstance(pgs, np.ndarray) else list(pgs)
 
     if pgs is None:
         pgs = [{}]
@@ -118,8 +118,9 @@ def _func2(iterable):
                    potpath=iterable[2], start=iterable[3], relax=iterable[4])
 
 
-def mx_input_batch_parallelize(pgs: List[Dict], potpath=r"POT-database", log_file="path.csv",
+def mx_input_batch_parallelize(pgs: Iterable[Dict], potpath=r"POT-database", log_file="path.csv",
                                relax=True, n_jobs=10):
+    pgs = list(pgs)
     l = len(pgs)
     step = l // (n_jobs - 1)
     indices_or_sections = [step * i for i in range(1, n_jobs)]
@@ -138,7 +139,7 @@ def mx_input_batch_parallelize(pgs: List[Dict], potpath=r"POT-database", log_fil
 
     pool = multiprocessing.Pool(processes=n_jobs)
 
-    pool.map(func=_func2, iterable=zip(msgs, log_files, potpaths, starts, relaxs))
+    tqdm(pool.map(func=_func2, iterable=zip(msgs, log_files, potpaths, starts, relaxs)))
     pool.close()
     pool.join()
 
@@ -146,8 +147,8 @@ def mx_input_batch_parallelize(pgs: List[Dict], potpath=r"POT-database", log_fil
 # 2. make supercell and doping
 
 
-def supercell_and_doping_mx_input(structure, doping, super_cell, pathi, incar=None,
-                                  potpath="POT-database"):
+def supercell_and_doping(structure, doping, super_cell, pathi, incar=None,
+                         potpath="POT-database"):
     if incar is None:
         incar = Incar.from_string(opt_incar)
 
@@ -186,17 +187,21 @@ def supercell_and_doping_mx_input(structure, doping, super_cell, pathi, incar=No
     return out_dir
 
 
-def supercell_and_doping_mx_input_batch_parallelize(paths: List, pgs: List[Dict] = None, potpath="POT-database",
+def supercell_and_doping_mx_input_batch_parallelize(paths: List, pgs: Iterable[Dict] = None,
+                                                    potpath="POT-database",
                                                     n_jobs=8):
+    if isinstance(potpath, str):
+        potpath = check_potcar(potpath=potpath)
+
     pool = multiprocessing.Pool(processes=n_jobs)
-    for pi in paths:
-        pool.apply(func=supercell_and_doping_mx_input_batch, args=(pi,),
+    for pi in tqdm(paths):
+        pool.apply(func=supercell_and_doping_mx_input, args=(pi,),
                    kwds={"pgs": pgs, "potpath": potpath})
     pool.close()
     pool.join()
 
 
-def supercell_and_doping_mx_input_batch(pi, pgs: List[Dict] = None, potpath="POT-database"):
+def supercell_and_doping_mx_input(pi, pgs: Iterable[Dict] = None, potpath="POT-database"):
     if isinstance(potpath, str):
         potpath = check_potcar(potpath=potpath)
 
@@ -214,22 +219,27 @@ def supercell_and_doping_mx_input_batch(pi, pgs: List[Dict] = None, potpath="POT
 
         pgs = ParameterGrid(dop_space)
 
-    mxvi = MXVaspInput.from_directory(pi, structure_file="CONTCAR")
-    poscar = mxvi["POSCAR"]
-    incar = mxvi["INCAR"]
-
-    for pgi in pgs:
-        super_cell = pgi["super_cell"]
-        doping = pgi["doping"]
-        supercell_and_doping_mx_input(poscar.structure, doping, super_cell, pi,
-                                      incar=incar,
-                                      potpath=potpath)
+    try:
+        mxvi = MXVaspInput.from_directory(pi, structure_file="CONTCAR")
+        poscar = mxvi["POSCAR"]
+        incar = mxvi["INCAR"]
+        if poscar is None:
+            return
+    except:
+        print(f"The needed 4 files is not enough in:\n {pi}")
+    else:
+        for pgi in pgs:
+            super_cell = pgi["super_cell"]
+            doping = pgi["doping"]
+            supercell_and_doping(poscar.structure, doping, super_cell, pi,
+                                 incar=incar,
+                                 potpath=potpath)
 
 
 # 3. absorb
 
-def absorb_mx_input(structure, absorb, site_name, site_type, pathi, kpoints, incar=None,
-                    potpath="POT-database"):
+def absorb_atom(structure, absorb, site_name, site_type, pathi, kpoints, incar=None,
+           potpath="POT-database"):
     if incar is None:
         incar = Incar.from_string(opt_incar)
 
@@ -259,17 +269,20 @@ def absorb_mx_input(structure, absorb, site_name, site_type, pathi, kpoints, inc
     return out_dir
 
 
-def absorb_mx_input_batch_parallelize(paths: List, pgs: List[Dict] = None, potpath="POT-database", n_jobs=8):
+def absorb_mx_input_batch_parallelize(paths: List, pgs: Iterable[Dict] = None, potpath="POT-database", n_jobs=8):
+    if isinstance(potpath, str):
+        potpath = check_potcar(potpath=potpath)
+
     pool = multiprocessing.Pool(processes=n_jobs)
 
-    for pi in paths:
-        pool.apply(func=absorb_mx_input_batch, args=(pi,),
+    for pi in tqdm(paths):
+        pool.apply(func=absorb_mx_input, args=(pi,),
                    kwds={"pgs": pgs, "potpath": potpath})
     pool.close()
     pool.join()
 
 
-def absorb_mx_input_batch(pi, pgs: List[Dict] = None, potpath="POT-database"):
+def absorb_mx_input(pi, pgs: Iterable[Dict] = None, potpath="POT-database"):
     if isinstance(potpath, str):
         potpath = check_potcar(potpath=potpath)
 
@@ -280,15 +293,23 @@ def absorb_mx_input_batch(pi, pgs: List[Dict] = None, potpath="POT-database"):
                      "absorb": _predefined_am_list, }
 
         pgs = ParameterGrid(dop_space)
-    mxvi = MXVaspInput.from_directory(pi, structure_file="CONTCAR")
-    poscar = mxvi["POSCAR"]
-    incar = mxvi["INCAR"]
-    kpoints = mxvi["KPOINTS"]
 
-    for pgi in pgs:
-        site_name = pgi["site_name"]
-        absorb = pgi["absorb"]
-        site_type = "top" if absorb == "H" else "fcc"
-        absorb_mx_input(poscar.structure, absorb, site_name, site_type, pi, kpoints,
-                        incar=incar,
-                        potpath=potpath)
+    try:
+        mxvi = MXVaspInput.from_directory(pi, structure_file="POSCAR")
+        poscar = mxvi["POSCAR"]
+        incar = mxvi["INCAR"]
+        kpoints = mxvi["KPOINTS"]
+
+        if poscar is None:
+            return
+    except NameError as e:
+        print(e)
+        print(f"The needed 4 files is not enough in:\n {pi}")
+    else:
+        for pgi in pgs:
+            site_name = pgi["site_name"]
+            absorb = pgi["absorb"]
+            site_type = "top" if absorb == "H" else "fcc"
+            absorb_atom(poscar.structure, absorb, site_name, site_type, pi, kpoints,
+                   incar=incar,
+                   potpath=potpath)
