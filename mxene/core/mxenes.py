@@ -563,10 +563,28 @@ class MXene(Structure):
         if terminal_site is None:
             pass
         else:
+
             if terminal_site == "fcc":
                 sam1, sam2 = 2, -3
             elif terminal_site == "hcp":
                 sam1, sam2 = 1, -2
+            elif terminal_site == "fcc-hcp":
+                sam1, sam2 = 2, -2
+            elif terminal_site == "hcp-fcc":
+                sam1, sam2 = 1, -3
+            elif terminal_site == "auto":
+                # experiment site. should check.
+                pre_sites = {"fcc": [2, -3], "hcp": [1, -2], "top": [0, -1]}
+                sam = []
+                for i in range(2):
+                    tm = base_list[[0, -1][i]]
+                    if tm in ["Sc", "Cr", "W", "Mo"] and terminal in ["O", "S"]:
+                        sam.append(pre_sites["hcp"][i])
+                    if tm in ["W"] and terminal in ["F"]:
+                        sam.append(pre_sites["top"][i])
+                    else:
+                        sam.append(pre_sites["fcc"][i])
+                sam1, sam2 = sam[0], sam[1]
             else:  # top
                 sam1, sam2 = 0, -1
 
@@ -585,7 +603,7 @@ class MXene(Structure):
 
         st = st.get_sorted_structure(key=lambda x: x.specie.Z)
 
-        if super_cell is not None:
+        if super_cell is not None or super_cell == (1, 1, 1):
             st.make_supercell(super_cell)
 
         if add_noise:

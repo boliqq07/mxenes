@@ -28,7 +28,7 @@ NELMIN = 5
 NELM = 200
 ALGO = F
 EDIFF = 1E-04
-EDIFFG = -0.001
+EDIFFG = -0.01
 NCORE = 8
 ISYM = 0
 
@@ -72,7 +72,7 @@ IBRION = 3
 ISIF = 2
 POTIM = 0
 NSW = 300
-EDIFFG = -0.005
+EDIFFG = -0.01
 ISYM = 0
 
 # Density of states related
