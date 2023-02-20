@@ -36,8 +36,8 @@ def get_node_run(run_file=None, name="normal3"):
 
 
 def get_left_limit(up_limit=4):
-
-    res = cmd_popen("squeue|grep PD|wc -l")[0]
+    username=os.getlogin()
+    res = os.popen(f"squeue -u {username}|grep PD|wc -l").readlines()[0]
     num = int(res)
     left_num = up_limit - num
     return max(left_num, 0)

@@ -52,6 +52,7 @@ def mx_input(pg: Dict, potpath="POT-database", incar=opt_incar, terminal="O", di
     super_cell = pg["super_cell"] if "super_cell" in pg else None
     terminal_site = pg["terminal_site"] if "terminal_site" in pg else None
 
+
     if isinstance(potpath, str):
         potpath = check_potcar(potpath=potpath)
 
@@ -73,6 +74,9 @@ def mx_input(pg: Dict, potpath="POT-database", incar=opt_incar, terminal="O", di
                                   )
     except BaseException as e:
         disk = f"{root}/{disk_num}"
+
+    if terminal_site is None:
+        terminal_site = "fcc"
 
     if terminal_site is None:
         disk = f"{disk}/{super_cell[0]}{super_cell[1]}{super_cell[2]}"
@@ -142,7 +146,6 @@ def mx_input_batch_parallelize(pgs: Iterable[Dict], potpath=r"POT-database", log
     relaxs = [relax] * n_jobs
     starts = [step * i for i in range(n_jobs)]
 
-
     pool = multiprocessing.Pool(processes=n_jobs)
 
     tqdm(pool.map(func=_func2, iterable=zip(msgs, log_files, potpaths, starts, relaxs)))
@@ -171,8 +174,9 @@ def supercell_and_doping(structure, doping, super_cell, pathi, incar=None,
     if "no_doping" in pathi:
         pi_new = pathi.replace("no_doping", doping)
         pi_new = pathlib.Path(pi_new)
-        if str(pi_new.name) == "111":
-            pi_new = pi_new.parent / f"{super_cell[0]}{super_cell[1]}{super_cell[2]}"
+        if "111" in str(pi_new.name) :
+            name = str(pi_new.name).replace("111", f"{super_cell[0]}{super_cell[1]}{super_cell[2]}")
+            pi_new = pi_new.parent / name
         else:
             pi_new = pi_new / f"{super_cell[0]}{super_cell[1]}{super_cell[2]}"
     else:
@@ -180,8 +184,9 @@ def supercell_and_doping(structure, doping, super_cell, pathi, incar=None,
             pi_new = sti.get_disk(doping=doping, ignore_index=-1)
         except BaseException:
             pi_new = pathlib.Path(pathi)
-            if str(pi_new.name) == "111":
-                pi_new = pi_new.parent / f"{super_cell[0]}{super_cell[1]}{super_cell[2]}"
+            if "111" in str(pi_new.name) :
+                name = str(pi_new.name).replace("111", f"{super_cell[0]}{super_cell[1]}{super_cell[2]}")
+                pi_new = pi_new.parent / name
             else:
                 pi_new = pi_new / f"{super_cell[0]}{super_cell[1]}{super_cell[2]}"
 

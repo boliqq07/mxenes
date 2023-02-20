@@ -3,7 +3,7 @@ import os.path
 from pathlib import Path
 from shutil import copy, move
 
-with open("all111.temp") as f:
+with open("paths.temp") as f:
     ls = f.readlines()
 ls = [Path(i.rstrip()) for i in ls]
 
@@ -11,7 +11,7 @@ for i in ls:
     if (i/"CONTCAR").is_file():
         if os.path.getsize(i/"CONTCAR")>0:
             try:
-                print(f"Move POSCAR to CONTCAR for {i}")
+                print(f"Move CONTCAR to POSCAR for {i}")
                 move(i/"POSCAR", i/"OLD_POSCAR")
                 move(i/"CONTCAR", i/"POSCAR")
             except:
