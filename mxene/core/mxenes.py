@@ -103,7 +103,7 @@ class MXene(Structure):
     _predefined_am_list = ["Al", "Ca", "Li", "Mg", "Na", "K", "Zn", "H"]
     _predefined_tem_list = ["O", "F", "OH", "Cl", None]
     _predefined_cn = ["C", "N"]
-    _predefined_bm = ["Ti", "Zr", "Hf", "V", "Nb", "Ta", "Cr", "Mo", "W"]
+    _predefined_bm = ["Ti", "Zr", "Hf", "V", "Nb", "Ta", "Cr", "Mo", "W", "Sc"]
     _predefined_tem_z_axis = {"O": 1.0, "F": 0.9, "Cl": 1.2}
     _predefined_am_z_axis = {"K": 2.1, "Li": 1.3, "H": 1.0, "Ca": 1.6, "Na": 1.6, "Mg": 1.4, "Al": 1.1, "Zn": 1.2}
 
@@ -155,6 +155,63 @@ class MXene(Structure):
             to_unit_cell, coords_are_cartesian, site_properties)
         self.out_dir = ""
         self.mark_label = None
+
+    @staticmethod
+    def _get_real_terminal_site(base, terminal, cn, layer=2):
+        bt = f"{terminal}-{base}-{cn}"
+        hcp_calc={
+        2 : [
+            # Cl
+            "Cl-Ta-C",
+            # F
+            "F-Ta-C",
+            "F-Ta-N",  "F-Hf-N",
+            # S
+            "S-Cr-C", "S-Mo-C", "S-Sc-C", "S-W-C",
+            "S-Cr-N", "S-Mo-N", "S-Nb-N", "S-Ta-N", "S-W-N",
+            # O
+            "O-Cr-C", "O-Mo-C", "O-Sc-C", "O-W-C",
+            "O-Mo-N", "O-Nb-N", "O-Ta-N", "O-W-N","O-V-N",
+            # Se
+            "Se-Hf-C", "Se-Mo-C", "Se-W-C",
+            "Se-Hf-C", "Se-Mo-C", "Se-W-C",
+        ],
+        3 : [
+            # Cl
+            "Cl-Mo-C", "Cl-Nb-C", "Cl-Ta-C", "Cl-V-C",
+            # F
+            "F-Nb-C", "F-Ta-C", "F-V-C",
+            # S
+            "S-Cr-C", "S-Mo-C", "S-Sc-C", "S-W-C",
+            # O
+            "O-Cr-C", "O-Mo-C", "O-W-C",
+        ],
+        4 : [
+        ]
+        }
+
+        top_calc={
+        2 : [
+            "S-W-N",
+        ],
+        3 : [
+            "Cl-W-C",
+            "F-Mo-C", "F-W-C",
+        ],
+        4 : [
+        ]
+        }
+
+        if layer not in hcp_calc:
+            warnings.warn("The definition of MXenes is with [2, or 3, or 4] metal layers,"
+                          "please check you input.")
+        if bt in hcp_calc[layer]:
+            return "hcp"
+        elif bt in top_calc[layer]:
+            return "top"
+        else:
+            return "fcc"
+
 
     def get_similar_layer_atoms(self, z0=0.0, tol=0.005, axis=2, frac=True, coords=None):
         """
@@ -573,17 +630,17 @@ class MXene(Structure):
             elif terminal_site == "hcp-fcc":
                 sam1, sam2 = 1, -3
             elif terminal_site == "auto":
+                assert len(set(carbide_nitride_list)) == 1, 'auto just accept one type of in ["C","N"], rather both.'
                 # experiment site. should check.
                 pre_sites = {"fcc": [2, -3], "hcp": [1, -2], "top": [0, -1]}
                 sam = []
                 for i in range(2):
                     tm = base_list[[0, -1][i]]
-                    if tm in ["Sc", "Cr", "W", "Mo"] and terminal in ["O", "S"]:
-                        sam.append(pre_sites["hcp"][i])
-                    if tm in ["W"] and terminal in ["F"]:
-                        sam.append(pre_sites["top"][i])
-                    else:
-                        sam.append(pre_sites["fcc"][i])
+
+                    tps = cls._get_real_terminal_site(tm, terminal, carbide_nitride_list[0], layer=len(base_list))
+
+                    sam.append(pre_sites[tps][i])
+
                 sam1, sam2 = sam[0], sam[1]
             else:  # top
                 sam1, sam2 = 0, -1
@@ -645,12 +702,12 @@ class MXene(Structure):
         nm_tm = "NM" if doping in self._predefined_nm_list else "TM"
 
         label = self.split_layer(ignore_index=None, tol=0.5, axis=2,
-                    force_plane=True, reverse=False, force_finite=True)
+                                 force_plane=True, reverse=False, force_finite=True)
 
-        if nm_tm =="NM":
+        if nm_tm == "NM":
             index = np.argmax(label)
         else:
-            index = np.where(label == np.max(label)-1)[0][0]
+            index = np.where(label == np.max(label) - 1)[0][0]
         assert isinstance(index, np.int64)
         z0 = self.frac_coords[index][-1]
         sam_atoms = self.get_similar_layer_atoms(z0=z0, frac=True)
@@ -662,7 +719,6 @@ class MXene(Structure):
         self.remove_sites([sam_atoms[index], ])
         self.append(doping, site, coords_are_cartesian=False)
         self.num_doping = len(self) - 1
-
 
     def get_structure_message(self):
         """Obtaining bond, face Information"""
@@ -1570,3 +1626,6 @@ class MXene(Structure):
     def view(self):
         """The same as show. plot by ase."""
         self.show()
+
+if __name__=="__main__":
+    MXene.from_standard(terminal_site="auto",base="W", carbide_nitride="C", n_base=3,terminal="F")

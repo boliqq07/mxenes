@@ -33,6 +33,7 @@ from typing import List, Dict, Iterable
 
 import numpy as np
 import pandas as pd
+import path
 from pymatgen.io.vasp import Potcar, Poscar, Incar
 from sklearn.model_selection import ParameterGrid
 from tqdm import tqdm
@@ -190,11 +191,13 @@ def supercell_and_doping(structure, doping, super_cell, pathi, incar=None,
             else:
                 pi_new = pi_new / f"{super_cell[0]}{super_cell[1]}{super_cell[2]}"
 
-    out_dir = pi_new
+    out_dir = path.Path(str(pi_new))
 
     potcar = Potcar(tuple(poscar_new.site_symbols), sym_potcar_map=potpath)
     mxin = MXVaspInput(incar, kpoints, poscar_new, potcar, optional_files=None)
     mxin.write_input(output_dir=out_dir)
+
+    # out_dir.rmtree_p()
     return out_dir
 
 
