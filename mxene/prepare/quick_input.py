@@ -53,7 +53,6 @@ def mx_input(pg: Dict, potpath="POT-database", incar=opt_incar, terminal="O", di
     super_cell = pg["super_cell"] if "super_cell" in pg else None
     terminal_site = pg["terminal_site"] if "terminal_site" in pg else None
 
-
     if isinstance(potpath, str):
         potpath = check_potcar(potpath=potpath)
 
@@ -67,7 +66,7 @@ def mx_input(pg: Dict, potpath="POT-database", incar=opt_incar, terminal="O", di
         except BaseException:
             pass
 
-    root = "."
+    root = ".."
     try:
         disk = structure.get_disk(root, tol=0.5, doping=doping, terminal=terminal,
                                   ignore_index=-1,

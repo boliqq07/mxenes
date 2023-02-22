@@ -16,6 +16,7 @@ from typing import Union, Sequence, List
 import numpy as np
 from pymatgen.core import Structure, Lattice, SymmOp, PeriodicSite
 
+
 from mxene.core.functions import coarse_and_spilt_array_ignore_force_plane, \
     get_plane_neighbors_to_center, Interp2dNearest, coarse_cluster_array, check_random_state
 from mxene.utility.typing import CompositionLike, ArrayLike, ListTuple
@@ -171,7 +172,7 @@ class MXene(Structure):
             "S-Cr-N", "S-Mo-N", "S-Nb-N", "S-Ta-N", "S-W-N",
             # O
             "O-Cr-C", "O-Mo-C", "O-Sc-C", "O-W-C",
-            "O-Mo-N", "O-Nb-N", "O-Ta-N", "O-W-N","O-V-N",
+            "O-Mo-N", "O-Nb-N", "O-Ta-N", "O-W-N", "O-V-N",
             # Se
             "Se-Hf-C", "Se-Mo-C", "Se-W-C",
             "Se-Hf-C", "Se-Mo-C", "Se-W-C",
@@ -520,10 +521,11 @@ class MXene(Structure):
                 self.append(n, coords=s, coords_are_cartesian=True)
 
     @classmethod
-    def from_standard(cls, terminal_site: Union[None, str] = "fcc",
+    def from_standard(cls, terminal_site: Union[None, str, Sequence] = "fcc",
                       doping: Union[None, str] = None, terminal: Union[None, str] = "O",
-                      base="Ti", carbide_nitride="C", n_base=2, add_noise=False,
-                      super_cell=(3, 3, 1), add_atoms=None, add_atoms_site=None,
+                      base:Union[Sequence,str]="Ti", carbide_nitride:Union[Sequence, str]="C",
+                      n_base:int=2,add_noise:bool=False,
+                      super_cell:tuple=(3, 3, 1), add_atoms=None, add_atoms_site=None,
                       coords_are_cartesian=True, lattice: Union[Lattice, tuple, list] = None,
                       layer_space=1.25, terminal_z_axis=None, random_state=None, random_factor=0.001) -> "MXene":
         """
@@ -620,19 +622,26 @@ class MXene(Structure):
         if terminal_site is None:
             pass
         else:
+            pre_sites = {"fcc": [2, -3], "hcp": [1, -2], "top": [0, -1]}
 
-            if terminal_site == "fcc":
+            if isinstance(terminal_site,str) and "-" in terminal_site:
+                terminal_site = terminal_site.split("-")
+
+            if isinstance(terminal_site,(list,tuple)):
+                assert len(terminal_site) == 2
+                sam1 = pre_sites[terminal_site[0]][0]
+                sam2 = pre_sites[terminal_site[1]][1]
+
+            elif terminal_site == "fcc":
                 sam1, sam2 = 2, -3
             elif terminal_site == "hcp":
                 sam1, sam2 = 1, -2
-            elif terminal_site == "fcc-hcp":
-                sam1, sam2 = 2, -2
-            elif terminal_site == "hcp-fcc":
-                sam1, sam2 = 1, -3
+            elif terminal_site == "top":
+                sam1, sam2 = 0, -1
+
             elif terminal_site == "auto":
                 assert len(set(carbide_nitride_list)) == 1, 'auto just accept one type of in ["C","N"], rather both.'
                 # experiment site. should check.
-                pre_sites = {"fcc": [2, -3], "hcp": [1, -2], "top": [0, -1]}
                 sam = []
                 for i in range(2):
                     tm = base_list[[0, -1][i]]
@@ -640,10 +649,9 @@ class MXene(Structure):
                     tps = cls._get_real_terminal_site(tm, terminal, carbide_nitride_list[0], layer=len(base_list))
 
                     sam.append(pre_sites[tps][i])
-
                 sam1, sam2 = sam[0], sam[1]
             else:  # top
-                sam1, sam2 = 0, -1
+                raise NotImplementedError("please str name such as 'fcc','hcp','top'.")
 
             start = copy.copy(fracs[sam1])
             start[-1] = -oz_step - round((n_layer - 1) / 2) * z_step + 0.5
@@ -651,6 +659,7 @@ class MXene(Structure):
             end = copy.copy(fracs[sam2])
             end[-1] = oz_step + round((n_layer - 1) / 2) * z_step + 0.5
             fracs.append(end)
+
             mx_list.insert(0, terminal)
             mx_list.append(terminal)
 
@@ -1627,5 +1636,9 @@ class MXene(Structure):
         """The same as show. plot by ase."""
         self.show()
 
-if __name__=="__main__":
-    MXene.from_standard(terminal_site="auto",base="W", carbide_nitride="C", n_base=3,terminal="F")
+# if __name__=="__main__":
+#     from pymatgen.io.vasp import Poscar
+#     mx = MXene.from_standard(terminal_site=["hcp", "fcc"], base=["W", "Ti"],
+#                         carbide_nitride="C", n_base=3, terminal="F")
+#     po =Poscar(mx)
+#     po.write_file("POSCAR")
