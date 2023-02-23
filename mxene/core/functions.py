@@ -36,6 +36,37 @@ def middle(st: Structure, ignore_index=None, tol=0.01):
     return middle_atoms
 
 
+def _get_err_decrease_and_increase(label):
+    """返回离群值"""
+    label_dict = Counter(label)
+    common_num = Counter(list(label_dict.values())).most_common(1)[0][0]
+
+    assert common_num >= 3, "Just for super_cell"
+
+    err = []
+    decrease = []
+    increase = []
+
+    for k in label_dict.keys():
+        if label_dict[k] <= 1:
+            err.append(k)
+        if label_dict[k]==common_num-1:
+            decrease.append(k)
+        if label_dict[k] == common_num+1:
+            increase.append(k)
+
+    if len(err) > 1 or len(decrease)>1 or len(increase) > 1:
+        raise ValueError("Just for single doping, if absorbed, "
+                         "please use ignore_index to jump the absorb atoms. "
+                         "Or the tolerance is too small.")
+
+    err = err[0] if len(err)==1 else None
+    increase = increase[0] if len(increase) == 1 else None
+    decrease = decrease[0] if len(decrease) == 1 else None
+
+    return err,decrease,increase
+
+
 def coarse_and_spilt_array_ignore_force_plane(array: np.ndarray, ignore_index: Union[int, np.ndarray] = None,
                                               tol=0.5, force_plane: bool = True, reverse: bool = True,
                                               force_finite: bool = True, method=None, n_cluster: int = 3) -> np.ndarray:
@@ -52,7 +83,7 @@ def coarse_and_spilt_array_ignore_force_plane(array: np.ndarray, ignore_index: U
     (3). Used 'ignore_index'=None and 'force_plane' to make the 'out-of-station' doped atom to be grouped.
          the 'tol' could be appropriate smaller (less than interlayer spacing).
     (4). For absorb + doped system, 'ignore_index', 'force_finite' and 'force_plane' could be used together,
-         change the 'tol' to check the result.But, for large structural deformations array.
+         change the 'tol' to check the result. But, for large structural deformations array.
          This function is not effective always.
     (5). If all the parameter are failed, please generate the input array by hand or
          tune the value in array.
@@ -87,68 +118,68 @@ def coarse_and_spilt_array_ignore_force_plane(array: np.ndarray, ignore_index: U
     if ignore_index is not None:
         mark[ignore_index] = False
         array = array[mark]
-    sel = np.where(array)[0]
+
+    sel = np.where(array)[0]  # -np.inf index
 
     label = coarse_cluster_array(array, tol=tol, reverse=reverse, method=method, n_cluster=n_cluster)
 
-    label_dict = Counter(label)
-    common_num = Counter(list(label_dict.values())).most_common(1)[0][0]
+    # 1. 分配
+    # decrease 为缺失组
+    # increase 为冗余组
+    # err 为独立值
 
-    force_label = []
-    for k in label_dict.keys():
-        if label_dict[k] >= common_num - 2 and label_dict[k] < common_num:
-            force_label.append(k)
-    if len(force_label) > 1:
-        if not force_plane:
-            warnings.warn("Find 2 or more atoms, can't to be split.")
-        else:
-            raise ValueError("Find 2 or more atoms, can't to be split, use 'ignore_index' to jump them"
-                             " or use your self defined 'array'.")
-    elif len(force_label) == 1:
-        force_label = force_label[0]
-    else:
-        force_label = None
-
-    if force_plane and common_num >= 3:
-        err = []
-        d = list(set(label))
-        d.sort()
-        for k in d:
-            if label_dict[k] <= 2:
-                err.append(k)
-        if len(err) > 1:
-
-            warnings.warn("Just for single doping, if absorbed, please use ignore_index to jump the absorb atoms",
-                          UserWarning)
-            ds = np.array([array[:][label == i] for i in err])
-            err_index = np.argsort(np.mean(array[:]) - ds)
-            k = np.array(err)[err_index][0]
-            k_index = np.where(label == k)[0]
-            k_array = np.mean(array[k_index])
-            if force_label is None:
-                warnings.warn("Try to force dispense the single atom to group, please check carefully.", UserWarning)
-                force_index = np.argsort(np.abs(array - k_array))[1]
-                force_label = label[force_index]
-                label[k_index] = force_label
+    if force_plane:
+        err, decrease, increase = _get_err_decrease_and_increase(label)
+        if err is None and decrease is None and increase is None: # s1
+            pass  # 无错误
+        elif err is None and decrease is None and increase is not None:# s2
+            pass  # 多余自动划分好
+        elif err is None and decrease is not None and increase is None:# s3
+            pass  # 少1，可能为ignore_index跳过,后续补全, s4 ignore_index处理后，将运行到s3
+        elif err is None and decrease is not None and increase is not None:# s4
+            # 划分错误，将一层的一个原子划分到另一层。
+            # deindex = np.where(label == decrease)[0]
+            inindex = np.where(label == increase)[0]
+            lab = coarse_cluster_array(array[inindex], tol=tol/2, reverse=reverse)
+            if len(set(lab))==2:
+                nim = np.argmin(lab)
+                axm = np.argmax(lab)
+                if len(lab==lab[axm])>len(lab==lab[nim]):
+                    err_x = nim
+                else:
+                    err_x = axm
+                err_index = inindex[err_x]
+                label[err_index] = decrease
             else:
-                label[k_index] = force_label
-
-        elif len(err) == 1:
-            k = err[0]
-            k_index = np.where(label == k)[0]
-            k_array = np.mean(array[k_index])
-            if force_label is None:
-                warnings.warn("Try to force dispense the single atom to group, please check carefully.")
-                force_index = np.argsort(np.abs(array - k_array))[1]
-                force_label = label[force_index]
-                label[k_index] = force_label
-            else:
-                label[k_index] = force_label
+                raise ValueError("One atom is split to other layer, (Alayer+1 and Blayer-1)\n"
+                                 "Please 1. change (decrease) the tolerance or 2.offer reformed array"
+                                 "3. using  ignore_index and force_infinite to fix it.")
+        elif err is not None and decrease is None: #(increase in[None, not None])# s5,6
+            # 进行吸附原子压平，强制分为最近邻组。通常这种操作是错的。
+            if increase is not None:
+                warnings.warn("There are more than one single atoms, please check it!")
+            warnings.warn("Try to force dispense the single atom to nearist unbroken group, \n"
+                          "please check carefully !!! or change the force_plane=False")
+            err_index = np.where(label == err)[0]
+            err_array = np.mean(array[err_index])
+            loss_index = np.argsort(np.abs(array - err_array))[1]
+            loss = label[loss_index]
+            label[err_index] = loss
+        elif err is not None and decrease is not None and increase is None:# s7
+            # 通常的错误划分
+            err_index = np.where(label == err)[0]
+            label[err_index] = decrease
+        elif err is not None and decrease is not None and increase is not None:# s8
+            # 无法定义的错误划分。
+            raise NotImplementedError("Bad spilt! "
+                                      "Please 1. change the tolerance or 2.offer reformed array."
+                                      )
         else:
             pass
 
     res_label[sel] = label  # ignore is -np.inf
 
+    # 2. 删除空组
     i = 0
     m = max(res_label)
     while i <= m:
@@ -158,32 +189,32 @@ def coarse_and_spilt_array_ignore_force_plane(array: np.ndarray, ignore_index: U
         i += 1
         m = max(res_label)
 
-    if not force_plane and force_finite:
-        if np.any(np.isinf(res_label)):
-            warnings.warn("Some atoms is not be split (grouped), The code try to reformed it, "
-                          "but it could lead to an error, manual checking is suggested.")
+    # 3. 补全有理数
+    # 适用于划分层（A-1,B+1）错误,如 s3，或者多余吸附原子，不适合放到上面
+    # if force_plane:
 
-            res_label[np.isinf(res_label)] = np.inf
-            if np.sum(np.isinf(res_label)) == 1:
-                err_index = np.where(np.isinf(res_label))[0]
-                val_index = np.isfinite(res_label)
-                layer1_values = np.min(res_label)
-                layer2_values = layer1_values + 1 if layer1_values + 1 in res_label else layer1_values + 2
-                la1 = len(np.where(res_label == layer1_values)[0])
-                la2 = len(np.where(res_label == layer2_values)[0])
-                if la1 == la2 - 1:
-                    res_label[err_index] = layer1_values
-                elif la2 == la1 - 1:
-                    res_label[err_index] = layer2_values
-                elif la1 == 1 and la2 == 1:
-                    res_label[err_index] = max(res_label[val_index]) + 1
-                else:
-                    raise ValueError("Some atoms is not be split (grouped), and The code reformed failed. "
-                                     "One solution: use 'array' directly. "
-                                     "One another solution: use 'ignore_index' to jump it.")
+    if force_finite:
+        if np.any(np.isinf(res_label)):
+            warnings.warn("Some atoms is not be split (grouped), The code try to reformed it,\n "
+                          "but it could lead to an error, manual checking is suggested.")
+            val_index = np.isfinite(res_label)
+            err_index = np.isinf(res_label)
+
+            res_label2 = res_label.copy()
+            res_label2[err_index] = np.max(res_label[val_index])+1 # 改值,
+            lll = coarse_cluster_array(array=res_label2.astype(np.float32), tol= 0.2, )
+            err, decrease, increase = _get_err_decrease_and_increase(lll)
+
+            if decrease is not None and increase is None:
+                # 处理s3
+                res_label[err_index] = np.where(lll == decrease)[0][0]
+                warnings.warn("The add atoms is split one group, This could be error.")
             else:
-                raise ValueError("Some atoms is not be split (grouped), One solution: use 'array' directly. "
-                                 "One another solution: use 'ignore_index' to jump it.")
+                # 吸附
+                if force_plane:
+                    warnings.warn("Fore absorb system, force_plane is not plane the absorb atom.")
+                res_label[err_index] = max(res_label[val_index]) + 1
+                warnings.warn("The add atoms is split one group, This could be error.")
 
     if np.all(np.isfinite(res_label)):
         res_label = res_label.astype(int)
@@ -293,7 +324,7 @@ def get_plane_neighbors_to_center_raw(st: Structure, center, neighbors_name: Uni
     # Relative to the center
     temp_index2 = np.min(np.abs(points_indices - samez_o_index.reshape(-1, 1)), axis=0) == 0
     points_indices, offset_vectors, distances = points_indices[
-                                                    temp_index2], offset_vectors[temp_index2], distances[temp_index2]
+        temp_index2], offset_vectors[temp_index2], distances[temp_index2]
     return points_indices, offset_vectors, distances
 
 
@@ -347,7 +378,7 @@ def get_plane_neighbors_to_center(st: Structure, neighbors_name: Union[List, Tup
     # Relative to the center
     temp_index2 = np.min(np.abs(points_indices - samez_o_index.reshape(-1, 1)), axis=0) == 0
     points_indices, offset_vectors, distances = points_indices[
-                                                    temp_index2], offset_vectors[temp_index2], distances[temp_index2]
+        temp_index2], offset_vectors[temp_index2], distances[temp_index2]
 
     # get top 3 neighbors
     labels = coarse_cluster_array(distances, tol=tol, method=None)

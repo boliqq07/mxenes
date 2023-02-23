@@ -27,19 +27,25 @@ Examples:
 
     MXenes ->  M2N ->  Ti2NO2 ->  no_add ->  Mo        ->  pure/pure_static
 
+
+Examples (New):
+
+    MXenes ->  M2C ->  Ti2NO2 ->  no_add ->  no_doping -> no_absorb -> fcc(O-site) -> pure/pure_static
+
+
 ** (2) adsorption **
 
-    MXenes ->  Basal number classification -> Base name -> Load content -> Dopant -> Adsorbate -> The label
+    MXenes ->  Basal number classification -> Base name -> Load content -> Dopant -> Adsorb ->  site ->  label
 
 Examples:
 
-    MXenes ->  M2N  ->  Ti2NO2      ->  no_add ->  no_dopin ->  H/add_H  ->  top ->  00
+    MXenes ->  M2N  ->  Ti2NO2      ->  no_add ->  no_dopin ->  H/add_H  ->  top ->  opt
 
-    MXenes ->  M3N2 ->  TiNCrNTi-O2 ->  Hf     ->  C         ->  Li ->  S0  ->  00
+    MXenes ->  M3N2 ->  TiNCrNTi-O2 ->  Hf     ->  C         ->  Li ->  S0  ->  opt
 
 ** (3)NEB **
 
-    MXenes ->  Basal number classification -> Base name -> Load content -> Dopant -> Adsorbate -> Equivalent site -> Path name
+    MXenes ->  Basal number classification -> Base name -> Load content -> Dopant -> Adsorb -> Equivalent site -> Path name
 
 Examples:
 
@@ -70,36 +76,57 @@ Examples:
 
 最终统一的文件夹格式为:
 
-**(1)不吸附**
+**(1)不吸附** 6层 8层
 
-MXenes -> 基底层数分类 -> 基底名称 -> 负载物 -> 搀杂物 -> pure/pure_static
+MXenes -> 基底层数 -> 基底名称 -> 负载物 -> 搀杂物 -> pure/pure_static
 
-例子
+例子 6层  （兼容以前）
 
 MXenes -> M2C -> Ti2NO2 -> no_add -> no_doping -> pure/pure_static
 
+>>> self.get_disk(disk='.', site_name=None, equ_name="pure",
+...          add_atoms=None, absorb=None, doping=None, old_type=True,)
+
 MXenes -> M2N -> Ti2NO2 -> no_add -> Mo        -> pure/pure_static
 
-**(2)吸附**
+例子 8层
 
-MXenes -> 基底层数分类  -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物  -> 标签
+MXenes -> 基底层数 -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物     -> 位点 -> 标签
+
+>>> self.get_disk(disk='.', site_name=None, equ_name="pure", terminal_site="fcc",
+...          add_atoms=None, absorb=None, doping=None, old_type=False)
+
+MXenes -> M2C -> Ti2NO2 -> no_add -> no_doping -> no_absorb -> fcc -> pure_opt
+
+**(2)吸附** 8 层
+
+MXenes -> 基底层数  -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物  -> 位点 -> 标签
 
 例子
-MXenes -> M2N  -> Ti2NO2      -> no_add -> no_dopin -> H/add_H  -> top -> 00
 
-MXenes -> M3N2 -> TiNCrNTi-O2 -> Hf     -> C         -> Li -> S0  -> 00
+MXenes -> M2N  -> Ti2NO2      -> no_add -> no_doping -> H/add_H   -> up-S0 -> ini_opt
 
-**(3)NEB**
+MXenes -> M3N2 -> TiNCrNTi-O2 -> Hf     -> C         -> Li        -> S0  -> ini_opt
 
-MXenes -> 基底层数分类  -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物 -> 等效位点 -> 路径名称
+MXenes -> M3N2 -> TiNCrNTi-O2 -> Hf     -> C         -> no_absorb -> S0  -> ini_opt
+
+>>> self.get_disk(disk='.', site_name="up-S0", equ_name="ini_opt",
+...          add_atoms=None, absorb="Li", doping=None)
+
+**(3)NEB** 8 层
+
+MXenes -> 基底层数  -> 基底名称 -> 负载物 -> 搀杂物 -> 吸附物 -> 等效位点 -> 路径名称
 
 例子
 
 MXenes -> M2N -> Ti2NO2 -> no_add -> no_doping -> H -> S0-S1 -> 00/01/01/03/04/ini/fin/...
 
+>>> self.get_disk(disk='.', site_name="up-S0-S1", equ_name="ini_opt", nm_tm="TM",
+...          add_atoms=None, absorb="Li", doping=None)
+
+
 ``->`` 代表下一层
 ``/`` 代表或者
-
 
 """
 import copy

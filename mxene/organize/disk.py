@@ -5,12 +5,16 @@
 # @Software: PyCharm
 # @License: MIT License
 
-import pathlib
+import path
 from collections import Counter
+from typing import Sequence
+
+import path
 
 
-def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, absorb=None, equ_name=None,
-              site_name=None, add_atoms=None, base_num_cls=None) -> pathlib.Path:
+def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, site_name, absorb=None, equ_name=None,
+              add_atoms=None, base_num_cls=None, super_cell=None, terminal_site=None,
+              old_type=True) -> path.Path:
     """Organize the name to one path."""
     nm_list = ["H", "B", "C", "N", "O", "F", "Si", "P", "S", "Cl", "As", "Se", "Br", "I", "Te", "At"]
     if isinstance(base, (tuple, list)):
@@ -32,7 +36,10 @@ def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, absorb=None
         name.update({base: n_base})
         name.update({carbide_nitride: n_base - 1})
     if terminal is not None:
-        name.update({terminal: 2})
+        if not isinstance(terminal, (list, tuple)):
+            name.update({terminal: 2})
+        else:
+            name.update({i: 1 for i in terminal})
     else:
         name.update({"bare": 2})
 
@@ -81,6 +88,9 @@ def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, absorb=None
     else:
         dop = doping
 
+    if absorb is None:
+        absorb = "no_absorb"
+
     if add_atoms is None:
         add_atoms = "no_add"
     elif isinstance(add_atoms, (list, tuple)):
@@ -90,15 +100,32 @@ def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, absorb=None
     else:
         raise TypeError("add_atoms just accept list of str or str.")
 
-    if absorb is None:
-        absorb = "no_absorb"
+    assert equ_name is not None
 
-    disk = pathlib.Path(disk) / "MXenes" / base_num_cls / base_mx / add_atoms / dop / absorb
+    if isinstance(super_cell, tuple):
+        super_cell = "".join([str(i) for i in super_cell])
 
-    if site_name is not None:
-        disk = disk / site_name
+    if isinstance(super_cell, str):
+        base_num_cls = f"{base_num_cls}_{super_cell}"
 
-    if equ_name is not None:
-        disk = disk / equ_name
+    ############################################################
+
+    disk = path.Path(disk) / "MXenes" / base_num_cls / base_mx / add_atoms / dop
+
+    site_name = "-".join([i for i in [terminal_site, site_name] if i is not None])
+
+    if old_type is True:
+        if absorb == "no_absorb" and add_atoms == "no_add":  # pure
+            pass
+        else:
+            if site_name =="":
+                raise NotImplementedError("site_name must offered.")
+            disk = disk / absorb / site_name  # doping or absorb
+    else:
+        if site_name == "":
+            raise NotImplementedError("site_name must offered.")
+        disk = disk / absorb / site_name  # doping or absorb
+
+    disk = disk / equ_name
 
     return disk

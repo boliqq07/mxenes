@@ -51,6 +51,88 @@ IVDW = 12
 
 IOPTCELL = 1 1 0 1 1 0 0 0 0"""
 
+opt_incar_isym = """
+# Basic
+PREC = Normal
+ISPIN = 2
+#LORBIT=11
+
+# Initialization
+ISTART = 0
+ICHARG = 2
+
+# Electronic relaxation
+ENCUT = 600
+NELMIN = 5
+NELM = 200
+ALGO = F
+EDIFF = 1E-04
+EDIFFG = -0.01
+NCORE = 8
+
+ISYM = 2
+SYMPREC =1E-4
+
+# Ionic relaxation
+IBRION = 2
+ISIF = 3
+NSW = 200
+
+# Density of states related
+ISMEAR = 0
+SIGMA = 0.02
+NEDOS = 301
+
+# Output
+LCHARG = .FALSE.
+LWAVE = .FALSE.
+
+# Specific
+IVDW = 12
+
+IOPTCELL = 1 1 0 1 1 0 0 0 0"""
+
+
+opt_incar_tune = """
+# Basic
+PREC = Normal
+ISPIN = 2
+#LORBIT=11
+
+# Initialization
+ISTART = 0
+ICHARG = 2
+
+# Electronic relaxation
+ENCUT = 600
+NELMIN = 5
+NELM = 200
+ALGO = N
+EDIFF = 1E-05
+EDIFFG = -0.005
+NCORE = 8
+ISYM = 0
+
+# Ionic relaxation
+IBRION = 2
+ISIF = 3
+NSW = 200
+
+# Density of states related
+ISMEAR = 0
+SIGMA = 0.02
+NEDOS = 301
+
+# Output
+LCHARG = .FALSE.
+LWAVE = .FALSE.
+
+# Specific
+IVDW = 12
+
+IOPTCELL = 1 1 0 1 1 0 0 0 0"""
+
+
 neb_incar = """
 # Basic
 PREC = Normal

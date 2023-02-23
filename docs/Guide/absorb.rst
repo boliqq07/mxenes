@@ -30,6 +30,20 @@ At the same time, ``mxene`` also supports layered adsorption.
 .. figure:: layer_absorb.png
     :align: center
 
+    which is often used in the calculation of battery materials.
+
+        >>> from mxene.core.mxenes import MXene
+        >>> from pymatgen.io.vasp import Poscar
+        >>> pos = MXene.from_file('POSCAR')
+        >>> pos.add_atom_layer(site_type="fcc",site_atom="Ag",up_down="up_and_down")
+
+    which is often used in the calculation of battery materials.
+
+        >>> from mxene.core.mxenes import MXene
+        >>> from pymatgen.io.vasp import Poscar
+        >>> pos = MXene.from_file('POSCAR')
+        >>> pos.add_atom_layer(site_type="fcc",site_atom="Ag",up_down="up_and_down")
+
 which is often used in the calculation of battery materials.
 
     >>> from mxene.core.mxenes import MXene

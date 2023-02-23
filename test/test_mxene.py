@@ -152,10 +152,10 @@ class MyTestCase(unittest.TestCase):
                                  base="Ti", carbide_nitride="C",
                                  n_base=2, add_noise=True,
                                  super_cell=(3, 3, 1), )
-        mx.add_next_layer_atoms(site_type= "fcc", ignore_index = None,
-                             force_plane=False, force_finite = True,
-                             up_down="up_and_down", site_atom = "Ag",
-                                reformed_array = None, tol = 0.5)
+        mx.add_atom_layer(site_type="fcc", ignore_index = None,
+                          force_plane=False, force_finite = True,
+                          up_down="up_and_down", site_atom = "Ag",
+                          reformed_array = None, tol = 0.5)
         mx.get_disk()
         mx.show()
 
