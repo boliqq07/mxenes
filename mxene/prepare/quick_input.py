@@ -17,13 +17,13 @@ Notes:
     # 2. read vasp (CONTCAR, ...) results, make supercell, doping, and make new input.
 
     >>> paths = find_leaf_path(".") # filter the needed
-    >>> supercell_and_doping_mx_input_batch_parallelize(paths, pgs = None, potpath="POT-database", n_jobs=8)
+    >>> supercell_and_doping_mx_input_batch(paths, pgs = None, potpath="POT-database", n_jobs=8)
 
 
     # 3. read vasp (CONTCAR, ...) results, make absorb, and make new input.
 
     >>> paths = find_leaf_path(".") # filter the needed
-    >>> absorb_mx_input_batch_parallelize(paths, pgs= None, potpath="POT-database", n_jobs=8)
+    >>> absorb_mx_input_batch(paths, pgs= None, potpath="POT-database", n_jobs=8)
 
 """
 
@@ -48,7 +48,7 @@ from mxene.prepare.vaspinput import MXVaspInput
 # 1. generate vasp input
 
 def mx_input(pg: Dict, potpath="POT-database", incar=opt_incar, terminal="O", disk_num=0,
-             run_file=None, relax=True, **kwargs):
+             run_file=None, relax=True, test=False, **kwargs):
     doping = pg["doping"] if "doping" in pg else None
     super_cell = pg["super_cell"] if "super_cell" in pg else None
     if "terminal_site" in pg:
@@ -75,7 +75,7 @@ def mx_input(pg: Dict, potpath="POT-database", incar=opt_incar, terminal="O", di
         except BaseException:
             pass
 
-    root = ".."
+    root = "."
     try:
 
         # decrease calculation (等位置覆盖)
@@ -93,18 +93,21 @@ def mx_input(pg: Dict, potpath="POT-database", incar=opt_incar, terminal="O", di
     except BaseException as e:
         disk = f"{root}/{disk_num}"
 
-    kpoints = kp_dict[super_cell]
-    poscar = Poscar(structure)
-    incar = Incar.from_string(incar) if isinstance(incar, str) else incar
-    potcar = Potcar(tuple(poscar.site_symbols), sym_potcar_map=potpath)
-    mxin = MXVaspInput(incar, kpoints, poscar, potcar, optional_files=run_file)
+    if test:
+        print(f"Path:{disk}")
+    else:
+        kpoints = kp_dict[super_cell]
+        poscar = Poscar(structure)
+        incar = Incar.from_string(incar) if isinstance(incar, str) else incar
+        potcar = Potcar(tuple(poscar.site_symbols), sym_potcar_map=potpath)
+        mxin = MXVaspInput(incar, kpoints, poscar, potcar, optional_files=run_file)
 
-    mxin.write_input(output_dir=str(disk), make_dir_if_not_present=True)
+        mxin.write_input(output_dir=str(disk), make_dir_if_not_present=True)
     return disk
 
 
 def mx_input_batch(pgs: Iterable[Dict], potpath=r"POT-database", start=0,
-                   relax=True, log_file="path.csv", **kwargs):
+                   relax=True, log_file="path.csv", test=False,  **kwargs):
     pgs = pgs.tolist() if isinstance(pgs, np.ndarray) else list(pgs)
 
     if pgs is None:
@@ -118,7 +121,7 @@ def mx_input_batch(pgs: Iterable[Dict], potpath=r"POT-database", start=0,
 
         try:
             logi = mx_input(pg, disk_num=i + start, potpath=potpath, incar=opt_incar, terminal="O",
-                            run_file=None, relax=relax,
+                            run_file=None, relax=relax, test=test,
                             **kwargs)
         except BaseException as e:
             logi = f"Error(num:{i},err_msg:{e})"
@@ -131,13 +134,13 @@ def mx_input_batch(pgs: Iterable[Dict], potpath=r"POT-database", start=0,
     # return log
 
 
-def _func2(iterable):
-    mx_input_batch(iterable[0], log_file=iterable[1],
-                   potpath=iterable[2], start=iterable[3], relax=iterable[4])
+# def _func2(iterable):
+#     mx_input_batch(iterable[0], log_file=iterable[1],
+#                    potpath=iterable[2], start=iterable[3], relax=iterable[4],test=iterable[5])
 
 
 def mx_input_batch_parallelize(pgs: Iterable[Dict], potpath=r"POT-database", log_file="path.csv",
-                               relax=True, n_jobs=10):
+                               relax=True, n_jobs=10,test=False):
     assert n_jobs > 1
 
     pgs = list(pgs)
@@ -152,13 +155,24 @@ def mx_input_batch_parallelize(pgs: Iterable[Dict], potpath=r"POT-database", log
 
     msgs = np.split(np.array(pgs), indices_or_sections=indices_or_sections)
     log_files = [f"part-0-{log_file}"] + [f"part-{i}-{log_file}" for i in indices_or_sections]
-    potpaths = [potpath] * n_jobs
-    relaxs = [relax] * n_jobs
     starts = [step * i for i in range(n_jobs)]
 
+    ##### old #############
+    # potpaths = [potpath] * n_jobs
+    # relaxs = [relax] * n_jobs
+    # tests = [test] * n_jobs
+    # pool = multiprocessing.Pool(processes=n_jobs)
+    #
+    # tqdm(pool.map(func=_func2, iterable=zip(msgs, log_files, potpaths, starts, relaxs, tests)))
+    # pool.close()
+    # pool.join()
+
+    ###### new #################
     pool = multiprocessing.Pool(processes=n_jobs)
 
-    tqdm(pool.map(func=_func2, iterable=zip(msgs, log_files, potpaths, starts, relaxs)))
+    for pi,log,start in tqdm(zip(msgs,log_files,starts)):
+        pool.apply(func=mx_input_batch, args=(pi,),
+                   kwds={"log_file": log, "potpath": potpath, "start": start,"relax":relax,"test":test})
     pool.close()
     pool.join()
 
@@ -167,8 +181,8 @@ def mx_input_batch_parallelize(pgs: Iterable[Dict], potpath=r"POT-database", log
 
 
 def supercell_and_doping(structure, doping, super_cell, pathi, incar=None,
-                         potpath="POT-database", site_name="up"):
-    assert site_name in ["up","down"]
+                         potpath="POT-database", site_name="up", no_doping_name="no_doping", test=False):
+    assert site_name in ["up", "down"]
     if incar is None:
         incar = Incar.from_string(opt_incar)
 
@@ -176,33 +190,44 @@ def supercell_and_doping(structure, doping, super_cell, pathi, incar=None,
         potpath = check_potcar(potpath=potpath)
 
     kpoints = kp_dict[super_cell]
+
     sti = MXene.from_structure(structure)
 
-    sti.make_supercell(super_cell )
+    sti.make_supercell(super_cell)
 
-    doping_index, atom = sti.pure_add_doping(doping=doping,up_down=site_name)
+    if sti.is_mirror_sym():
+        site_name = "up"
+
+    doping_index, atom = sti.pure_add_doping(doping=doping, up_down=site_name)
 
     if doping is None:
-        doping = atom
+        if no_doping_name == "atom":
+            no_doping_name = str(atom)
+    else:
+        no_doping_name = doping
 
     poscar_new = Poscar(sti)
     if "no_doping" in pathi:
-        pi_new = pathi.replace("no_doping", doping)
+        pi_new = pathi.replace("no_doping", no_doping_name)
         pi_new = pi_new.replace("pure", "ini")
         pi_new = pathlib.Path(pi_new)
         end = pi_new.name
         terminal_site2 = path.Path(pi_new).parent.name
         site_name = "-".join([i for i in [terminal_site2, site_name] if i is not None])
-        pi_new = pi_new.parent.parent/site_name/end
+        pi_new = pi_new.parent.parent / site_name / end
 
         if "111" in str(pi_new):
             pi_new = str(pi_new).replace("111", f"{super_cell[0]}{super_cell[1]}{super_cell[2]}")
         else:
             pi_new = pi_new / f"{super_cell[0]}{super_cell[1]}{super_cell[2]}"
+
     else:
         try:
+            if doping is None and no_doping_name == "atom":
+                doping = str(atom)
+
             pi_new = sti.get_disk(doping=doping, ignore_index=-1, site_name=site_name,
-            equ_name = "ini_opt",  tol = 0.4, terminal_site = "auto", super_cell= super_cell,
+                                  equ_name="ini_opt", tol=0.4, terminal_site="auto", super_cell=super_cell,
                                   old_type=False)
         except BaseException:
             pi_new = pathlib.Path(pathi)
@@ -216,35 +241,38 @@ def supercell_and_doping(structure, doping, super_cell, pathi, incar=None,
     if len(sti.atomic_numbers) > 50:
         incar = opt_incar_isym
 
-    print(pathi)
-    print(out_dir)
+    if test:
+        print(f"Old:{pathi}")
+        print(f"New:{out_dir}")
+    else:
 
-    potcar = Potcar(tuple(poscar_new.site_symbols), sym_potcar_map=potpath)
-    mxin = MXVaspInput(incar, kpoints, poscar_new, potcar, optional_files=None)
-    mxin.write_input(output_dir=out_dir)
-
-    # out_dir.rmtree_p()
+        potcar = Potcar(tuple(poscar_new.site_symbols), sym_potcar_map=potpath)
+        mxin = MXVaspInput(incar, kpoints, poscar_new, potcar, optional_files=None)
+        mxin.write_input(output_dir=out_dir)
+        # out_dir.rmtree_p()
+        pass
     return out_dir
 
 
-def supercell_and_doping_mx_input_batch_parallelize(paths: List, pgs: Iterable[Dict] = None,
-                                                    potpath="POT-database",
-                                                    n_jobs=8,
-                                                    read_file="CONTCAR"
-                                                    ):
+def supercell_and_doping_mx_input_batch(paths: List, pgs: Iterable[Dict] = None,
+                                        potpath="POT-database",
+                                        n_jobs=8,
+                                        read_file="CONTCAR",
+                                        test=False
+                                        ):
     if isinstance(potpath, str):
         potpath = check_potcar(potpath=potpath)
 
     pool = multiprocessing.Pool(processes=n_jobs)
     for pi in tqdm(paths):
         pool.apply(func=supercell_and_doping_mx_input, args=(pi,),
-                   kwds={"pgs": pgs, "potpath": potpath, "read_file": read_file})
+                   kwds={"pgs": pgs, "potpath": potpath, "read_file": read_file, "test":test})
     pool.close()
     pool.join()
 
 
 def supercell_and_doping_mx_input(pi, pgs: Iterable[Dict] = None, potpath="POT-database",
-                                  read_file="CONTCAR"):
+                                  read_file="CONTCAR", no_doping_name="no_doping", test=False):
     if isinstance(potpath, str):
         potpath = check_potcar(potpath=potpath)
 
@@ -271,19 +299,32 @@ def supercell_and_doping_mx_input(pi, pgs: Iterable[Dict] = None, potpath="POT-d
     except:
         print(f"The needed 4 files is not enough in:\n {pi}")
     else:
-        for pgi in pgs:
-            super_cell = pgi["super_cell"]
-            doping = pgi["doping"]
-            site_name = pgi["up_down"] if "up_down" in pgi and pgi["up_down"] is not None else "up"
-            supercell_and_doping(poscar.structure, doping, super_cell, pi,
-                                 incar=incar,
-                                 potpath=potpath, site_name=site_name, )
+        try:
+            for pgi in pgs:
+                super_cell = pgi["super_cell"]
+                doping = pgi["doping"]
+                if "up_down" in pgi:
+                    if pgi["up_down"] is None:
+                        site_name = "up"
+                    else:
+                        site_name = pgi["up_down"]
+                else:
+                    site_name = "up"
+
+                supercell_and_doping(poscar.structure, doping, super_cell, pi,
+                                     incar=incar,
+                                     potpath=potpath, site_name=site_name, no_doping_name=no_doping_name,
+                                     test=test)
+        except IndexError:
+            print(f"Error for '{pi}' and store to doping_fail_path.temp")
+            with open("doping_fail_path.temp", "a+") as f:
+                f.write(str(pi))
 
 
 # 3. absorb
 
 def absorb_atom(structure, absorb, site_name, site_type, pathi, kpoints, incar=None,
-                potpath="POT-database", ):
+                potpath="POT-database", test=True):
     if incar is None:
         incar = Incar.from_string(opt_incar)
 
@@ -297,13 +338,13 @@ def absorb_atom(structure, absorb, site_name, site_type, pathi, kpoints, incar=N
 
     pathi = path.Path(pathi)
 
-    if any([True  for i in pathi.parts() if "down" in str(i) ]):
+    if any([True for i in pathi.parts() if "down" in str(i)]):
         up_down = "down"
     else:
         up_down = "up"
 
     sti.add_absorb(site_name=site_name, site_type=site_type, absorb=absorb, up_down=up_down,
-                   ignore_index=-1,)
+                   ignore_index=-1)
 
     poscar_new = Poscar(sti)
 
@@ -318,14 +359,19 @@ def absorb_atom(structure, absorb, site_name, site_type, pathi, kpoints, incar=N
 
     out_dir = pi_new
 
-    potcar = Potcar(tuple(poscar_new.site_symbols), sym_potcar_map=potpath)
-    mxin = MXVaspInput(incar, kpoints, poscar_new, potcar, optional_files=None)
-    # mxin.write_input(output_dir=str(out_dir))
+    if test:
+        print(f"Old:{pathi}")
+        print(f"New:{pi_new}")
+    else:
+        potcar = Potcar(tuple(poscar_new.site_symbols), sym_potcar_map=potpath)
+        mxin = MXVaspInput(incar, kpoints, poscar_new, potcar, optional_files=None)
+        mxin.write_input(output_dir=str(out_dir))
+        pass
     return out_dir
 
 
-def absorb_mx_input_batch_parallelize(paths: List, pgs: Iterable[Dict] = None, potpath="POT-database",
-                                      n_jobs=8, read_file="CONTCAR"):
+def absorb_mx_input_batch(paths: List, pgs: Iterable[Dict] = None, potpath="POT-database",
+                          n_jobs=8, read_file="CONTCAR", test=True):
     if isinstance(potpath, str):
         potpath = check_potcar(potpath=potpath)
 
@@ -333,17 +379,17 @@ def absorb_mx_input_batch_parallelize(paths: List, pgs: Iterable[Dict] = None, p
 
     for pi in tqdm(paths):
         pool.apply(func=absorb_mx_input, args=(pi,),
-                   kwds={"pgs": pgs, "potpath": potpath, "read_file": read_file})
+                   kwds={"pgs": pgs, "potpath": potpath, "read_file": read_file,"test":test})
     pool.close()
     pool.join()
 
 
-def absorb_mx_input(pi, pgs: Iterable[Dict] = None, potpath="POT-database", read_file="CONTCAR"):
+def absorb_mx_input(pi, pgs: Iterable[Dict] = None, potpath="POT-database", read_file="CONTCAR", test=True):
     if isinstance(potpath, str):
         potpath = check_potcar(potpath=potpath)
 
     if pgs is None:
-        _predefined_am_list = ["Al", "Ca", "Li", "Mg", "Na", "K", "Zn", "H"]
+        _predefined_am_list = ["H", "Al", "Ca", "Li", "Mg", "Na", "K", "Zn"]
 
         dop_space = {"site_name": ["S0"],
                      "absorb": _predefined_am_list, }
@@ -362,10 +408,15 @@ def absorb_mx_input(pi, pgs: Iterable[Dict] = None, potpath="POT-database", read
         print(e)
         print(f"The needed 4 files is not enough in:\n {pi}")
     else:
-        for pgi in pgs:
-            site_name = pgi["site_name"]
-            absorb = pgi["absorb"]
-            site_type = "top" if absorb == "H" else "fcc"
-            absorb_atom(poscar.structure, absorb, site_name, site_type, pi, kpoints,
-                        incar=incar,
-                        potpath=potpath)
+        try:
+            for pgi in pgs:
+                site_name = pgi["site_name"]
+                absorb = pgi["absorb"]
+                site_type = "top" if absorb == "H" else "fcc"
+                absorb_atom(poscar.structure, absorb, site_name, site_type, pi, kpoints,
+                            incar=incar, test=test,
+                            potpath=potpath)
+        except IndexError:
+            print(f"Error for {pi} and store to absorb_fail_path.temp")
+            with open("absorb_fail_path.temp", "a+") as f:
+                f.write(str(pi))

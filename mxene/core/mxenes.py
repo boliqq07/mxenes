@@ -267,6 +267,26 @@ class MXene(Structure):
         spe.extend(other.species)
         return self.__class__(species=spe, coords=frac, lattice=self.lattice)
 
+    def is_mirror_sym(self, tol=0.3, axis=2) -> bool:
+        try:
+
+            label = self.split_layer(ignore_index=None, tol=tol, force_plane=False, reverse=True,
+                             force_finite=False, array=None, axis=axis)
+
+            label2 = np.max(label)-label
+
+            atm = np.array(self.atomic_numbers)
+
+            for i in range(np.max(label)):
+                atm1 = atm[label ==i]
+                atm2 = atm[label2 ==i]
+                if not np.all(np.equal(atm1, atm2)):
+                    return False
+
+            return True
+        except BaseException as e:
+            return False
+
     def split_layer(self, ignore_index=None, tol=0.5, force_plane=True, reverse=True,
                     force_finite=False, array=None, axis=2):
         """
@@ -334,7 +354,7 @@ class MXene(Structure):
         """
         reverse = True if up_down == "up" else False
 
-        lab = ["fcc", "hcp", "top"]
+        lab = ["hcp", "top"]
 
         if isinstance(array, np.ndarray):
             assert array.ndim == 2 and array.shape[1] == 3
@@ -342,7 +362,7 @@ class MXene(Structure):
             array = self.cart_coords
 
         layer_label = self.split_layer(array=array[:, -1], tol=tol, reverse=reverse,
-                                       force_plane=False, force_finite=True)
+                                       **kwargs)
 
         single = self.check_single_cell(array[:, -1])
 
@@ -361,25 +381,28 @@ class MXene(Structure):
         layer1_index = np.where(layer_label == ll[0])[0]
         layer2_index = np.where(layer_label == ll[1])[0]
         layer3_index = np.where(layer_label == ll[2])[0]
-        layer4_index = np.where(layer_label == ll[3])[0]
+        # layer4_index = np.where(layer_label == ll[3])[0]
         coords1 = array[layer1_index, :2]
         coords2 = array[layer2_index, :2]
         coords3 = array[layer3_index, :2]
-        coords4 = array[layer4_index, :2]
+        # coords4 = array[layer4_index, :2]
 
         coords_add_top = coords2
         coords_add_hcp = coords3
-        coords_add_fcc = coords4
+        # coords_add_fcc = coords4
 
-        r = np.array([coords_add_fcc, coords_add_hcp, coords_add_top])
+        rhcp = np.mean(coords_add_hcp, axis=0)
+        rtop = np.mean(coords_add_top, axis=0)
+        coords1m = np.mean(coords1, axis=0)
 
-        r = np.mean(r, axis=1)
-        coords1 = np.mean(coords1, axis=0)
-
-        diff = np.abs(r - coords1)
+        diff = np.abs(np.array([rhcp, rtop]) - coords1m.reshape(1,-1))
         dis = np.sum(diff ** 2, axis=-1)**0.5
         s = np.argmin(dis)
-        return lab[s]
+
+        if dis[s] > 0.05:
+            return "fcc"
+        else:
+            return lab[s]
 
     def get_next_layer_sites_xy(self, array, site_type: Union[None, str] = "fcc",
                                 up_down="up", tol=0.5, **kwargs ):
@@ -417,14 +440,20 @@ class MXene(Structure):
 
         layer1_index = np.where(layer_label == ll[0])[0]
         layer2_index = np.where(layer_label == ll[1])[0]
-        layer3_index = np.where(layer_label == ll[2])[0]
+        # layer3_index = np.where(layer_label == ll[2])[0]
         coords1 = array[layer1_index, :2]
         coords2 = array[layer2_index, :2]
-        coords3 = array[layer3_index, :2]
+        # coords3 = array[layer3_index, :2]
+
+        c = coords1[0]
+        moves = coords2 - c
+        d = np.sum(moves**2, axis=1)
+        d_index = np.argmin(d)
+        move = moves[d_index]
 
         coords_add_top = coords1
         coords_add_hcp = coords2
-        coords_add_fcc = coords3
+        coords_add_fcc = coords1+move # could be negative
 
         if site_type == "fcc":
             coords_add = coords_add_fcc
@@ -495,14 +524,20 @@ class MXene(Structure):
 
         layer1_index = np.where(layer_label == ll[0])[0]
         layer2_index = np.where(layer_label == ll[1])[0]
-        layer3_index = np.where(layer_label == ll[2])[0]
+        # layer3_index = np.where(layer_label == ll[2])[0]
         coords1 = array[layer1_index, :2]
         coords2 = array[layer2_index, :2]
-        coords3 = array[layer3_index, :2]
+        # coords3 = array[layer3_index, :2]
+
+        c = coords1[0]
+        moves = coords2 - c
+        d = np.sum(moves**2, axis=1)
+        d_index = np.argmin(d)
+        move = moves[d_index]
 
         coords_add_top = coords1
         coords_add_hcp = coords2
-        coords_add_fcc = coords3
+        coords_add_fcc = coords1+move # could be negative
 
         if site_type == "fcc":
             coords_add = coords_add_fcc
@@ -522,11 +557,14 @@ class MXene(Structure):
         else:
             pass
             # terminal_z_axis = 1.2
+        coords_top = array[layer1_index,-1]
+        zz = np.mean(coords_top)
+        coords = np.concatenate((coords_add,np.full(coords_add.shape[0],zz).reshape(-1,1)),axis=1)
 
         if terminal_z_axis is not None:
-            coords_add[:, -1] = coef * terminal_z_axis + coords1[:, -1]
+            coords[:, -1] = coef * terminal_z_axis + coords[:, -1]
 
-        return coords_add
+        return coords
 
     def change_top_layer_site(self, terminal_site_to: Union[Sequence, str] = "fcc",
                               up_down="down_up",
@@ -570,7 +608,10 @@ class MXene(Structure):
         max_n = np.max(label)
         min_n = np.min(label)
 
-        index = ~((label == max_n) | (label == min_n))
+        max_index = label == max_n
+        min_index = label == min_n
+
+        index = ~(max_index | min_index)
         array_select = self.cart_coords[index]
 
         cart_up = self.get_next_layer_sites_xy(array_select, site_type=terminal_site[1], up_down="up", tol=tol)
@@ -585,20 +626,20 @@ class MXene(Structure):
             offset_z1, offset_z2 = offset_z
 
         if "up" in up_down:
-            coords[label == min_n, :2] = cart_up
-            coords[label == min_n, -1] = coords[label == min_n, -1] + abs(offset_z2)
+            coords[min_index, :2] = cart_up
+            coords[min_index, -1] = coords[min_index, -1] + abs(offset_z2)
         if "down" in up_down:
-            coords[label == max_n, :2] = cart_down
-            coords[label == max_n, -1] = coords[label == max_n, -1] - abs(offset_z1)
+            coords[max_index, :2] = cart_down
+            coords[max_index, -1] = coords[max_index, -1] - abs(offset_z1)
 
         sp = np.array(self.species)
 
         if "up" in up_down:
             if atom_type[0] is not None:
-                sp[label == max_n] = Element(atom_type[0])
+                sp[max_index] = Element(atom_type[0])
         if "down" in up_down:
             if atom_type[1] is not None:
-                sp[label == min_n] = Element(atom_type[1])
+                sp[min_index] = Element(atom_type[1])
 
         return self.__class__(lattice=self.lattice,
                               species=[i for i in sp],
@@ -857,7 +898,7 @@ class MXene(Structure):
         if nm_tm == "NM":
             index = np.argmin(label)
         else:
-            index = np.where(label == (np.min(label) - 1))[0][0]
+            index = np.where(label == (np.min(label) + 1))[0][0]
 
         assert isinstance(index, np.int64)
 
@@ -1130,6 +1171,7 @@ class MXene(Structure):
             else:
 
                 sites = self.get_next_layer_sites(site_type=site_type, ignore_index=ignore_index,
+                                                  force_finite=True,force_plane=True,
                                                   up_down=up_down, site_atom=absorb, tol=tol,
                                                   array=array)
 
@@ -1338,7 +1380,7 @@ class MXene(Structure):
             terminal = terminal_ if terminal_ else terminal[0]
         else:
             warnings.warn("This is just for same terminal. Different terminals could be error path.")
-            terminal
+
             terminal = terminal_ if terminal_ else terminal
 
         carbide_nitride = carbide_nitride_ if carbide_nitride_ else carbide_nitride
@@ -1848,20 +1890,21 @@ if __name__ == "__main__":
 
     mx = MXene.from_standard(terminal_site=["hcp", "hcp"], base=["W", "Ti"],
                              carbide_nitride="C", n_base=3, terminal="O")
-    # assert "hcp" == mx.check_terminal_sites_by_3_layer(up_down="up")
-    # assert "hcp" == mx.check_terminal_sites_by_3_layer(up_down="down")
-    # mx = MXene.from_standard(terminal_site=["hcp", "fcc"], base=["W", "Ti"],
-    #                          carbide_nitride="C", n_base=3, terminal="O")
-    # assert "fcc" == mx.check_terminal_sites_by_3_layer(up_down="up")
-    # assert "hcp" == mx.check_terminal_sites_by_3_layer(up_down="down")
-    # mx = MXene.from_standard(terminal_site=["top", "hcp"], base=["W", "Ti"],
-    #                          carbide_nitride="C", n_base=3, terminal="O")
-    # assert "hcp" == mx.check_terminal_sites_by_3_layer(up_down="up")
-    # assert "top" == mx.check_terminal_sites_by_3_layer(up_down="down")
+    assert "hcp" == mx.check_terminal_sites_by_3_layer(up_down="up")
+    assert "hcp" == mx.check_terminal_sites_by_3_layer(up_down="down")
+    mx = MXene.from_standard(terminal_site=["hcp", "fcc"], base=["W", "Ti"],
+                             carbide_nitride="C", n_base=3, terminal="O")
+    assert "fcc" == mx.check_terminal_sites_by_3_layer(up_down="up")
+    assert "hcp" == mx.check_terminal_sites_by_3_layer(up_down="down")
+    mx = MXene.from_standard(terminal_site=["top", "hcp"], base=["W", "Ti"],
+                             carbide_nitride="C", n_base=3, terminal="O")
+    assert "hcp" == mx.check_terminal_sites_by_3_layer(up_down="up")
+    assert "top" == mx.check_terminal_sites_by_3_layer(up_down="down")
 
-    po = Poscar(mx)
-    po.write_file("POSCAR")
-    mx2 = mx.change_top_layer_site(terminal_site_to="fcc-top", up_down="updown",
-                                   atom_type="S-F")
-    po = Poscar(mx2)
-    po.write_file("new-POSCAR")
+
+    # po = Poscar(mx)
+    # po.write_file("POSCAR")
+    # mx2 = mx.change_top_layer_site(terminal_site_to="fcc-top", up_down="updown",
+    #                                atom_type="S-F")
+    # po = Poscar(mx2)
+    # po.write_file("new-POSCAR")

@@ -112,7 +112,10 @@ def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, site_name, 
 
     disk = path.Path(disk) / "MXenes" / base_num_cls / base_mx / add_atoms / dop
 
-    site_name = "-".join([i for i in [terminal_site, site_name] if i is not None])
+    if site_name is None:
+        if terminal_site is not None:
+            site_name = terminal_site
+    # site_name = "-".join([i for i in [terminal_site, site_name] if i is not None])
 
     if old_type is True:
         if absorb == "no_absorb" and add_atoms == "no_add":  # pure

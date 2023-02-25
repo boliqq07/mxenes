@@ -155,7 +155,7 @@ class MyTestCase(unittest.TestCase):
         mx.add_atom_layer(site_type="fcc", ignore_index = None,
                           force_plane=False, force_finite = True,
                           up_down="up_and_down", site_atom = "Ag",
-                          reformed_array = None, tol = 0.5)
+                          array = None, tol = 0.5)
         mx.get_disk()
         mx.show()
 
@@ -251,7 +251,7 @@ class MyTestCase(unittest.TestCase):
         mx = MXene.from_file("Y-POSCAR")
         coor = mx.get_next_layer_sites(ignore_index=-1,
                              force_plane=True, force_finite=False,
-                             up_down="up", site_atom="O", reformed_array=None, tol=0.5)
+                             up_down="up", site_atom="O", array=None, tol=0.5)
         print(coor)
 
     def test_next_relax(self):
