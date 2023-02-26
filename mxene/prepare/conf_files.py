@@ -29,7 +29,7 @@ NELM = 200
 ALGO = F
 EDIFF = 1E-04
 EDIFFG = -0.01
-NCORE = 8
+NCORE = 4
 ISYM = 0
 
 # Ionic relaxation
@@ -68,7 +68,7 @@ NELM = 200
 ALGO = F
 EDIFF = 1E-04
 EDIFFG = -0.01
-NCORE = 8
+NCORE = 4
 
 ISYM = 2
 SYMPREC =1E-4
@@ -110,7 +110,7 @@ NELM = 200
 ALGO = N
 EDIFF = 1E-05
 EDIFFG = -0.005
-NCORE = 8
+NCORE = 4
 ISYM = 0
 
 # Ionic relaxation
@@ -161,7 +161,7 @@ ISYM = 0
 ISMEAR = 0
 SIGMA = 0.02
 #NEDOS = 301
-NCORE = 8
+NCORE = 4
 
 # Output
 LCHARG = .FALSE.

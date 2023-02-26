@@ -303,6 +303,7 @@ def supercell_and_doping_mx_input(pi, pgs: Iterable[Dict] = None, potpath="POT-d
             for pgi in pgs:
                 super_cell = pgi["super_cell"]
                 doping = pgi["doping"]
+
                 if "up_down" in pgi:
                     if pgi["up_down"] is None:
                         site_name = "up"
@@ -323,7 +324,7 @@ def supercell_and_doping_mx_input(pi, pgs: Iterable[Dict] = None, potpath="POT-d
 
 # 3. absorb
 
-def absorb_atom(structure, absorb, site_name, site_type, pathi, kpoints, incar=None,
+def absorb_atom(structure, absorb, site_name, site_type, pathi, kpoints, incar=None, up_down=None,
                 potpath="POT-database", test=True):
     if incar is None:
         incar = Incar.from_string(opt_incar)
@@ -338,10 +339,13 @@ def absorb_atom(structure, absorb, site_name, site_type, pathi, kpoints, incar=N
 
     pathi = path.Path(pathi)
 
-    if any([True for i in pathi.parts() if "down" in str(i)]):
-        up_down = "down"
+    if up_down is None or up_down == "auto":
+        if any([True for i in pathi.parts() if "down" in str(i)]):
+            up_down = "down"
+        else:
+            up_down = "up"
     else:
-        up_down = "up"
+        up_down = str(up_down)
 
     sti.add_absorb(site_name=site_name, site_type=site_type, absorb=absorb, up_down=up_down,
                    ignore_index=-1)
@@ -413,8 +417,17 @@ def absorb_mx_input(pi, pgs: Iterable[Dict] = None, potpath="POT-database", read
                 site_name = pgi["site_name"]
                 absorb = pgi["absorb"]
                 site_type = "top" if absorb == "H" else "fcc"
+
+                if "up_down" in pgi:
+                    if pgi["up_down"] == "auto":
+                        up_down = None
+                    else:
+                        up_down = pgi["up_down"]
+                else:
+                    up_down = None
+
                 absorb_atom(poscar.structure, absorb, site_name, site_type, pi, kpoints,
-                            incar=incar, test=test,
+                            incar=incar, test=test,up_down=up_down,
                             potpath=potpath)
         except IndexError:
             print(f"Error for {pi} and store to absorb_fail_path.temp")

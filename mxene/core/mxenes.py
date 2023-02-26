@@ -104,7 +104,7 @@ class MXene(Structure):
     _predefined_cn = ["C", "N"]
     _predefined_bm = ["Ti", "Zr", "Hf", "V", "Nb", "Ta", "Cr", "Mo", "W", "Sc"]
     _predefined_tem_z_axis = {"O": 1.0, "F": 0.9, "Cl": 1.2}
-    _predefined_am_z_axis = {"K": 2.1, "Li": 1.3, "H": 1.0, "Ca": 1.6, "Na": 1.6, "Mg": 1.4, "Al": 1.1, "Zn": 1.2}
+    _predefined_am_z_axis = {"K": 2.1, "Li": 1.3, "H": 0.9, "Ca": 1.6, "Na": 1.6, "Mg": 1.4, "Al": 1.1, "Zn": 1.2}
 
     def __init__(self,
                  lattice: Union[ArrayLike, Lattice],
