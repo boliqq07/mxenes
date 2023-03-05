@@ -100,7 +100,7 @@ class MXene(Structure):
     _predefined_dop_list = _predefined_nm_list + _predefined_tm_list
 
     _predefined_am_list = ["Al", "Ca", "Li", "Mg", "Na", "K", "Zn", "H"]
-    _predefined_tem_list = ["O", "F", "OH", "Cl", None]
+    _predefined_tem_list = ["O", "F", "Cl", "S", None]
     _predefined_cn = ["C", "N"]
     _predefined_bm = ["Ti", "Zr", "Hf", "V", "Nb", "Ta", "Cr", "Mo", "W", "Sc"]
     _predefined_tem_z_axis = {"O": 1.0, "F": 0.9, "Cl": 1.2}
