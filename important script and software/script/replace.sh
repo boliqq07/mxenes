@@ -1,14 +1,25 @@
 #!/bin/bash
 
+# 替换命令必须用单引号
+old_cmd='LREAL = *'
+new_cmd='LREAL = Auto'
+
 old_path=$(cd "$(dirname "$0")"; pwd)
 
 for i in $(cat paths.temp)
-
 do
 cd $i
 echo $(cd "$(dirname "$0")"; pwd)
 
-sed -i 's/^"NCORE = 8"/"NCORE = 4"/g' INCAR
+res=$(grep "$old_cmd" INCAR)
+
+if [[ "$res" != "" ]]
+then
+  cmd="s/^"$res"/"$new_cmd"/g"
+  sed -i "$cmd" INCAR
+else
+  sed -i '$a '"$new_cmd"  INCAR
+fi
 
 cd $old_path
 done
