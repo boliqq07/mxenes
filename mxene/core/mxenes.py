@@ -103,7 +103,8 @@ class MXene(Structure):
     _predefined_tem_list = ["O", "F", "Cl", "S", None]
     _predefined_cn = ["C", "N"]
     _predefined_bm = ["Ti", "Zr", "Hf", "V", "Nb", "Ta", "Cr", "Mo", "W", "Sc"]
-    _predefined_bm_cell_ab = {"Ti": 3.0, "Zr": 3.2, "Hf": 3.15, "V": 2.93, "Nb": 3.0, "Ta": 3.05, "Cr": 2.83,
+    _predefined_bm_cell_ab = {"Ti": 3.0, "Zr": 3.2, "Hf": 3.15, "V": 2.93, "Nb": 3.0,
+                              "Ta": 3.05, "Cr": 2.83,
                               "Mo": 2.9, "W": 2.87, "Sc": 3.3}
     _predefined_tem_z_axis = {"O": 1.0, "F": 0.9, "Cl": 1.2}
     _predefined_am_z_axis = {"K": 2.1, "Li": 1.3, "H": 0.9, "Ca": 1.6, "Na": 1.6, "Mg": 1.4, "Al": 1.1, "Zn": 1.2}
