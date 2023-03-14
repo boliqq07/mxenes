@@ -103,6 +103,8 @@ class MXene(Structure):
     _predefined_tem_list = ["O", "F", "Cl", "S", None]
     _predefined_cn = ["C", "N"]
     _predefined_bm = ["Ti", "Zr", "Hf", "V", "Nb", "Ta", "Cr", "Mo", "W", "Sc"]
+    _predefined_bm_cell_ab = {"Ti": 3.0, "Zr": 3.2, "Hf": 3.15, "V": 2.93, "Nb": 3.0, "Ta": 3.05, "Cr": 2.83,
+                              "Mo": 2.9, "W": 2.87, "Sc": 3.3}
     _predefined_tem_z_axis = {"O": 1.0, "F": 0.9, "Cl": 1.2}
     _predefined_am_z_axis = {"K": 2.1, "Li": 1.3, "H": 0.9, "Ca": 1.6, "Na": 1.6, "Mg": 1.4, "Al": 1.1, "Zn": 1.2}
 
@@ -211,16 +213,15 @@ class MXene(Structure):
         else:
             return "fcc"
 
-
-    def check_single_cell(self,array=False):
-        if isinstance(array,np.ndarray):
+    def check_single_cell(self, array=False):
+        if isinstance(array, np.ndarray):
             l = len(array)
         else:
             l = len(self.atomic_numbers)
-        if l<12:
+        if l < 12:
             single = True
         else:
-            single= False
+            single = False
         return single
 
     def get_similar_layer_atoms(self, z0=0.0, tol=0.005, axis=2, frac=True, array=None):
@@ -248,7 +249,6 @@ class MXene(Structure):
         z0_atoms = np.where(np.abs(array - z0) < tol)[0]
         return z0_atoms
 
-
     def __add__(self, other: Structure) -> "MXene":
         """
         Add 2 MXenes with same lattice.
@@ -271,15 +271,15 @@ class MXene(Structure):
         try:
 
             label = self.split_layer(ignore_index=None, tol=tol, force_plane=False, reverse=True,
-                             force_finite=False, array=None, axis=axis)
+                                     force_finite=False, array=None, axis=axis)
 
-            label2 = np.max(label)-label
+            label2 = np.max(label) - label
 
             atm = np.array(self.atomic_numbers)
 
             for i in range(np.max(label)):
-                atm1 = atm[label ==i]
-                atm2 = atm[label2 ==i]
+                atm1 = atm[label == i]
+                atm2 = atm[label2 == i]
                 if not np.all(np.equal(atm1, atm2)):
                     return False
 
@@ -372,11 +372,11 @@ class MXene(Structure):
         i = 0
         while len(ll) < 4:
             if not single:
-                if np.sum(layer_label==i)>=3:
+                if np.sum(layer_label == i) >= 3:
                     ll.append(i)
             else:
                 ll.append(i)
-            i+=1
+            i += 1
 
         layer1_index = np.where(layer_label == ll[0])[0]
         layer2_index = np.where(layer_label == ll[1])[0]
@@ -395,8 +395,8 @@ class MXene(Structure):
         rtop = np.mean(coords_add_top, axis=0)
         coords1m = np.mean(coords1, axis=0)
 
-        diff = np.abs(np.array([rhcp, rtop]) - coords1m.reshape(1,-1))
-        dis = np.sum(diff ** 2, axis=-1)**0.5
+        diff = np.abs(np.array([rhcp, rtop]) - coords1m.reshape(1, -1))
+        dis = np.sum(diff ** 2, axis=-1) ** 0.5
         s = np.argmin(dis)
 
         if dis[s] > 0.05:
@@ -405,7 +405,7 @@ class MXene(Structure):
             return lab[s]
 
     def get_next_layer_sites_xy(self, array, site_type: Union[None, str] = "fcc",
-                                up_down="up", tol=0.5, **kwargs ):
+                                up_down="up", tol=0.5, **kwargs):
         """
         According to the current atomic layer site, and stacking method,
         to obtain the atomic position (x, y) of the next layer.
@@ -432,11 +432,11 @@ class MXene(Structure):
         i = 0
         while len(ll) < 3:
             if not single:
-                if np.sum(layer_label==i)>=3:
+                if np.sum(layer_label == i) >= 3:
                     ll.append(i)
             else:
                 ll.append(i)
-            i+=1
+            i += 1
 
         layer1_index = np.where(layer_label == ll[0])[0]
         layer2_index = np.where(layer_label == ll[1])[0]
@@ -447,13 +447,13 @@ class MXene(Structure):
 
         c = coords1[0]
         moves = coords2 - c
-        d = np.sum(moves**2, axis=1)
+        d = np.sum(moves ** 2, axis=1)
         d_index = np.argmin(d)
         move = moves[d_index]
 
         coords_add_top = coords1
         coords_add_hcp = coords2
-        coords_add_fcc = coords1+move # could be negative
+        coords_add_fcc = coords1 + move  # could be negative
 
         if site_type == "fcc":
             coords_add = coords_add_fcc
@@ -531,13 +531,13 @@ class MXene(Structure):
 
         c = coords1[0]
         moves = coords2 - c
-        d = np.sum(moves**2, axis=1)
+        d = np.sum(moves ** 2, axis=1)
         d_index = np.argmin(d)
         move = moves[d_index]
 
         coords_add_top = coords1
         coords_add_hcp = coords2
-        coords_add_fcc = coords1+move # could be negative
+        coords_add_fcc = coords1 + move  # could be negative
 
         if site_type == "fcc":
             coords_add = coords_add_fcc
@@ -557,9 +557,9 @@ class MXene(Structure):
         else:
             pass
             # terminal_z_axis = 1.2
-        coords_top = array[layer1_index,-1]
+        coords_top = array[layer1_index, -1]
         zz = np.mean(coords_top)
-        coords = np.concatenate((coords_add,np.full(coords_add.shape[0],zz).reshape(-1,1)),axis=1)
+        coords = np.concatenate((coords_add, np.full(coords_add.shape[0], zz).reshape(-1, 1)), axis=1)
 
         if terminal_z_axis is not None:
             coords[:, -1] = coef * terminal_z_axis + coords[:, -1]
@@ -780,7 +780,11 @@ class MXene(Structure):
             pass
         else:  # default # for atom not predefined
             cc = 2.5 * (n_layer - 3) + 25
-            lattice = Lattice.from_parameters(3.0, 3.0, cc, 90.0000, 90.0000, 120)
+
+            ab = [cls._predefined_bm_cell_ab[i] if i in cls._predefined_bm_cell_ab else 3.0 for i in base_list]
+            ab = sum(ab) / len(ab)
+
+            lattice = Lattice.from_parameters(ab, ab, cc, 90.0000, 90.0000, 120)
 
         z_axis = lattice.c
 
@@ -1171,7 +1175,7 @@ class MXene(Structure):
             else:
 
                 sites = self.get_next_layer_sites(site_type=site_type, ignore_index=ignore_index,
-                                                  force_finite=True,force_plane=True,
+                                                  force_finite=True, force_plane=True,
                                                   up_down=up_down, site_atom=absorb, tol=tol,
                                                   array=array)
 
@@ -1296,7 +1300,7 @@ class MXene(Structure):
         else:
             mx = self
         labels = mx.split_layer(ignore_index=ignore_index, tol=tol, force_plane=force_plane,
-                                reverse=False, # to make rank is corresponding with down-up
+                                reverse=False,  # to make rank is corresponding with down-up
                                 force_finite=force_finite)
         end = int(max(labels) + 1)
         start = int(max(min(labels), 0))
@@ -1676,7 +1680,7 @@ class MXene(Structure):
         """
 
         label = self.split_layer(ignore_index=ignore_index, tol=0.5, axis=2,
-                                 force_plane=True, reverse=True,force_finite=True)
+                                 force_plane=True, reverse=True, force_finite=True)
         marks = []
         for i in range(int(max(label))):
             marki = label == i
@@ -1886,8 +1890,6 @@ class MXene(Structure):
 
 
 if __name__ == "__main__":
-    from pymatgen.io.vasp import Poscar
-
     mx = MXene.from_standard(terminal_site=["hcp", "hcp"], base=["W", "Ti"],
                              carbide_nitride="C", n_base=3, terminal="O")
     assert "hcp" == mx.check_terminal_sites_by_3_layer(up_down="up")
@@ -1900,7 +1902,6 @@ if __name__ == "__main__":
                              carbide_nitride="C", n_base=3, terminal="O")
     assert "hcp" == mx.check_terminal_sites_by_3_layer(up_down="up")
     assert "top" == mx.check_terminal_sites_by_3_layer(up_down="down")
-
 
     # po = Poscar(mx)
     # po.write_file("POSCAR")
