@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 替换命令必须用单引号
-old_cmd='LREAL = *'
-new_cmd='LREAL = Auto'
+old_cmd='NCORE = *'
+new_cmd='NCORE = 16'
 
 old_path=$(cd "$(dirname "$0")"; pwd)
 

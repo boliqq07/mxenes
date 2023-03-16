@@ -1,7 +1,7 @@
 #!/bin/bash
 import os.path
 from pathlib import Path
-from shutil import copy, move
+from shutil import copyfile, move
 
 with open("paths.temp") as f:
     ls = f.readlines()
@@ -13,7 +13,7 @@ for i in ls:
             try:
                 print(f"Move CONTCAR to POSCAR for {i}")
                 move(i/"POSCAR", i/"OLD_POSCAR")
-                move(i/"CONTCAR", i/"POSCAR")
+                copyfile(i/"CONTCAR", i/"POSCAR")
             except:
                 print(f"Error for: {i}")
 

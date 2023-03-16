@@ -128,7 +128,7 @@ def loop(file="paths.temp"):
             ff.write("\n" + ("\n".join(msg)))
         msg.clear()
 
-        time.sleep(120)
+        time.sleep(60)
         lp += 1
         msg.append(f">>> Next Loop ({lp}): Left {len(words)} jobs >>>")
 
@@ -139,8 +139,11 @@ def loop(file="paths.temp"):
     msg.clear()
 
 
+# xx_run = '''
+# mpirun -np 64 /home/xdjf/app/vasp_fix_neb/bin/vasp_std > log.txt &
+# '''
 xx_run = '''
-mpirun -np 64 /home/xdjf/app/vasp_fix_neb/bin/vasp_std > log.txt &
+mpirun -np 64 /home/xdjf/app/vasp.6.3.0/bin/vasp_std > log.txt &
 '''
 
 if __name__ == "__main__":
