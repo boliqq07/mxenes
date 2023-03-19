@@ -10,169 +10,224 @@ This file is used to generated vasp input file (INCAR, run script)
 Custom modifications are recommended.
 """
 
-# 1. INCAR file
+# 1. MXenes INCAR file
 
-opt_incar = """
-# Basic
-PREC = Normal
-ISPIN = 2
-#LORBIT=11
-
+opt_big_incar_isym = """
 # Initialization
 ISTART = 0
 ICHARG = 2
 
+# Basic
+PREC = Normal
+ISPIN = 2
+
+# Output
+LCHARG = F
+LWAVE = F
+LORBIT = F
+
 # Electronic relaxation
-ENCUT = 600
-NELMIN = 5
+ALGO = Very_Fast
+EDIFF = 1E-04
+EDIFFG = -0.01
+ENCUT = 500
+NELMIN = 2
+NELMDL = -3
 NELM = 200
+NCORE = 8
+NSIM = 8
+ISYM = 2
+SYMPREC = 1E-4
+LREAL = Auto
+
+# Ionic relaxation
+IBRION = 2
+ISIF = 3
+NSW = 100
+
+# Density of states related
+ISMEAR = 0
+SIGMA = 0.05
+NEDOS = 301
+
+# Specific
+IVDW = 12
+
+IOPTCELL = 1 1 0 1 1 0 0 0 0
+
+"""
+
+opt_big_incar = """
+# Initialization
+ISTART = 0
+ICHARG = 2
+
+# Basic
+PREC = Normal
+ISPIN = 2
+
+# Output
+LCHARG = F
+LWAVE = F
+LORBIT = F
+
+# Electronic relaxation
 ALGO = F
 EDIFF = 1E-04
 EDIFFG = -0.01
-NCORE = 4
+ENCUT = 500
+NELMIN = 2
+NELM = 200
+NCORE = 8
+NPAP = 2
+ISYM = 0
+LREAL = Auto
+
+# Ionic relaxation
+IBRION = 2
+ISIF = 3
+NSW = 100
+
+# Density of states related
+ISMEAR = 0
+SIGMA = 0.05
+NEDOS = 301
+
+# Specific
+IVDW = 12
+
+IOPTCELL = 1 1 0 1 1 0 0 0 0
+
+"""
+
+opt_small_incar="""
+# Initialization
+ISTART = 0
+ICHARG = 2
+
+# Basic
+PREC = Normal
+ISPIN = 2
+
+# Output
+LCHARG = F
+LWAVE = F
+LORBIT = F
+
+# Electronic relaxation
+ALGO = F
+EDIFF = 5E-05
+EDIFFG = -0.005
+ENCUT = 500
+NELMIN = 2
+NELM = 200
+NCORE = 8
 ISYM = 0
 
 # Ionic relaxation
 IBRION = 2
 ISIF = 3
-NSW = 200
+NSW = 100
 
 # Density of states related
 ISMEAR = 0
-SIGMA = 0.02
+# ISMEAR = -5
+SIGMA = 0.05
 NEDOS = 301
-
-# Output
-LCHARG = .FALSE.
-LWAVE = .FALSE.
 
 # Specific
 IVDW = 12
 
-IOPTCELL = 1 1 0 1 1 0 0 0 0"""
+IOPTCELL = 1 1 0 1 1 0 0 0 0
 
-opt_incar_isym = """
-# Basic
-PREC = Normal
-ISPIN = 2
-#LORBIT=11
-
-# Initialization
-ISTART = 0
-ICHARG = 2
-
-# Electronic relaxation
-ENCUT = 600
-NELMIN = 5
-NELM = 200
-ALGO = F
-EDIFF = 1E-04
-EDIFFG = -0.01
-NCORE = 4
-
-ISYM = 2
-SYMPREC =1E-4
-
-# Ionic relaxation
-IBRION = 2
-ISIF = 3
-NSW = 200
-
-# Density of states related
-ISMEAR = 0
-SIGMA = 0.02
-NEDOS = 301
-
-# Output
-LCHARG = .FALSE.
-LWAVE = .FALSE.
-
-# Specific
-IVDW = 12
-
-IOPTCELL = 1 1 0 1 1 0 0 0 0"""
+"""
 
 
 opt_incar_tune = """
-# Basic
-PREC = Normal
-ISPIN = 2
-#LORBIT=11
-
 # Initialization
 ISTART = 0
 ICHARG = 2
 
+# Basic
+PREC = Normal
+ISPIN = 2
+
+# Output
+LCHARG = F
+LWAVE = F
+LORBIT = F
+
 # Electronic relaxation
-ENCUT = 600
-NELMIN = 5
-NELM = 200
-ALGO = N
+ALGO = F
 EDIFF = 1E-05
-EDIFFG = -0.005
-NCORE = 4
+EDIFFG = -0.001
+ENCUT = 500
+NELMIN = 2
+NELM = 200
+NCORE = 8
 ISYM = 0
+LREAL = Auto
 
 # Ionic relaxation
 IBRION = 2
 ISIF = 3
-NSW = 200
+NSW = 100
 
 # Density of states related
 ISMEAR = 0
-SIGMA = 0.02
+#ISMEAR = -5
+SIGMA = 0.05
 NEDOS = 301
-
-# Output
-LCHARG = .FALSE.
-LWAVE = .FALSE.
 
 # Specific
 IVDW = 12
 
-IOPTCELL = 1 1 0 1 1 0 0 0 0"""
+IOPTCELL = 1 1 0 1 1 0 0 0 0
+
+"""
 
 
 neb_incar = """
-# Basic
-PREC = Normal
-ISPIN = 2
-
 # Initialization
 ISTART = 0
 ICHARG = 2
 
+# Basic
+PREC = Normal
+ISPIN = 2
+
+# Output
+LCHARG = F
+LWAVE = F
+LORBIT = F
+
 # Electronic relaxation
+ALGO = F
+EDIFF = 1E-04
+EDIFFG = -0.01
 ENCUT = 500
 NELMIN = 5
+NELMDL = -3
 NELM = 200
-ALGO = Fast
-EDIFF = 1E-04
+NCORE = 8
+NSIM = 8
+ISYM = 0
+LREAL = Auto
 
 # Ionic relaxation
 IBRION = 3
 ISIF = 2
 POTIM = 0
-NSW = 300
-EDIFFG = -0.01
-ISYM = 0
+NSW = 200
 
 # Density of states related
 ISMEAR = 0
-SIGMA = 0.02
-#NEDOS = 301
-NCORE = 4
-
-# Output
-LCHARG = .FALSE.
-LWAVE = .FALSE.
+# ISMEAR = -5
+SIGMA = 0.05
+NEDOS = 301
 
 # Specific
 IVDW = 12
-#NCORE = 4
-#NPAR = 8
-ISYM = 0
-LREAL = Auto
 
 #CI-NEB caculations (Append "#" before these flags for other caculations):
 ICHAIN = 0             # 0-NEB,1-Dynamic matrix,2-Dimer,3-Lanczos
@@ -188,23 +243,29 @@ IOPT   = 3            # 0-IBRION(Default),1-LBFGS,2-CG,3-QM,4-SD,7-FIRE; Set IBR
                       # After the force < 1 eV/ang, an aggressive optimizer con
                       # verges better.
 
-
-
 """
 
 static_incar = """
+# Initiaization
+ISTART = 0
+#ISTART = 1
+ICHARG = 2
+#ICHARG = 1
+
 # Basic
 PREC = Normal
 ISPIN = 2
 
-# Initiaization
-ISTART = 0
-ICHARG = 2
+# Output
+LCHARG = T
+LWAVE = T
+LAECHG= T
+LORBIT= 11
 
 # Electronic relaxation
-ENCUT = 600
-NELMIN = 5
-NELM = 200
+ENCUT = 500
+NELMIN = 2
+NELM = 60
 ALGO = N
 EDIFF = 1E-05
 EDIFFG = -0.001
@@ -213,23 +274,19 @@ NCORE = 8
 # Ionic relaxation
 IBRION = -1
 ISIF = 2
-NSW = 1
+NSW = 0
 
 # Density of states related
 ISMEAR = 0
-SIGMA = 0.02
+# ISMEAR = -5
+SIGMA = 0.05
 NEDOS = 301
-
-# Output
-LCHARG = T
-LWAVE = T
-LAECHG= T
-LORBIT=11
 
 # Specific
 IVDW = 12
 
 IOPTCELL = 1 1 0 1 1 0 0 0 0
+
 """
 
 # 2. run script
@@ -398,7 +455,7 @@ def write_batch():
     with open("static_INCAR", "w") as f:
         f.writelines(static_incar)
     with open("opt_INCAR", "w") as f:
-        f.writelines(opt_incar)
+        f.writelines(opt_big_incar)
     with open("neb_INCAR", "w") as f:
         f.writelines(neb_incar)
 

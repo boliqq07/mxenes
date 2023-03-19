@@ -39,7 +39,7 @@ from sklearn.model_selection import ParameterGrid
 from tqdm import tqdm
 
 from mxene.core.mxenes import MXene
-from mxene.prepare.conf_files import opt_incar, opt_incar_isym
+from mxene.prepare.conf_files import opt_big_incar, opt_small_incar, opt_big_incar_isym
 from mxene.prepare.pre_kpoints import kp_dict
 from mxene.prepare.pre_potcar import check_potcar
 from mxene.prepare.vaspinput import MXVaspInput
@@ -47,8 +47,16 @@ from mxene.prepare.vaspinput import MXVaspInput
 
 # 1. generate vasp input
 
-def mx_input(pg: Dict, potpath="POT-database", incar=opt_incar, terminal="O", disk_num=0,
+def mx_input(pg: Dict, potpath="POT-database", incar=opt_small_incar, terminal="O", disk_num=0,
              run_file=None, relax=True, test=False, **kwargs):
+    assert "base" in pg
+    assert "carbide_nitride" in pg
+    assert "terminal_site" in pg
+
+    # not assert "doping" in pg
+    # not assert "up_down" in pg
+    # not assert "super_cell" in pg
+
     doping = pg["doping"] if "doping" in pg else None
     super_cell = pg["super_cell"] if "super_cell" in pg else None
     if "terminal_site" in pg:
@@ -56,14 +64,31 @@ def mx_input(pg: Dict, potpath="POT-database", incar=opt_incar, terminal="O", di
             pg["terminal_site"] = "fcc"
 
     if doping is None:
-        site_name = None
+        up_down = None
         equ_name = "pure_opt"
     else:
-        site_name = "up"
+        up_down = pg["up_down"] if "up_down" in pg else "up"
         equ_name = "ini_opt"
 
     if isinstance(potpath, str):
         potpath = check_potcar(potpath=potpath)
+
+    sym = False
+    base = pg["base"]
+    if len(base) == 2 and base[0] == base[1]:
+        sym = True
+    elif len(base) == 3 and base[0] == base[2]:
+        sym = True
+    elif len(base) == 4 and base[0] == base[1]:
+        sym = True
+
+    if sym:
+        up_down = "up"
+        terminal_site = pg["terminal_site"]
+        terminal_site = terminal_site.split("-")[0] if "-" in terminal_site else terminal_site
+        pg["terminal_site"] = terminal_site
+
+    pg["up_down"] = up_down
 
     structure = MXene.from_standard(**pg)
 
@@ -82,13 +107,14 @@ def mx_input(pg: Dict, potpath="POT-database", incar=opt_incar, terminal="O", di
         terminal_site = "auto"
         disk = structure.get_disk(root, tol=0.4, doping=doping,
                                   terminal=terminal,
-                                  site_name=site_name,
+                                  site_name=up_down,
                                   equ_name=equ_name,
                                   terminal_site=terminal_site,
                                   ignore_index=-1,
                                   force_plane=True,
                                   old_type=False,
                                   super_cell=super_cell,
+
                                   )
     except BaseException as e:
         disk = f"{root}/{disk_num}"
@@ -107,7 +133,7 @@ def mx_input(pg: Dict, potpath="POT-database", incar=opt_incar, terminal="O", di
 
 
 def mx_input_batch(pgs: Iterable[Dict], potpath=r"POT-database", start=0,
-                   relax=True, log_file="path.csv", test=False,  **kwargs):
+                   relax=True, log_file="path.csv", test=False, incar=opt_small_incar, **kwargs):
     pgs = pgs.tolist() if isinstance(pgs, np.ndarray) else list(pgs)
 
     if pgs is None:
@@ -120,7 +146,7 @@ def mx_input_batch(pgs: Iterable[Dict], potpath=r"POT-database", start=0,
     for i, pg in tqdm(enumerate(pgs)):
 
         try:
-            logi = mx_input(pg, disk_num=i + start, potpath=potpath, incar=opt_incar, terminal="O",
+            logi = mx_input(pg, disk_num=i + start, potpath=potpath, incar=incar, terminal="O",
                             run_file=None, relax=relax, test=test,
                             **kwargs)
         except BaseException as e:
@@ -140,7 +166,7 @@ def mx_input_batch(pgs: Iterable[Dict], potpath=r"POT-database", start=0,
 
 
 def mx_input_batch_parallelize(pgs: Iterable[Dict], potpath=r"POT-database", log_file="path.csv",
-                               relax=True, n_jobs=10,test=False):
+                               relax=True, n_jobs=10, test=False, incar=opt_small_incar):
     assert n_jobs > 1
 
     pgs = list(pgs)
@@ -170,9 +196,10 @@ def mx_input_batch_parallelize(pgs: Iterable[Dict], potpath=r"POT-database", log
     ###### new #################
     pool = multiprocessing.Pool(processes=n_jobs)
 
-    for pi,log,start in tqdm(zip(msgs,log_files,starts)):
+    for pi, log, start in tqdm(zip(msgs, log_files, starts)):
         pool.apply(func=mx_input_batch, args=(pi,),
-                   kwds={"log_file": log, "potpath": potpath, "start": start,"relax":relax,"test":test})
+                   kwds={"log_file": log, "potpath": potpath, "start": start, "relax": relax,
+                         "test": test, "incar": incar})
     pool.close()
     pool.join()
 
@@ -181,10 +208,8 @@ def mx_input_batch_parallelize(pgs: Iterable[Dict], potpath=r"POT-database", log
 
 
 def supercell_and_doping(structure, doping, super_cell, pathi, incar=None,
-                         potpath="POT-database", site_name="up", no_doping_name="no_doping", test=False):
-    assert site_name in ["up", "down"]
-    if incar is None:
-        incar = Incar.from_string(opt_incar)
+                         potpath="POT-database", up_down="up", no_doping_name="no_doping", test=False):
+    assert up_down in ["up", "down"]
 
     if isinstance(potpath, str):
         potpath = check_potcar(potpath=potpath)
@@ -193,12 +218,19 @@ def supercell_and_doping(structure, doping, super_cell, pathi, incar=None,
 
     sti = MXene.from_structure(structure)
 
-    sti.make_supercell(super_cell)
+    if super_cell == (1, 1, 1):
+        pass
+        if incar is None:
+            incar = Incar.from_string(opt_small_incar)
+    else:
+        sti.make_supercell(super_cell)
+        if incar is None:
+            incar = Incar.from_string(opt_big_incar_isym)
 
     if sti.is_mirror_sym():
-        site_name = "up"
+        up_down = "up"
 
-    doping_index, atom = sti.pure_add_doping(doping=doping, up_down=site_name)
+    doping_index, atom = sti.pure_add_doping(doping=doping, up_down=up_down)
 
     if doping is None:
         if no_doping_name == "atom":
@@ -213,7 +245,7 @@ def supercell_and_doping(structure, doping, super_cell, pathi, incar=None,
         pi_new = pathlib.Path(pi_new)
         end = pi_new.name
         terminal_site2 = path.Path(pi_new).parent.name
-        site_name = "-".join([i for i in [terminal_site2, site_name] if i is not None])
+        site_name = "-".join([i for i in [terminal_site2, up_down] if i is not None])
         pi_new = pi_new.parent.parent / site_name / end
 
         if "111" in str(pi_new):
@@ -226,7 +258,7 @@ def supercell_and_doping(structure, doping, super_cell, pathi, incar=None,
             if doping is None and no_doping_name == "atom":
                 doping = str(atom)
 
-            pi_new = sti.get_disk(doping=doping, ignore_index=-1, site_name=site_name,
+            pi_new = sti.get_disk(doping=doping, ignore_index=-1, site_name=up_down,
                                   equ_name="ini_opt", tol=0.4, terminal_site="auto", super_cell=super_cell,
                                   old_type=False)
         except BaseException:
@@ -239,7 +271,7 @@ def supercell_and_doping(structure, doping, super_cell, pathi, incar=None,
     out_dir = path.Path(str(pi_new))
 
     if len(sti.atomic_numbers) > 50:
-        incar = opt_incar_isym
+        incar = opt_big_incar_isym
 
     if test:
         print(f"Old:{pathi}")
@@ -266,7 +298,7 @@ def supercell_and_doping_mx_input_batch(paths: List, pgs: Iterable[Dict] = None,
     pool = multiprocessing.Pool(processes=n_jobs)
     for pi in tqdm(paths):
         pool.apply(func=supercell_and_doping_mx_input, args=(pi,),
-                   kwds={"pgs": pgs, "potpath": potpath, "read_file": read_file, "test":test})
+                   kwds={"pgs": pgs, "potpath": potpath, "read_file": read_file, "test": test})
     pool.close()
     pool.join()
 
@@ -306,15 +338,15 @@ def supercell_and_doping_mx_input(pi, pgs: Iterable[Dict] = None, potpath="POT-d
 
                 if "up_down" in pgi:
                     if pgi["up_down"] is None:
-                        site_name = "up"
+                        up_down = "up"
                     else:
-                        site_name = pgi["up_down"]
+                        up_down = pgi["up_down"]
                 else:
-                    site_name = "up"
+                    up_down = "up"
 
                 supercell_and_doping(poscar.structure, doping, super_cell, pi,
                                      incar=incar,
-                                     potpath=potpath, site_name=site_name, no_doping_name=no_doping_name,
+                                     potpath=potpath, up_down=up_down, no_doping_name=no_doping_name,
                                      test=test)
         except IndexError:
             print(f"Error for '{pi}' and store to doping_fail_path.temp")
@@ -327,10 +359,10 @@ def supercell_and_doping_mx_input(pi, pgs: Iterable[Dict] = None, potpath="POT-d
 def absorb_atom(structure, absorb, site_name, site_type, pathi, kpoints, incar=None, up_down=None,
                 potpath="POT-database", test=True):
     if incar is None:
-        incar = Incar.from_string(opt_incar)
+        incar = Incar.from_string(opt_big_incar)
 
-    if len(structure.atomic_numbers) > 60:
-        incar = opt_incar_isym
+    if len(structure.atomic_numbers) > 50:
+        incar = opt_big_incar_isym
 
     if isinstance(potpath, str):
         potpath = check_potcar(potpath=potpath)
@@ -367,6 +399,8 @@ def absorb_atom(structure, absorb, site_name, site_type, pathi, kpoints, incar=N
         print(f"Old:{pathi}")
         print(f"New:{pi_new}")
     else:
+        print(f"Old:{pathi}")
+        print(f"New:{pi_new}")
         potcar = Potcar(tuple(poscar_new.site_symbols), sym_potcar_map=potpath)
         mxin = MXVaspInput(incar, kpoints, poscar_new, potcar, optional_files=None)
         mxin.write_input(output_dir=str(out_dir))
@@ -383,12 +417,16 @@ def absorb_mx_input_batch(paths: List, pgs: Iterable[Dict] = None, potpath="POT-
 
     for pi in tqdm(paths):
         pool.apply(func=absorb_mx_input, args=(pi,),
-                   kwds={"pgs": pgs, "potpath": potpath, "read_file": read_file,"test":test})
+                   kwds={"pgs": pgs, "potpath": potpath, "read_file": read_file, "test": test})
     pool.close()
     pool.join()
 
 
 def absorb_mx_input(pi, pgs: Iterable[Dict] = None, potpath="POT-database", read_file="CONTCAR", test=True):
+    tm_list = ["Sc", "Y", "Ti", "Zr", "Hf", "V", "Nb", "Ta", "Cr", "Mo", "W", "Mn",
+               "Re", "Fe", "Ru", "Os", "Co", "Rh", "Ir", "Ni", "Pd", "Pt", "Cu", "Ag",
+               "Au", "Zn", "Cd"]
+
     if isinstance(potpath, str):
         potpath = check_potcar(potpath=potpath)
 
@@ -416,7 +454,15 @@ def absorb_mx_input(pi, pgs: Iterable[Dict] = None, potpath="POT-database", read
             for pgi in pgs:
                 site_name = pgi["site_name"]
                 absorb = pgi["absorb"]
-                site_type = "top" if absorb == "H" else "fcc"
+
+                if "site_type" in pgi:
+                    site_type = pgi["site_type"]
+                else:
+                    site_type = "top" if absorb == "H" else "fcc"
+
+                if site_type == "top":
+                    if poscar.structure.symbol_set[-1] in tm_list:
+                        site_name = "S0"  # some `center` for non-mental
 
                 if "up_down" in pgi:
                     if pgi["up_down"] == "auto":
@@ -427,9 +473,9 @@ def absorb_mx_input(pi, pgs: Iterable[Dict] = None, potpath="POT-database", read
                     up_down = None
 
                 absorb_atom(poscar.structure, absorb, site_name, site_type, pi, kpoints,
-                            incar=incar, test=test,up_down=up_down,
+                            incar=incar, test=test, up_down=up_down,
                             potpath=potpath)
-        except IndexError:
+        except (IndexError, ValueError):
             print(f"Error for {pi} and store to absorb_fail_path.temp")
             with open("absorb_fail_path.temp", "a+") as f:
                 f.write(str(pi))

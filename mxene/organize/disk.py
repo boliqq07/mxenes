@@ -13,7 +13,7 @@ import path
 
 
 def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, site_name, absorb=None, equ_name=None,
-              add_atoms=None, base_num_cls=None, super_cell=None, terminal_site=None,
+              add_atoms=None, base_num_cls=None, super_cell=None, terminal_site=None, ts_name="all",
               old_type=True) -> path.Path:
     """Organize the name to one path."""
     nm_list = ["H", "B", "C", "N", "O", "F", "Si", "P", "S", "Cl", "As", "Se", "Br", "I", "Te", "At"]
@@ -115,7 +115,19 @@ def make_disk(disk, terminal, base, carbide_nitride, n_base, doping, site_name, 
     if site_name is None:
         if terminal_site is not None:
             site_name = terminal_site
-    # site_name = "-".join([i for i in [terminal_site, site_name] if i is not None])
+        else:
+            raise NotImplementedError("site_name should be offered.")
+    else:
+        if terminal_site is not None:
+            if ts_name=="all":
+                site_name = f"{terminal_site}-{site_name}"
+            elif ts_name == "s":
+                site_name = site_name
+            else:
+                # ts_name == "t"
+                site_name = terminal_site
+        else:
+            pass
 
     if old_type is True:
         if absorb == "no_absorb" and add_atoms == "no_add":  # pure

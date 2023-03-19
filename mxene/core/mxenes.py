@@ -106,8 +106,9 @@ class MXene(Structure):
     _predefined_bm_cell_ab = {"Ti": 3.0, "Zr": 3.2, "Hf": 3.15, "V": 2.93, "Nb": 3.0,
                               "Ta": 3.05, "Cr": 2.83,
                               "Mo": 2.9, "W": 2.87, "Sc": 3.3}
-    _predefined_tem_z_axis = {"O": 1.0, "F": 0.9, "Cl": 1.2}
-    _predefined_am_z_axis = {"K": 2.1, "Li": 1.3, "H": 0.9, "Ca": 1.6, "Na": 1.6, "Mg": 1.4, "Al": 1.1, "Zn": 1.2}
+    _predefined_tem_z_axis = {"O": 1.0, "F": 0.9, "Cl": 1.2, "H": 0.8}
+    _predefined_am_z_axis = {"K": 2.1, "Li": 1.3, "H": 0.9, "Ca": 1.6, "Na": 1.6, "Mg": 1.4,
+                             "Al": 1.1, "Zn": 1.2}
 
     def __init__(self,
                  lattice: Union[ArrayLike, Lattice],
@@ -285,6 +286,37 @@ class MXene(Structure):
                     return False
 
             return True
+        except BaseException as e:
+            return False
+
+    def is_mirror_sym_rough(self, tol=0.3, axis=2, max_number=3) -> bool:
+        try:
+
+            label = self.split_layer(ignore_index=None, tol=tol, force_plane=True, reverse=True,
+                                     force_finite=False, array=None, axis=axis)
+
+            label2 = np.max(label) - label
+
+            atm = np.array(self.atomic_numbers)
+
+            ss = []
+            more = 0
+            for i in range(np.max(label)):
+                atm1 = atm[label == i]
+                atm2 = atm[label2 == i]
+
+                mi=abs(len(atm2)-len(atm1))
+                if mi > 0:
+                    more+=mi
+                    min_ = min((len(atm1), len(atm2)))
+                    ss.append(np.all(np.equal(atm1[:min_], atm2[:min_])))
+                else:
+                    ss.append(np.all(np.equal(atm1, atm2)))
+            ss = np.array(ss).ravel()
+            if np.sum(ss == False) > (max_number-more):
+                return False
+            else:
+                return True
         except BaseException as e:
             return False
 
@@ -468,7 +500,7 @@ class MXene(Structure):
         return coords_add
 
     def get_next_layer_sites(self, site_type: Union[None, str] = "fcc", ignore_index=None,
-                             force_plane=False, force_finite=True, terminal_z_axis=1.2,
+                             force_plane=False, force_finite=True, terminal_z_axis=1.0,
                              up_down="up", site_atom="O", array=None, tol=0.5) -> np.ndarray:
         """
         According to the atomic layer in the structure and the stacking method,
@@ -554,10 +586,10 @@ class MXene(Structure):
         elif isinstance(site_atom, str) and site_atom in self._predefined_tem_z_axis:
             terminal_z_axis = self._predefined_am_z_axis[site_atom]
         elif isinstance(site_atom, str):
-            terminal_z_axis = 1.2
+            terminal_z_axis = 1.0
         else:
             pass
-            # terminal_z_axis = 1.2
+            # terminal_z_axis = 1.0
         coords_top = array[layer1_index, -1]
         zz = np.mean(coords_top)
         coords = np.concatenate((coords_add, np.full(coords_add.shape[0], zz).reshape(-1, 1)), axis=1)
@@ -705,10 +737,11 @@ class MXene(Structure):
     def from_standard(cls, terminal_site: Union[None, str, Sequence] = "fcc",
                       doping: Union[None, str] = None, terminal: Union[None, str] = "O",
                       base: Union[Sequence, str] = "Ti", carbide_nitride: Union[Sequence, str] = "C",
-                      n_base: int = 2, add_noise: bool = False,
+                      n_base: int = 2, add_noise: bool = False, up_down="up",
                       super_cell: tuple = (3, 3, 1), add_atoms=None, add_atoms_site=None,
                       coords_are_cartesian=True, lattice: Union[Lattice, tuple, list] = None,
-                      layer_space=1.25, terminal_z_axis=None, random_state=None, random_factor=0.001) -> "MXene":
+                      layer_space=1.25, terminal_z_axis=None, random_state=None, random_factor=0.001,
+                      **kwargs) -> "MXene":
         """
         Generate ideal single atom doping MXenes.
 
@@ -717,6 +750,7 @@ class MXene(Structure):
             >>> mx = MXene.from_standard(base="Mo",doping="Ti",n_base=3,terminal="O",terminal_site="hcp")
 
         Args:
+            up_down: (str), up, down.
             random_factor: float, random factor.
             random_state: (random.RandomState, int),
             terminal_z_axis: float, z axis for terminal.
@@ -738,6 +772,8 @@ class MXene(Structure):
             st: pymatgen.core.Structure
 
         """
+        if "site_name" in kwargs: # old name, not suggest.
+            up_down = kwargs["site_name"]
 
         if terminal is None:
             terminal_site = None
@@ -862,26 +898,28 @@ class MXene(Structure):
 
         if doping:
 
-            nm_tm = "NM" if doping in cls._predefined_nm_list else "TM"
+            # nm_tm = "NM" if doping in cls._predefined_nm_list else "TM"
+            #
+            # if terminal_site is None:
+            #     if nm_tm == "NM":
+            #         raise TypeError("'NM' should be with 'terminal'")
+            #     z0 = fracs[-1][-1]
+            # else:
+            #     if nm_tm == "TM":
+            #         z0 = fracs[-2][-1]
+            #     else:
+            #         z0 = fracs[-1][-1]
+            # sam_atoms = cls.get_similar_layer_atoms(st, z0=z0, frac=True)
+            # xys = st.frac_coords[sam_atoms][:, :2]
+            # xy = np.mean(xys, axis=0)
+            # xyd = np.sum(abs(xys - xy), axis=1)  # find the center location.
+            # index = int(np.argmin(xyd))
+            # site = st.frac_coords[sam_atoms[index]]
+            # st.remove_sites([sam_atoms[index], ])
+            # st.append(doping, site, coords_are_cartesian=False)
+            # st.num_doping = len(st) - 1
 
-            if terminal_site is None:
-                if nm_tm == "NM":
-                    raise TypeError("'NM' should be with 'terminal'")
-                z0 = fracs[-1][-1]
-            else:
-                if nm_tm == "TM":
-                    z0 = fracs[-2][-1]
-                else:
-                    z0 = fracs[-1][-1]
-            sam_atoms = cls.get_similar_layer_atoms(st, z0=z0, frac=True)
-            xys = st.frac_coords[sam_atoms][:, :2]
-            xy = np.mean(xys, axis=0)
-            xyd = np.sum(abs(xys - xy), axis=1)  # find the center location.
-            index = int(np.argmin(xyd))
-            site = st.frac_coords[sam_atoms[index]]
-            st.remove_sites([sam_atoms[index], ])
-            st.append(doping, site, coords_are_cartesian=False)
-            st.num_doping = len(st) - 1
+            st.pure_add_doping(doping, up_down=up_down)
         if add_atoms is not None:
             if isinstance(add_atoms, (list, tuple)):
                 for n, s in zip(add_atoms, add_atoms_site):
@@ -1093,12 +1131,20 @@ class MXene(Structure):
         frac_coords_z = frac_coords[:, 2]
         frac_coords_xy_temp = np.zeros_like(frac_coords_xy)
 
-        index = np.array([True if i.specie.name == atom_type else False for i in self.sites])
+        if atom_type:
+            index = np.array([True if i.specie.name == atom_type else False for i in self.sites])
+        else:
+            index = np.full_like(frac_coords_z, fill_value=True,dtype=bool)
 
         labels = coarse_cluster_array(frac_coords_z, tol=0.02).astype(float)
-        labels[~index] = np.nan
+        labels[~index] = 100000
 
-        s = max(labels) if up_down == "up" else min(labels)
+        if up_down == "up":
+            labels[~index] = -100000
+            s = max(labels)
+        else:
+            labels[~index] = 100000
+            s = min(labels)
 
         index2 = labels == s
 
@@ -1144,6 +1190,10 @@ class MXene(Structure):
         Returns:
 
         """
+        if up_down == "up":
+            factor = 1
+        else:
+            factor = -1
 
         if ignore_index is not None:
             ignore_index = list(range(len(self)))[ignore_index]
@@ -1168,8 +1218,8 @@ class MXene(Structure):
                 else:
                     offset_z = offset_z * coef
 
-                absorb_site = self.cart_coords[center] + np.array([0, 0, offset_z]) + rdm.random(
-                    size=3) * 50 * random_factor
+                absorb_site = self.cart_coords[center] + factor*( np.array([0, 0, offset_z]) + rdm.random(
+                    size=3) * 25 * random_factor)
 
                 self.append(absorb, coords=absorb_site, coords_are_cartesian=coords_are_cartesian)
 
@@ -1184,6 +1234,7 @@ class MXene(Structure):
                 [st2.append(species=i, coords=j, coords_are_cartesian=True) for i, j in
                  zip([absorb] * sites.shape[0], list(sites))]
 
+                # 如果 down, center应当给予准确（下面的中心）或者center为None.否则错误
                 points_and_distance_to_m0 = get_plane_neighbors_to_center(st2, center_index=center,
                                                                           neighbors_name=absorb,
                                                                           plane=False,
@@ -1201,8 +1252,8 @@ class MXene(Structure):
 
                 index = list(points_and_distance_to_m0[si].keys())[sel]
 
-                absorb_site = st2.cart_coords[index] + np.array([0, 0, offset_z]) + rdm.random(
-                    size=3) * 50 * random_factor
+                absorb_site = st2.cart_coords[index] + factor*( np.array([0, 0, offset_z]) + rdm.random(
+                    size=3) * 25 * random_factor)
 
                 self.append(absorb, coords=absorb_site, coords_are_cartesian=coords_are_cartesian)
 
@@ -1231,7 +1282,7 @@ class MXene(Structure):
                  equ_name="opt", ignore_index=None, add_atoms=None, tol=0.4, terminal_site=None,
                  absorb=None, doping=None, terminal=None, carbide_nitride=None, force_plane=True,
                  old_type=False, nm_tm: Optional[str] = None, super_cell: Optional[tuple] = None,
-                 force_finite=False,
+                 force_finite=False,ts_name="all",
                  ):
         """Just for single doping, single absorb, single type terminal.
         for some name, the code could judge the parameter automatically, and for others, you should offer it.
@@ -1411,7 +1462,7 @@ class MXene(Structure):
                                  n_base=None, doping=doping, site_name=site_name,
                                  absorb=absorb, equ_name=equ_name, base_num_cls=None,
                                  add_atoms=add_atoms, super_cell=super_cell,
-                                 terminal_site=terminal_site,
+                                 terminal_site=terminal_site, ts_name=ts_name,
                                  old_type=old_type, )
         return self.out_dir
 

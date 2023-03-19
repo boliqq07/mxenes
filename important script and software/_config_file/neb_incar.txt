@@ -1,0 +1,55 @@
+# Initialization
+ISTART = 0
+ICHARG = 2
+
+# Basic
+PREC = Normal
+ISPIN = 2
+
+# Output
+LCHARG = F
+LWAVE = F
+LORBIT = F
+
+# Electronic relaxation
+ALGO = Very_Fast
+EDIFF = 1E-04
+EDIFFG = -0.01
+ENCUT = 500
+NELMIN = 5
+NELMDL = -3
+NELM = 100
+NCORE = 8
+NPAP = 2
+NSIM = 8
+ISYM = 0
+LREAL = Auto
+
+# Ionic relaxation
+IBRION = 3
+ISIF = 2
+POTIM = 0
+NSW = 200
+
+# Density of states related
+ISMEAR = 0
+# ISMEAR = -5
+SIGMA = 0.05
+NEDOS = 301
+
+# Specific
+IVDW = 12
+
+#CI-NEB caculations (Append "#" before these flags for other caculations):
+ICHAIN = 0             # 0-NEB,1-Dynamic matrix,2-Dimer,3-Lanczos
+IMAGES = 3             # Number of images,excluding endpoints.
+SPRING = -5            # Spring force between images
+LCLIMB = .TRUE.        # Flag to ture on the climbing image algorithm
+LTANGENTOLD = .FALSE.  # Flag to turn on the old central difference tangent
+LDNEB  = .FALSE.       # Flag to turn on modified doubble nudging
+#
+##Aggressive optimizers:
+IOPT   = 3            # 0-IBRION(Default),1-LBFGS,2-CG,3-QM,4-SD,7-FIRE; Set IBRION=3,POTIM=0 
+                      # when turn on it.
+                      # After the force < 1 eV/ang, an aggressive optimizer con
+                      # verges better.

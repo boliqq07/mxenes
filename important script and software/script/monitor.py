@@ -220,10 +220,11 @@ xx_run = '''
 #JSUB -o out.%J                  
 #JSUB -e err.%J
 
-source ~/intel/oneapi/mkl/2022.0.2/env/vars.sh intel64
-source ~/intel/oneapi/compiler/2022.0.2/env/vars.sh intel64
-source ~/intel/oneapi/mpi/2021.5.1/env/vars.sh intel64
-export PATH=~/app/vasp.5.4.4/bin/:$PATH
+source /opt/intel/compilers_and_libraries_2020.1.217/linux/mkl/bin/mklvars.sh intel64
+source /opt/intel/compilers_and_libraries_2020.1.217/linux/mpi/intel64/bin/mpivars.sh intel64
+source /opt/intel/compilers_and_libraries_2020/linux/bin/compilervars.sh intel64
+
+export PATH=/beegfs/home/wangchangxin/app/vasp.6.3.0/bin:$PATH
 
 ulimit -s 5120000
 
