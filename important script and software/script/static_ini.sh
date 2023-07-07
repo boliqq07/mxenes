@@ -10,8 +10,8 @@ echo $(cd "$(dirname "$0")"; pwd)
 
 cd .. 
 rm -rf ini_static 
-cp -r ini_opt ini_static 
-cp ini_opt/CONTCAR ini_static/POSCAR 
+cp -r ini_opt ini_static
+cp ini_opt/CONTCAR ini_static/POSCAR
 cp $old_path/static_INCAR ini_static/INCAR
 
 cd $old_path

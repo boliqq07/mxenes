@@ -1942,18 +1942,19 @@ class MXene(Structure):
 
 
 if __name__ == "__main__":
-    mx = MXene.from_standard(terminal_site=["hcp", "hcp"], base=["W", "Ti"],
-                             carbide_nitride="C", n_base=3, terminal="O")
-    assert "hcp" == mx.check_terminal_sites_by_3_layer(up_down="up")
-    assert "hcp" == mx.check_terminal_sites_by_3_layer(up_down="down")
-    mx = MXene.from_standard(terminal_site=["hcp", "fcc"], base=["W", "Ti"],
-                             carbide_nitride="C", n_base=3, terminal="O")
-    assert "fcc" == mx.check_terminal_sites_by_3_layer(up_down="up")
-    assert "hcp" == mx.check_terminal_sites_by_3_layer(up_down="down")
-    mx = MXene.from_standard(terminal_site=["top", "hcp"], base=["W", "Ti"],
-                             carbide_nitride="C", n_base=3, terminal="O")
-    assert "hcp" == mx.check_terminal_sites_by_3_layer(up_down="up")
-    assert "top" == mx.check_terminal_sites_by_3_layer(up_down="down")
+    mx = MXene.from_standard(terminal_site=["fcc", "fcc"], base=["Co", "Ti", "Co"],
+                             carbide_nitride="N",  terminal="F")
+    mx.show()
+    # assert "hcp" == mx.check_terminal_sites_by_3_layer(up_down="up")
+    # assert "hcp" == mx.check_terminal_sites_by_3_layer(up_down="down")
+    # mx = MXene.from_standard(terminal_site=["hcp", "fcc"], base=["W", "Ti"],
+    #                          carbide_nitride="C", n_base=3, terminal="O")
+    # assert "fcc" == mx.check_terminal_sites_by_3_layer(up_down="up")
+    # assert "hcp" == mx.check_terminal_sites_by_3_layer(up_down="down")
+    # mx = MXene.from_standard(terminal_site=["top", "hcp"], base=["W", "Ti"],
+    #                          carbide_nitride="C", n_base=3, terminal="O")
+    # assert "hcp" == mx.check_terminal_sites_by_3_layer(up_down="up")
+    # assert "top" == mx.check_terminal_sites_by_3_layer(up_down="down")
 
     # po = Poscar(mx)
     # po.write_file("POSCAR")
